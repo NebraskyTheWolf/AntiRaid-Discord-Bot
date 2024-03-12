@@ -2,6 +2,14 @@ import * as dotenv from "dotenv";
 
 dotenv.config()
 
+
+global.__rootdir__ = __dirname || process.cwd();
+
+declare global {
+  var __rootdir__: string;
+}
+
+
 import 'module-alias/register';
 import { Client, Intents } from "discord.js";
 import mongoose from "mongoose";
@@ -13,7 +21,7 @@ import discordModals from "discord-modals";
 
 import Logger from "@fluffici.ts/logger";
 import InitChecker from '@fluffici.ts/utils/InitChecker';
-import BaseCommand from "@fluffici.ts/components/BaseCommand";
+import {SlashCommandBuilder} from "@discordjs/builders";
 
 export default class Fluffici extends Client {
     public static instance: Fluffici
@@ -23,6 +31,7 @@ export default class Fluffici extends Client {
     public readonly logger: Logger
     public readonly checker: InitChecker
 
+    public readonly REGISTRY: SlashCommandBuilder
     public manager: CommandManager
     public eventManager: EventManager
     public buttonManager: ButtonManager
@@ -95,16 +104,10 @@ export default class Fluffici extends Client {
     }
 
     private load() {
-      discordModals(this);
-
       this.logger.info("Loading system...")
 
       this.manager = new CommandManager()
       this.manager.registerCommands()
-
-      const commandData = this.manager.toMap().map((getData: BaseCommand) => {
-        return getData.getCommand().toJSON();
-      });
 
       this.eventManager = new EventManager()
       this.eventManager.registerEvents()

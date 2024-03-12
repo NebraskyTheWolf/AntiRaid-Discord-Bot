@@ -62,6 +62,10 @@ export default class CommandManager {
     if (base.options.get("isDisabled")) {
       this.logger.warn(`${base.name} is disabled.`);
     } else {
+      if (this.REGISTRY.has(base.name)) {
+        this.logger.warn(`Command ${base.name} is already registered. Overwriting it.`);
+      }
+
       this.REGISTRY.add(base.name, base);
       this.logger.info(`Command ${base.name} is now registered.`);
     }

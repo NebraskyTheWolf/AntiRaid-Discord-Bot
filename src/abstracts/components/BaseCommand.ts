@@ -18,10 +18,6 @@ import {
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import {CommandInteraction, Guild, GuildMember, Permissions} from "discord.js";
 
-/**
- * Represents a category in the system.
- * @typedef {('ADMINISTRATOR' | 'OWNER' | 'DEFAULT')} Category
- */
 export declare type Category = 'ADMINISTRATOR' | 'MODERATION' | 'OWNER' | 'DEFAULT';
 
 export default abstract class BaseCommand extends Base {
@@ -37,7 +33,7 @@ export default abstract class BaseCommand extends Base {
 
         this.command = new SlashCommandBuilder();
         this.command.setName(this.name);
-        this.command.setDescription(this.description || "No description set.");
+        this.command.setDescription(this.description);
 
         if (this.options.has("dmPermission")) {
           this.command.setDMPermission(this.options.get("dmPermission"));

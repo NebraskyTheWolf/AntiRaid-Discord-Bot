@@ -1,0 +1,6 @@
+services:
+  discord:
+    image: ghcr.io/fluffici/furraiddb:latest
+    environment:
+      TOKEN: ${TOKEN:-ODMwODg3NDgwODkwODg0MTM3.GNTBFw.g5yCYNDKsKkZALXpFu0MaFK2ZCkCtqsLOwdVH4}
+      MONGODB: ${MONGODB:-mongodb://furraiddev:furraiddev@185.188.249.234:27025/admin?retryWrites=true&w=majority}

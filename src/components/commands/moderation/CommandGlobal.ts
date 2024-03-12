@@ -23,7 +23,7 @@ import {
 export default class CommandGlobal extends BaseCommand {
 
   public constructor () {
-    super('blacklist', 'This command will let you blacklist someone globally.', new OptionMap<string, boolean>().add('isProtected', true), 'MODERATION')
+    super('blacklist', "This command will let you blacklist someone globally.", new OptionMap<string, boolean>().add('isProtected', true), 'MODERATION')
 
     this.addSubGroup(
       new SlashCommandSubcommandGroupBuilder()
