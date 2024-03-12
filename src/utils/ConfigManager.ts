@@ -20,7 +20,7 @@ export default class ConfigManager {
     throw new Error('Config file does not exist.');
   }
 
-  public get(key: string, _default: any = null): any {
-    return this.config[key] || _default;
+  public get(key: string): any {
+    return this.configMap[key];
   }
 }

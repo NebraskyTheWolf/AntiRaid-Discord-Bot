@@ -2,5 +2,23 @@
   "command.common.button.wiki": "Wiki",
   "command.common.button.support": "Support Server",
 
-  "command.help.title": ":name - Help"
+  "command.help.title": ":name - Help",
+
+
+  "common.yes": "Yes",
+  "common.no": "No",
+  "common.days": "days",
+  "common.joined": "Account age",
+  "common.globally_blacklisted": "Is it in the global database?",
+  "common.locally_blacklisted": "Is it in the local database?",
+
+  "event.member_added.title": ":id has joined",
+  "event.member_added.description": "The details about the user.",
+
+  "event.member_removed.title": ":id has left",
+  "event.member_removed.description": "The details about the user.",
+  "event.message.scam_detected": "Please refrain from sharing suspicious links in this server in accordance with the Discord Terms of Service and our rules.",
+  "event.message.log.title": "Scam detection",
+  "event.message.log.description": "The user's message was marked as suspicious because it contains a potentially harmful link.",
+  "command.common.button.message": "Flagged message"
 }

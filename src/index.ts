@@ -35,6 +35,10 @@ export default class Fluffici extends Client {
         partials: ["MESSAGE", "USER", "REACTION"],
         intents: [
           Intents.FLAGS.GUILDS,
+          Intents.FLAGS.MESSAGE_CONTENT,
+          Intents.FLAGS.GUILD_MESSAGES,
+          Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+          Intents.FLAGS.GUILD_MESSAGE_TYPING,
           Intents.FLAGS.GUILD_MEMBERS,
           Intents.FLAGS.GUILD_PRESENCES
         ]
@@ -49,12 +53,15 @@ export default class Fluffici extends Client {
 
     private setupErrorHandling (): void {
       process.on('uncaughtException', function (error) {
+        Fluffici.instance.logger.error("uncaughtException: ")
         Fluffici.instance.logger.error("Stacktrace: " + error.stack)
         Fluffici.instance.logger.error("\n");
       });
 
-      process.on('unhandledRejection', function (error) {
+      process.on('unhandledRejection', function (error, object) {
+        Fluffici.instance.logger.error("unhandledRejection: ")
         Fluffici.instance.logger.error("Stacktrace: " + error)
+        Fluffici.instance.logger.error("Object: " + JSON.stringify(object))
         Fluffici.instance.logger.error("\n")
       });
     }
@@ -84,8 +91,6 @@ export default class Fluffici extends Client {
         this.logger.info("Connected to MongoDB.");
         this.load();
       }).catch(err => { this.logger.warn("Failed to contact the database.") });
-
-      this.load()
     }
 
     private load() {

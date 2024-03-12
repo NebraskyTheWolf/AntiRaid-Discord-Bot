@@ -2,7 +2,7 @@ import BaseEvent from '@fluffici.ts/components/BaseEvent'
 import { GuildMember } from 'discord.js'
 import { IBlacklist as FBlacklisted } from '@fluffici.ts/database/Common/Blacklist'
 import { LocalBlacklist as FLocalBlacklist } from '@fluffici.ts/database/Common/LocalBlacklist'
-import { createExtraOptions, fetchRequiredData, generateLogDetails, isBotOrSystem, isNull } from '@fluffici.ts/types'
+import { createExtraOptions, isBotOrSystem, isNull } from '@fluffici.ts/types'
 import { Guild as FGuild } from '@fluffici.ts/database/Guild/Guild'
 
 
@@ -17,14 +17,14 @@ export default class MemberJoin extends BaseEvent {
         localBlacklist,
         whitelist,
         staff
-      ] = await fetchRequiredData(member)
+      ] = await this.fetchRequiredData(member)
 
       const extra = createExtraOptions(whitelist, staff)
 
-      if (!isNull(guild.logChannelID)) {
-        await this.sendLog(guild, member, 'info', this.getLanguageManager().translate('event.member_added.title', {
+      if (guild.logChannelID) {
+        await this.sendLog(guild, member, 'warning', this.getLanguageManager().translate('event.member_added.title', {
           id: member.id
-        }), this.getLanguageManager().translate('event.member_added.description'), 'GREEN', generateLogDetails(member, blacklisted, localBlacklist), extra)
+        }), this.getLanguageManager().translate('event.member_added.description'), 'GREEN', this.generateLogDetails(member, blacklisted, localBlacklist), extra)
 
         await this.handleBan(guild, member, blacklisted, localBlacklist)
       }
@@ -32,7 +32,7 @@ export default class MemberJoin extends BaseEvent {
   }
 
   private async handleBan(guild: FGuild, member: GuildMember, blacklisted: FBlacklisted, locallyBlacklisted: FLocalBlacklist) {
-    if (!isNull(blacklisted.userID)) {
+    if (blacklisted) {
       await this.handleMember(member, blacklisted.reason)
       await member.ban({ reason: blacklisted.reason })
 
@@ -54,7 +54,7 @@ export default class MemberJoin extends BaseEvent {
       ])
     }
 
-    if (!isNull(locallyBlacklisted.userID)) {
+    if (locallyBlacklisted) {
       await this.handleMember(member, locallyBlacklisted.reason)
       await member.ban({ reason: locallyBlacklisted.reason })
 

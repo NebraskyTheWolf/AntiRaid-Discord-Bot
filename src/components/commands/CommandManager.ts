@@ -4,8 +4,16 @@ import OptionMap from '@fluffici.ts/utils/OptionMap'
 import { deleteCommand } from '@fluffici.ts/utils/registerCommand'
 import { Collection } from 'discord.js'
 
-import fs from 'fs';
-import path from 'path';
+import CommandSet from "./admin/CommandSet";
+import CommandShow from "./admin/CommandShow";
+import CommandHelp from "./default/CommandHelp";
+import CommandInvite from "./default/CommandInvite";
+import CommandSupport from "./default/CommandSupport";
+import CommandGlobal from "./moderation/CommandGlobal";
+import CommandWhitelist from "./moderation/CommandWhitelist";
+import CommandReload from "./owner/CommandReload";
+import CommandServers from "./owner/CommandServers";
+import CommandSpawnButton from "./owner/CommandSpawnButton";
 
 export default class CommandManager {
   private REGISTRY: OptionMap<String, BaseCommand>;
@@ -24,24 +32,19 @@ export default class CommandManager {
   }
 
   public registerCommands (): void {
-    const commandDirs = [
-      './admin',
-      './moderation',
-      './default',
-      './owner'
-    ];
+    this.registerCommand(new CommandSet())
+    this.registerCommand(new CommandShow())
 
-    for (const dir of commandDirs) {
-      const files = fs.readdirSync(path.resolve(__dirname, dir));
+    this.registerCommand(new CommandHelp())
+    this.registerCommand(new CommandInvite())
+    this.registerCommand(new CommandSupport())
 
-      for (const file of files) {
-        if (!file.endsWith('.js')) continue;
+    this.registerCommand(new CommandGlobal())
+    this.registerCommand(new CommandWhitelist())
 
-        const Command = require(path.resolve(__dirname, dir, file));
-
-        this.registerCommand(new Command());
-      }
-    }
+    this.registerCommand(new CommandReload())
+    this.registerCommand(new CommandServers())
+    this.registerCommand(new CommandSpawnButton())
   }
 
   /**

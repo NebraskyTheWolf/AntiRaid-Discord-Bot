@@ -52,62 +52,14 @@ export function isTypeNull<T>(object: unknown): Boolean {
 export function createExtraOptions(whitelist: FWhitelisted, staff: FStaff): OptionMap<string, any> {
   const extra: OptionMap<string, any> = new OptionMap<string, any>()
 
-  if (!isNull(whitelist.userID)) {
+  if (whitelist) {
     extra.add('isWhitelisted', true)
   }
-  if (!isNull(staff.userID)) {
+  if (staff) {
     extra.add('isStaff', staff.rank)
   }
 
   return extra
-}
-
-export async function fetchRequiredData(member: GuildMember) {
-  return Promise.all([
-    this.getGuild(member.guild.id),
-    Blacklist.findOne({
-      userID: member.id,
-      guildID: member.guild.id
-    }),
-    LocalBlacklist.findOne({
-      userID: member.id,
-      guildID: member.guild.id
-    }),
-    Whitelist.findOne({
-      userID: member.id,
-      guildID: member.guild.id
-    }),
-    Staff.findOne({ userID: member.id })
-  ])
-}
-
-export function generateLogDetails(member: GuildMember, blacklisted: FBlacklisted, localBlacklist: FLocalBlacklist) {
-  const yes = this.getLanguageManager().translate('common.yes');
-  const no = this.getLanguageManager().translate('common.no');
-  const days = this.getLanguageManager().translate('common.days');
-
-  return [
-    {
-      name: 'ID',
-      value: `${member.id}`,
-      inline: false
-    },
-    {
-      name: this.getLanguageManager().translate('common.joined'),
-      value: getAmountOfDays(member.user.createdAt) + ' ' + days,
-      inline: false
-    },
-    {
-      name: this.getLanguageManager().translate('common.globally_blacklisted'),
-      value: `${isNull(blacklisted.userID) ? no : yes}`,
-      inline: false
-    },
-    {
-      name: this.getLanguageManager().translate('common.locally_blacklisted'),
-      value: `${isNull(localBlacklist.userID) ? no : yes}`,
-      inline: false
-    }
-  ]
 }
 
 export function getCurrentDate(): Date {

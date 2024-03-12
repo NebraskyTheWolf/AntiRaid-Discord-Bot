@@ -1,7 +1,7 @@
 import BaseCommand from "@fluffici.ts/components/BaseCommand";
 import BaseEvent from "@fluffici.ts/components/BaseEvent";
 import BaseButton from "@fluffici.ts/components/BaseButton";
-import Developer from "@fluffici.ts/database/Common/Developer";
+import Developer from "@fluffici.ts/database/Security/Developer";
 
 import {
   ButtonInteraction,

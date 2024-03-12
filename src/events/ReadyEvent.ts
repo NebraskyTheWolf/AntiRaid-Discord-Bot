@@ -8,12 +8,14 @@ export default class Ready extends BaseEvent {
     private readonly activities: Tuple<string> = new Tuple<string>()
 
     public constructor() {
-        super("ready", () => {
+        super("ready", async () => {
             this.instance.user.setActivity(`Initializing...`, { type: "LISTENING" });
             this.instance.user.setStatus("idle");
 
+            const docCount = await Blacklist.countDocuments({}).exec();
+
             this.activities.add(`${Fluffici.instance.guilds.cache.size} serverů`)
-            this.activities.add(`${Blacklist.countDocuments()} raiderů`)
+            this.activities.add(`${docCount} raiderů`)
 
             setInterval(() => {
                 this.instance.user.setActivity({

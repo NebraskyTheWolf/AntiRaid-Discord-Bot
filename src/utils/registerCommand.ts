@@ -28,34 +28,8 @@ export function getRest(): REST {
     return new REST({ version: "9" }).setToken(process.env.TOKEN);
 }
 
+
 export async function registerCommands(
-    client: Client,
-    guildId: string,
-    guildName: string,
-    commandManager: CommandManager) {
-    try {
-        const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
-
-        const commandData = commandManager.toMap().map((getData: BaseCommand) => {
-            return getData.getCommand().toJSON();
-        });
-
-        await rest.put(
-            Routes.applicationGuildCommands(client.user?.id || "missing id", guildId),
-            { body: commandData }
-        );
-
-    } catch (error) {
-        if (error.rawError?.code === 50001) {
-            console.log(`Missing Access on server "${guildName}"`)
-            return
-        }
-        console.log(`Register command error on ${guildId}`)
-        console.log(error)
-    }
-};
-
-export async function removeGuildCommands(
   client: Client,
   guildId: string,
   guildName: string,
@@ -67,7 +41,7 @@ export async function removeGuildCommands(
       return getData.getCommand().toJSON();
     });
 
-    await rest.delete(
+    await rest.put(
       Routes.applicationGuildCommands(client.user?.id || "missing id", guildId),
       { body: commandData }
     );

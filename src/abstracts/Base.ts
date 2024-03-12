@@ -5,6 +5,11 @@ import LanguageManager from '@fluffici.ts/utils/LanguageManager'
 import Guild, { Guild as FGuild } from '@fluffici.ts/database/Guild/Guild'
 import ConfigManager from '@fluffici.ts/utils/ConfigManager'
 import { ColorResolvable, GuildMember, Message, MessageEmbed, TextChannel } from 'discord.js'
+import Blacklist, {IBlacklist as FBlacklisted} from "@fluffici.ts/database/Common/Blacklist";
+import LocalBlacklist, {LocalBlacklist as FLocalBlacklist} from "@fluffici.ts/database/Common/LocalBlacklist";
+import Whitelist from "@fluffici.ts/database/Common/Whitelist";
+import Staff from "@fluffici.ts/database/Guild/Staff";
+import {getAmountOfDays, isNull} from "@fluffici.ts/types";
 
 export declare type ComponentType = 'BUTTON' | 'COMMAND' | 'MODAL' | 'TASK' | 'EVENT' | 'COMPONENT' | 'SERVER' | 'UNRELATED';
 
@@ -52,6 +57,54 @@ export default abstract class Base {
     return guild
   }
 
+  protected async fetchRequiredData(member: GuildMember) {
+    return Promise.all([
+      this.getGuild(member.guild.id),
+      Blacklist.findOne({
+        userID: member.id,
+        guildID: member.guild.id
+      }),
+      LocalBlacklist.findOne({
+        userID: member.id,
+        guildID: member.guild.id
+      }),
+      Whitelist.findOne({
+        userID: member.id,
+        guildID: member.guild.id
+      }),
+      Staff.findOne({ userID: member.id })
+    ])
+  }
+
+  protected generateLogDetails(member: GuildMember, blacklisted: FBlacklisted, localBlacklist: FLocalBlacklist) {
+    const yes = this.getLanguageManager().translate('common.yes');
+    const no = this.getLanguageManager().translate('common.no');
+    const days = this.getLanguageManager().translate('common.days');
+
+    return [
+      {
+        name: 'ID',
+        value: `${member.id}`,
+        inline: false
+      },
+      {
+        name: this.getLanguageManager().translate('common.joined'),
+        value: getAmountOfDays(member.user.createdAt) + ' ' + days,
+        inline: false
+      },
+      {
+        name: this.getLanguageManager().translate('common.globally_blacklisted'),
+        value: `${isNull(blacklisted) ? no : yes}`,
+        inline: false
+      },
+      {
+        name: this.getLanguageManager().translate('common.locally_blacklisted'),
+        value: `${isNull(localBlacklist) ? no : yes}`,
+        inline: false
+      }
+    ]
+  }
+
   protected getDefaultConfig (): ConfigManager {
     return this.defaultConfig;
   }
@@ -65,8 +118,9 @@ export default abstract class Base {
     await channel.send({
       embeds: [
         {
-          title: this.getEmojisConfig().get("warning") + ' ' + title,
+          title: this.getEmojisConfig().get("warning") + ' FurRaidBot - '+ title,
           description: description,
+          color: 'RED',
           fields: fields,
           author: {
             name: message.member.user.tag,

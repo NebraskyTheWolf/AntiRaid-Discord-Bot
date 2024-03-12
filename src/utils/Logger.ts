@@ -8,7 +8,6 @@ export default class Logger {
     public constructor(prefix: string) {
         this.prefix = prefix;
         this.date = new Date();
-        fs.writeFile(`logs/${this.date}.log`, "------------ STARTING LOGGING SESSION ------------\n", (err) => { });
     }
 
     public info(message: string) {
@@ -25,7 +24,6 @@ export default class Logger {
 
     private log(type: string, message: string) {
         const prefix = `${moment(Date.now())} : ${this.prefix} . [${type}] - ${message}`;
-        fs.appendFileSync(`logs/${this.date}.log`, `${prefix}\n`);
         console.log(prefix);
     }
 }

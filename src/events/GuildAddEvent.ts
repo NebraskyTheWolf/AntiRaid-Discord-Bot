@@ -18,9 +18,9 @@ export default class GuildAddEvent extends BaseEvent {
         });
     }
   public async registerGuildIfAbsent(guild: DGuild): Promise<void> {
-    const data = await this.getGuild(guild.id);
+    const data = await Guild.findOne({ guildID: guild.id });
 
-    if (isNull(data.guildID)) {
+    if (isNull(data)) {
       await new Guild({
         guildID: guild.id,
         guildOwnerID: guild.ownerId,

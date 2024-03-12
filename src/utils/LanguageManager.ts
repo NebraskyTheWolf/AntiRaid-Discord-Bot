@@ -48,8 +48,8 @@ export default class LanguageManager {
    * @param _default - The default message in case the translation does not exist.
    * @return {string} The translated string or key if translation does not exist.
    */
-  public translate(key: string, args: Record<string, string> = {}, _default: string = ''): string {
-    let translation = this.translationMap[key] || _default;
+  public translate(key: string, args: Record<string, string> = {}): string {
+    let translation = this.translationMap[key] || key;
 
     // Replace placeholders with arguments
     for (const placeholder in args) {

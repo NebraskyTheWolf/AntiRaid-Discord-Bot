@@ -6,7 +6,7 @@ import Staff from '@fluffici.ts/database/Guild/Staff'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 import {
   fetchDGuild,
-  fetchMember, generateLogDetails,
+  fetchMember,
   getCurrentDate,
   isBotOrSystem,
   isNull
@@ -251,7 +251,7 @@ export default class CommandGlobal extends BaseCommand {
   async handleLog(guild: FGuild, inter: CommandInteraction<'cached'>, user: User, type: string, log: string) {
     await this.sendLog(guild, inter.member, (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
       this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
-      generateLogDetails(
+      this.generateLogDetails(
         await fetchMember(guild.guildID, user.id),
         await Blacklist.findOne({ userID: user.id }),
         await LocalBlacklist.findOne({ userID: user.id, guildId: inter.guildId })
