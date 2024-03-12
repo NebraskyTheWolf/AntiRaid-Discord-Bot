@@ -54,8 +54,9 @@ export default class CommandWhitelist extends BaseCommand {
   async handler(inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
     const command: string = inter.options.getSubcommand() || 'default'
     const user: User = inter.options.getUser('user') || member.user
+
     const whitelisted = await Whitelist.findOne({
-      guildId: guild.id,
+      guildID: guild.id,
       userID: user.id
     })
 
@@ -65,7 +66,7 @@ export default class CommandWhitelist extends BaseCommand {
       case 'check':
         const isWhitelisted = !isNull(whitelisted)
         const titleKey = `command.whitelist.${isWhitelisted ? 'whitelisted' : 'not_whitelisted'}.title`
-        const descriptionKey = isWhitelisted ? '' : 'command.whitelist.not_whitelisted.description'
+        const descriptionKey = isWhitelisted ? 'command.whitelist.whitelisted.description' : 'command.whitelist.not_whitelisted.description'
         const fields = isWhitelisted ? [{
           name: 'ID',
           value: `${user.id}`,
@@ -89,12 +90,12 @@ export default class CommandWhitelist extends BaseCommand {
         break
     }
 
-    return inter.reply(response)
+    return inter.followUp(response)
   }
 
   private generateEmbedsResponse (member: GuildMember, titleKey: string, icon: string, color: string, fields: any, descriptionKey?: string) {
     const title = this.getLanguageManager().translate(titleKey, { username: member.displayName })
-    const description = descriptionKey ? this.getLanguageManager().translate(descriptionKey) : null
+    const description = descriptionKey ? this.getLanguageManager().translate(descriptionKey) : ''
 
     return {
       embeds: this.buildEmbedMessage(member, {
@@ -117,7 +118,7 @@ export default class CommandWhitelist extends BaseCommand {
       await new Whitelist({
         userID: user.id,
         staff: member.id,
-        guildId: guildId,
+        guildID: guildId,
         date: getCurrentDate()
       }).save()
       return this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description')

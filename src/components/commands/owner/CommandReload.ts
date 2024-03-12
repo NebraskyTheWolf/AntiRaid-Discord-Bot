@@ -21,13 +21,11 @@ export default class CommandReload extends BaseCommand {
     }
 
     private async sendFollowUpMessage(inter: CommandInteraction) {
-      const followUpMessage = this.prepareFollowUpMessage();
       const replyMessage = this.prepareReplyMessage();
       const delay = 2 * 1000;
 
-      const m = await inter.followUp(followUpMessage);
       return setTimeout(() => {
-        inter.reply(replyMessage);
+        inter.followUp(replyMessage);
       }, delay);
     }
 

@@ -123,7 +123,7 @@ export default class CommandGlobal extends BaseCommand {
   }
 
   async respond (inter: CommandInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
-    await inter.reply({
+    await inter.followUp({
       embeds: this.buildEmbedMessage(inter.member, {
         icon: icon,
         color: color,

@@ -104,8 +104,6 @@ export default class CommandLocal extends BaseCommand {
   }
 
   async addMemberToBlacklist (inter: CommandInteraction<"cached">, user: User, reason: string, member: GuildMember) {
-    await member.ban({ reason: reason })
-
     await new LocalBlacklist({
       guildId: inter.guildId,
       userID: user.id,
@@ -114,6 +112,7 @@ export default class CommandLocal extends BaseCommand {
       date: getCurrentDate()
     }).save().then(async () => {
       await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN', { user: user.tag })
+      await member.ban({ reason: reason })
     }).catch(async (err) => {
       await this.respond(inter, 'command.blacklist.error_title', 'command.blacklist.error_description', 'RED', {}, 'error')
     })
@@ -131,7 +130,7 @@ export default class CommandLocal extends BaseCommand {
   }
 
   async respond (inter: CommandInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
-    await inter.reply({
+    await inter.followUp({
       embeds: this.buildEmbedMessage(inter.member, {
         icon: icon,
         color: color,

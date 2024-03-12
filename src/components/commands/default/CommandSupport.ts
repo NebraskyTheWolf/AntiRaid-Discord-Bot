@@ -14,7 +14,7 @@ export default class CommandSupport extends BaseCommand {
 
   async handler (inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
     await this.getGuild(guild.id)
-    await inter.reply({
+    await inter.followUp({
       embeds: this.buildEmbedMessage(member, {
         icon: 'info',
         color: '#720c7e',
@@ -27,7 +27,7 @@ export default class CommandSupport extends BaseCommand {
           components: [
             this.instance.buttonManager.createLinkButton(this
               .getLanguageManager()
-              .translate('command.common.button.invite'), this.getDefaultConfig().get('bot-invite'))
+              .translate('command.common.button.support'), this.getDefaultConfig().get('bot-invite'))
           ]
         }
       ],

@@ -114,7 +114,7 @@ export default class CommandSet extends BaseCommand {
             return this.handleLanguage(inter, fGuild)
           }
           default:
-            await inter.reply({
+            await inter.followUp({
               embeds: this.buildEmbedMessage(member, {
                 icon: 'info',
                 title: this.getLanguageManager().translate('command.config.not_found.title'),
@@ -137,7 +137,7 @@ export default class CommandSet extends BaseCommand {
       }
     })
 
-    await inter.reply({
+    await inter.followUp({
       content: `Scam detection set to ${scamLink ? 'Enabled' : 'Disabled'}`,
       ephemeral: true
     });
@@ -152,7 +152,7 @@ export default class CommandSet extends BaseCommand {
       }
     })
 
-    await inter.reply({
+    await inter.followUp({
       content: `Global database set to ${global ? 'Enabled' : 'Disabled'}`,
       ephemeral: true
     });
@@ -167,7 +167,7 @@ export default class CommandSet extends BaseCommand {
       }
     })
 
-    await inter.reply({
+    await inter.followUp({
       content: `Local database set to ${local ? 'Enabled' : 'Disabled'}`,
       ephemeral: true
     });
@@ -184,12 +184,12 @@ export default class CommandSet extends BaseCommand {
         }
       })
 
-      await inter.reply({
+      await inter.followUp({
         content: `Logging channel has been set to ${channel.name}`,
         ephemeral: true
       });
     } else {
-      await inter.reply({
+      await inter.followUp({
         content: `Invalid channel type. Please select a text channel.`,
         ephemeral: true
       });
@@ -206,12 +206,12 @@ export default class CommandSet extends BaseCommand {
         }
       })
 
-      await inter.reply({
+      await inter.followUp({
         content: `Language has been set to ${language}`,
         ephemeral: true
       });
     } else {
-      await inter.reply({
+      await inter.followUp({
         content: `Invalid language. Please select a valid language.`,
         ephemeral: true
       });
