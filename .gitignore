@@ -1,0 +1,13 @@
+node_modules
+logs
+build
+.env
+
+yarn-error.log
+package-lock.json
+
+.vscode
+logcertfile
+
+./data
+/data/

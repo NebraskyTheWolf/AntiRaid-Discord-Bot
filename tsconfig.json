@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecations": "5.0",
+    "allowJs": true,
+    "target": "ES6",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "baseUrl": "src/",
+    "skipLibCheck": true,
+    "paths": {
+      "@fluffici.ts/types": [
+        "types.ts"
+      ],
+      "@fluffici.ts/logger": [
+        "utils/Logger.ts"
+      ],
+      "@fluffici.ts": [
+        "index.ts"
+      ],
+      "@fluffici.ts/utils/*": [
+        "utils/*"
+      ],
+      "@fluffici.ts/database/*": [
+        "database/Models/*"
+      ],
+      "@fluffici.ts/components/*": [
+        "abstracts/components/*"
+      ],
+      "@fluffici.ts/server/*": [
+        "abstracts/server/*"
+      ],
+      "@fluffici.ts/controllers/*": [
+        "api/controllers/*"
+      ],
+      "@fluffici.ts/cache": [
+        "cache/CacheManager.ts"
+      ]
+    }
+  },
+  "include": ["./src/**/*"],
+  "exclude": [
+    "data",
+    "src/tests",
+    "tsconfig.json"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "discord-support-link": "https://discord.gg/RxvDMKQgtk",
+  "bot-invite": "https://discord.com/api/oauth2/authorize?client_id=803015962223837184&permissions=8&scope=bot",
+  "wiki-link": "https://frdb.fluffici.eu",
+  "fluffici-api": "https://api.fluffici.eu",
+
+  "max-errors": 40
+}
