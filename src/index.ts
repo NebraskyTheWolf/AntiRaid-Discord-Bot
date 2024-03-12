@@ -11,7 +11,7 @@ declare global {
 
 
 import 'module-alias/register';
-import { Client, Intents } from "discord.js";
+import {Client, Intents, Message} from "discord.js";
 import mongoose from "mongoose";
 
 import CommandManager from "./components/commands/CommandManager";
@@ -22,6 +22,10 @@ import discordModals from "discord-modals";
 import Logger from "@fluffici.ts/logger";
 import InitChecker from '@fluffici.ts/utils/InitChecker';
 import {SlashCommandBuilder} from "@discordjs/builders";
+
+import express from "express"
+
+const app = express();
 
 export default class Fluffici extends Client {
     public static instance: Fluffici
@@ -115,7 +119,18 @@ export default class Fluffici extends Client {
       this.buttonManager = new ButtonManager()
       this.buttonManager.registerButtons()
 
+      app.get('/', function (req, res) {
+        return res.json({
+          status: true,
+          message: 'FurRaidDB is alive.'
+        })
+      })
+
       this.login(process.env.TOKEN)
+
+      app.listen(4444, () => {
+        this.logger.info("WebApp is listening on port 4444")
+      })
     }
 
     public reload () {

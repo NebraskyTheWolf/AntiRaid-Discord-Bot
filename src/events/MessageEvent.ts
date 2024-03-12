@@ -12,6 +12,12 @@ export default class MessageEvent extends BaseEvent {
 
       const guild = await this.getGuild(message.guildId)
 
+      if (message.content.indexOf('frdb!') !== -1) {
+        await message.reply({
+          content: this.getLanguageManager().translate('event.transition')
+        })
+      }
+
       if (guild.scamLinks) {
         const urls = this.extractUrls(message.content)
         const scamUrl = await this.findScamUrl(urls)
@@ -20,8 +26,6 @@ export default class MessageEvent extends BaseEvent {
           await this.handleScam(guild, message, scamUrl)
         }
       }
-
-      this.instance.emit('messageCheck', { message: message })
     })
   }
 

@@ -65,5 +65,6 @@
   "event.message.scam_detected": "Prosíme aby ste sa vyhýbali zdieľaniu podozrivých odkazov na tomto servere v súlade s podmienkami Discord a našimi pravidlami.",
   "event.message.log.title": "Detekcia podvodu",
   "event.message.log.description": "Správa užívateľa bola označená ako podozrivá, pretože obsahovala potenciálne škodlivý odkaz.",
-  "event.member_added.banned_globally": "Tento užívateľ bol globálne zaradený na čiernu listinu."
+  "event.member_added.banned_globally": "Tento užívateľ bol globálne zaradený na čiernu listinu.",
+  "event.transition": "Prešli sme na používanie príkazov so znakom /. Pre ďalšiu pomoc, prosím použite príkaz /help"
 }
