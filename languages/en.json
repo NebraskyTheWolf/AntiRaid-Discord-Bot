@@ -13,6 +13,7 @@
   "command.support.title": "Support",
   "command.support.description": "Here, you will find the support server links.",
   "command.whitelist.whitelisted.title": ":username is whitelisted!",
+  "command.whitelist.whitelisted.description": "Details about the whitelist.",
   "command.whitelist.not_whitelisted.title": ":username is not whitelisted.",
   "command.whitelist.not_whitelisted.description": "You can add them using the command /whitelist add <user>",
   "command.whitelist.title": "Error",
@@ -47,11 +48,8 @@
   "command.blacklist.add.log.local.description": "Added to the local blacklist.",
   "command.blacklist.remove.log.local.title": ":user removed from the local blacklist.",
   "command.blacklist.remove.log.local.description": "Removed from the local blacklist.",
-
   "command.blacklist.insufficient_permissions_title": "Permission Denied",
   "command.blacklist.insufficient_permissions_description": "Your need to be staff of FurRaidDB to add a global blacklist.",
-
-
   "common.yes": "Yes",
   "common.no": "No",
   "common.days": "days",
@@ -66,5 +64,6 @@
   "event.member_removed.description": "The details about the user.",
   "event.message.scam_detected": "Please refrain from sharing suspicious links in this server in accordance with the Discord Terms of Service and our rules.",
   "event.message.log.title": "Scam detection",
-  "event.message.log.description": "The user's message was flagged as suspicious because it contained a potentially harmful link."
+  "event.message.log.description": "The user's message was flagged as suspicious because it contained a potentially harmful link.",
+  "event.member_added.banned_globally": "This user was blacklisted globally."
 }

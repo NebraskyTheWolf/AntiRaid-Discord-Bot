@@ -55,12 +55,12 @@ export default class CommandWhitelist extends BaseCommand {
     const command: string = inter.options.getSubcommand() || 'default'
     const user: User = inter.options.getUser('user') || member.user
 
+    await this.getGuild(guild.id)
+
     const whitelisted = await Whitelist.findOne({
       guildID: guild.id,
       userID: user.id
     })
-
-    let response
 
     switch (command) {
       case 'check':
@@ -77,25 +77,23 @@ export default class CommandWhitelist extends BaseCommand {
           inline: false
         }] : []
         const color = isWhitelisted ? 'ORANGE' : 'RED'
-        response = this.generateEmbedsResponse(member, titleKey,'info', color, fields, descriptionKey)
+        await inter.followUp(this.generateEmbedsResponse(member, titleKey,'info', color, fields, descriptionKey, { username: user.tag }))
         break
       case 'add':
-        response = this.handleAddCommand(inter, member, guild.id, user, whitelisted)
+        await this.handleAddCommand(inter, member, guild.id, user, whitelisted)
         break
       case 'remove':
-        response = this.handleRemoveCommand(inter, member, guild.id, user)
+        await this.handleRemoveCommand(inter, member, guild.id, user)
         break
       default:
-        response = this.generateEmbedsResponse(member, 'command.whitelist.title', 'warning', 'RED', [], 'command.whitelist.description')
+        await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.title', 'warning', 'RED', [], 'command.whitelist.description'))
         break
     }
-
-    return inter.followUp(response)
   }
 
-  private generateEmbedsResponse (member: GuildMember, titleKey: string, icon: string, color: string, fields: any, descriptionKey?: string) {
-    const title = this.getLanguageManager().translate(titleKey, { username: member.displayName })
-    const description = descriptionKey ? this.getLanguageManager().translate(descriptionKey) : ''
+  private generateEmbedsResponse (member: GuildMember, titleKey: string, icon: string, color: string, fields: any, descriptionKey?: string, args?: {}) {
+    const title = this.getLanguageManager().translate(titleKey, args)
+    const description = this.getLanguageManager().translate(descriptionKey, args)
 
     return {
       embeds: this.buildEmbedMessage(member, {
@@ -111,7 +109,7 @@ export default class CommandWhitelist extends BaseCommand {
 
   private async handleAddCommand (inter: CommandInteraction<'cached'>, member: GuildMember, guildId: string, user: User, whitelisted: any): Promise<any> {
     if (whitelisted) {
-      return this.generateEmbedsResponse(member, 'command.whitelist.already_whitelisted.title','info', 'ORANGE', [], 'command.whitelist.already_whitelisted.description')
+      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.already_whitelisted.title','info', 'ORANGE', [], 'command.whitelist.already_whitelisted.description'))
     }
 
     try {
@@ -121,21 +119,21 @@ export default class CommandWhitelist extends BaseCommand {
         guildID: guildId,
         date: getCurrentDate()
       }).save()
-      return this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description')
+      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description'))
     } catch {
-      return this.generateEmbedsResponse(member, 'command.whitelist.added_failed','error', 'RED', [], 'command.whitelist.added_failed.description')
+      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_failed','error', 'RED', [], 'command.whitelist.added_failed.description'))
     }
   }
 
   private async handleRemoveCommand (inter: CommandInteraction<'cached'>, member: GuildMember, guildId: string, user: User): Promise<any> {
     try {
       await Whitelist.deleteOne({
-        guildId: guildId,
+        guildID: guildId,
         userID: user.id
       })
-      return this.generateEmbedsResponse(member, 'command.whitelist.removed_success','success', 'ORANGE', [], 'command.whitelist.removed_success.description')
+      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_success','success', 'ORANGE', [], 'command.whitelist.removed_success.description'))
     } catch {
-      return this.generateEmbedsResponse(member, 'command.whitelist.removed_failed','error', 'RED', [], 'command.whitelist.removed_failed.description')
+      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_failed','error', 'RED', [], 'command.whitelist.removed_failed.description'))
     }
   }
 }

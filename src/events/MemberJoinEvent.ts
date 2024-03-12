@@ -48,7 +48,7 @@ export default class MemberJoin extends BaseEvent {
           value: `${blacklisted.staffName} (${blacklisted.staffID})`
         },
         {
-          name: this.getLanguageManager().translate('event.member_added.ban_reason'),
+          name: this.getLanguageManager().translate('common.reason'),
           value: `${blacklisted.reason}`
         }
       ])
@@ -82,7 +82,7 @@ export default class MemberJoin extends BaseEvent {
       embeds: [
         {
           title: 'Zabanován systémem FurRaidDB / Banned by FurRaidDB system',
-          color: '#ff0000',
+          color: 'RED',
           fields: [
             {
               name: ':flag_cz:',

@@ -29,13 +29,6 @@ export default class CommandReload extends BaseCommand {
       }, delay);
     }
 
-    private prepareFollowUpMessage(): { content: string, ephemeral: boolean } {
-        return {
-            content: 'Reloading...',
-            ephemeral: true
-        };
-    }
-
     private prepareReplyMessage(): { content: string, ephemeral: boolean } {
         return {
             content: 'The application was reloaded with success.',

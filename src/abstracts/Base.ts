@@ -61,8 +61,7 @@ export default abstract class Base {
     return Promise.all([
       this.getGuild(member.guild.id),
       Blacklist.findOne({
-        userID: member.id,
-        guildID: member.guild.id
+        userID: member.id
       }),
       LocalBlacklist.findOne({
         userID: member.id,
@@ -80,8 +79,7 @@ export default abstract class Base {
     return Promise.all([
       this.getGuild(guildId),
       Blacklist.findOne({
-        userID: userId,
-        guildID: guildId
+        userID: userId
       }),
       LocalBlacklist.findOne({
         userID: userId,
