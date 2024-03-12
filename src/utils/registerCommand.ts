@@ -38,7 +38,7 @@ export async function registerCommands(
     const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
 
     const commandData = commandManager.toMap().map((getData: BaseCommand) => {
-      return getData.getCommand().toJSON();
+      return getData.getCommand();
     });
 
     await rest.put(

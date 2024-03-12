@@ -18,7 +18,7 @@ export default class CommandInvite extends BaseCommand {
       embeds: this.buildEmbedMessage(member, {
         icon: 'info',
         color: '#720c7e',
-        title: `FurRaidDB`,
+        title: `Invite`,
         description: this.getLanguageManager().translate('command.invite.description')
       }),
       components: [

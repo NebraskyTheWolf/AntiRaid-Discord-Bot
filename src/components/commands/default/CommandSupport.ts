@@ -27,7 +27,7 @@ export default class CommandSupport extends BaseCommand {
           components: [
             this.instance.buttonManager.createLinkButton(this
               .getLanguageManager()
-              .translate('command.support.link'), this.getDefaultConfig().get('bot-invite'))
+              .translate('command.common.button.invite'), this.getDefaultConfig().get('bot-invite'))
           ]
         }
       ],

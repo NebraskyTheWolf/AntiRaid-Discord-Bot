@@ -63,7 +63,7 @@ export default class CommandWhitelist extends BaseCommand {
 
     switch (command) {
       case 'check':
-        const isWhitelisted = !isNull(whitelisted.userID)
+        const isWhitelisted = !isNull(whitelisted)
         const titleKey = `command.whitelist.${isWhitelisted ? 'whitelisted' : 'not_whitelisted'}.title`
         const descriptionKey = isWhitelisted ? '' : 'command.whitelist.not_whitelisted.description'
         const fields = isWhitelisted ? [{
@@ -85,7 +85,7 @@ export default class CommandWhitelist extends BaseCommand {
         response = this.handleRemoveCommand(inter, member, guild.id, user)
         break
       default:
-        response = this.generateEmbedsResponse(member, 'command.whitelist.title', 'info', 'ORANGE', [], 'command.whitelist.description')
+        response = this.generateEmbedsResponse(member, 'command.whitelist.title', 'warning', 'RED', [], 'command.whitelist.description')
         break
     }
 
@@ -93,7 +93,7 @@ export default class CommandWhitelist extends BaseCommand {
   }
 
   private generateEmbedsResponse (member: GuildMember, titleKey: string, icon: string, color: string, fields: any, descriptionKey?: string) {
-    const title = `${this.getLanguageManager().translate(titleKey)}`
+    const title = `${this.getLanguageManager().translate(titleKey, { username: member.displayName })}`
     const description = descriptionKey ? this.getLanguageManager().translate(descriptionKey) : null
 
     return {
@@ -109,7 +109,7 @@ export default class CommandWhitelist extends BaseCommand {
   }
 
   private async handleAddCommand (inter: CommandInteraction<'cached'>, member: GuildMember, guildId: string, user: User, whitelisted: any): Promise<any> {
-    if (!isNull(whitelisted.userID)) {
+    if (whitelisted) {
       return this.generateEmbedsResponse(member, 'command.whitelist.already_whitelisted.title','info', 'ORANGE', [], 'command.whitelist.already_whitelisted.description')
     }
 

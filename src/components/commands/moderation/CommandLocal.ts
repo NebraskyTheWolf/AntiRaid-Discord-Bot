@@ -20,10 +20,10 @@ import {
   SlashCommandUserOption
 } from '@discordjs/builders'
 
-export default class CommandGlobal extends BaseCommand {
+export default class CommandLocal extends BaseCommand {
 
   public constructor () {
-    super("blacklist", "This command will let you blacklist someone globally.", new OptionMap<string, boolean>().add('isProtected', true), 'MODERATION')
+    super("local", "This command will let you blacklist someone locally.", new OptionMap<string, boolean>().add('isProtected', true), 'MODERATION')
 
     this.addSubCommand(
       new SlashCommandSubcommandBuilder()
@@ -58,68 +58,76 @@ export default class CommandGlobal extends BaseCommand {
 
   async handler (inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
     const fGuild = await this.getGuild(guild.id)
+
     const command = inter.options.getSubcommand()
 
-    const staff = await Staff.findOne({ userID: inter.member.id })
-
-    if (!staff) {
-      return await this.respond(inter, 'command.blacklist.insufficient_permissions_title', 'command.blacklist.insufficient_permissions_description', 'RED', {}, 'error')
-    }
-
-    return await this.handleGlobalCommand(inter, command, fGuild)
+    return await this.handleLocalCommand(inter, command, fGuild)
   }
 
-  async handleGlobalCommand (inter: CommandInteraction<'cached'>, command: string, guild: FGuild) {
+  async handleLocalCommand (inter: CommandInteraction<'cached'>, command: string, guild: FGuild) {
     const user = inter.options.getUser('user', true)
-    const globalBlacklist: FBlacklist = await Blacklist.findOne({ userID: user.id })
-    const member = await fetchMember(inter.guildId, user.id)
-    const dGuild = await fetchDGuild(inter.guildId)
 
     switch (command) {
       case 'add': {
         const reason = inter.options.getString('reason', true)
-
+        const member = await fetchMember(inter.guildId, user.id)
         if (isBotOrSystem(member)) {
-          return await this.respond(inter, 'command.blacklist.cannot_blacklist_bot_title', 'command.blacklist.cannot_blacklist_bot_description', 'RED', {}, 'warning')
+          return await this.respond(inter, 'command.blacklist.cannot_blacklist_bot_title', 'command.blacklist.cannot_blacklist_bot_description', 'RED')
+        }
+        const local = await this.findLocal(user, inter.guildId)
+        if (local) {
+          return await this.respond(inter, 'command.blacklist.user_already_blacklisted_title', 'command.blacklist.user_already_blacklisted_description', 'RED', { user: user.tag }, 'error')
         }
 
-        if (globalBlacklist) {
-          return await this.respond(inter, 'command.blacklist.user_already_blacklisted_title', 'command.blacklist.user_already_blacklisted_description', 'RED', {}, 'warning')
-        }
+        await this.handleLog(guild, inter, user, 'add', 'local')
 
-        if (!member) {
-          return await this.respond(inter, 'command.blacklist.user_not_found_title', 'command.blacklist.user_not_found_description', 'RED', {}, 'warning')
-        }
-
-        await member.ban({ reason: reason })
-        await new Blacklist({
-          userID: user.id,
-          reason: reason,
-          staffID: inter.member.id,
-          staffName: inter.member.displayName,
-          date: getCurrentDate()
-        }).save().then(async () => {
-          await this.handleLog(guild, inter, user, 'add', 'global')
-
-          return await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
-        }).catch(async err => {
-          return await this.respond(inter, 'command.blacklist.error_title', 'command.blacklist.error_description', 'RED', {}, 'error')
-        })
-        break
+        return await this.addMemberToBlacklist(inter, user, reason, member)
       }
-      case "remove": {
-        const global = await Blacklist.findOne({ userID: user.id })
-        if (!global) {
+      case 'remove': {
+        const local = await this.findLocal(user, inter.guildId)
+        if (!local) {
           return await this.respond(inter, 'command.blacklist.user_not_blacklisted_title', 'command.blacklist.user_not_blacklisted_description', 'RED', { user: user.tag }, 'error')
         }
 
-        await dGuild.bans.remove(user, 'FurRaidDB, Blacklist revoked by ' + inter.member.user.tag)
+        await this.handleLog(guild, inter, user, 'remove', 'local')
 
-        await Blacklist.deleteOne({ userID: user.id })
-
-        await this.handleLog(guild, inter, user, 'remove', 'global')
+        return await this.removeMemberFromBlacklist(inter, user)
       }
     }
+  }
+
+  async findLocal (user: User, guildId: string) {
+    return LocalBlacklist.findOne({
+      guildId: guildId,
+      userID: user.id
+    })
+  }
+
+  async addMemberToBlacklist (inter: CommandInteraction<"cached">, user: User, reason: string, member: GuildMember) {
+    await member.ban({ reason: reason })
+
+    await new LocalBlacklist({
+      guildId: inter.guildId,
+      userID: user.id,
+      reason: reason,
+      staff: inter.member.id,
+      date: getCurrentDate()
+    }).save().then(async () => {
+      await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN', { user: user.tag })
+    }).catch(async (err) => {
+      await this.respond(inter, 'command.blacklist.error_title', 'command.blacklist.error_description', 'RED', {}, 'error')
+    })
+  }
+
+  async removeMemberFromBlacklist (inter: CommandInteraction<'cached'>, user: User) {
+    await LocalBlacklist.deleteOne({
+      guildId: inter.guildId,
+      userID: user.id
+    }).then(async () => {
+      await this.respond(inter, 'command.blacklist.user_unblacklisted_title', 'command.blacklist.user_unblacklisted_description', 'GREEN', { user: user.tag })
+    }).catch(async err => {
+      await this.respond(inter, 'command.blacklist.error_title', 'command.blacklist.error_description', 'RED', {}, 'error')
+    })
   }
 
   async respond (inter: CommandInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
@@ -135,7 +143,7 @@ export default class CommandGlobal extends BaseCommand {
   }
 
   async handleLog(guild: FGuild, inter: CommandInteraction<'cached'>, user: User, type: string, log: string) {
-    await this.sendLog(guild, inter.member, (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
+    await this.sendLog(guild, inter.member, (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title', { user: user.tag }),
       this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
       this.generateLogDetails(
         await fetchMember(guild.guildID, user.id),

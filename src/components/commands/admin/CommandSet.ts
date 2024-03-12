@@ -81,7 +81,7 @@ export default class CommandSet extends BaseCommand {
                 .addChoices({ name: 'Slovak', value: 'sk' })
                 .addChoices({ name: 'English', value: 'en' })
                 .setMinLength(2)
-                .setMaxLength(2)
+                .setMaxLength(12)
             )
         )
     )
@@ -107,7 +107,7 @@ export default class CommandSet extends BaseCommand {
           case "local": {
             return this.handleLocal(inter, fGuild)
           }
-          case "log": {
+          case "logging": {
             return this.handleLog(inter, fGuild)
           }
           case "language": {
@@ -116,7 +116,9 @@ export default class CommandSet extends BaseCommand {
           default:
             await inter.reply({
               embeds: this.buildEmbedMessage(member, {
-
+                icon: 'info',
+                title: this.getLanguageManager().translate('command.config.not_found.title'),
+                description: this.getLanguageManager().translate('command.config.not_found.description')
               }),
               ephemeral: true
             })

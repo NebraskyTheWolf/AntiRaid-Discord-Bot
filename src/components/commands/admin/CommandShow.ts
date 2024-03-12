@@ -3,7 +3,7 @@ import OptionMap from '@fluffici.ts/utils/OptionMap'
 
 import { CommandInteraction, Guild, GuildMember } from 'discord.js'
 import {SlashCommandUserOption} from "@discordjs/builders";
-import {fetchMember} from "@fluffici.ts/types";
+import {fetchMember, isNull} from "@fluffici.ts/types";
 
 export default class CommandShow extends BaseCommand {
 
@@ -27,7 +27,7 @@ export default class CommandShow extends BaseCommand {
         const fMember = await fetchMember(guild.id, user.id);
         const [fGuild, blacklisted, localBlacklist] = await this.fetchRequiredData(fMember);
 
-        const foundTitle = this.getLanguageManager().translate('command.show.found.title');
+        const foundTitle = this.getLanguageManager().translate('command.show.found.title', { id: user.id });
         const foundDesc = this.getLanguageManager().translate('command.show.found.description');
         const reason = this.getLanguageManager().translate('common.reason');
         const staff = this.getLanguageManager().translate('common.staff');
@@ -43,7 +43,7 @@ export default class CommandShow extends BaseCommand {
             });
         }
 
-        const notFoundTitle = this.getLanguageManager().translate('command.show.not_found.title');
+        const notFoundTitle = this.getLanguageManager().translate('command.show.not_found.title', { id: user.id });
         const notFoundDesc = this.getLanguageManager().translate('command.show.not_found.description');
 
         return await inter.reply({

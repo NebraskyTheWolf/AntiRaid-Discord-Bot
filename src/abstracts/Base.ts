@@ -200,7 +200,7 @@ export default abstract class Base {
   protected buildEmbedMessage(member: GuildMember, options: any) {
     return [
       {
-        title: 'FurRaidDB - ' + this.getEmojisConfig().get(options.icon) + ' ' + options.title,
+        title: this.getEmojisConfig().get(options.icon) + ' FurRaidDB - ' + options.title,
         color: options.color,
         description: options.description,
         fields: options.fields,

@@ -1,5 +1,5 @@
 {
-  "name": "riniya",
+  "name": "fluffici",
   "version": "7.0.5",
   "description": "",
   "main": "build/index.js",
@@ -14,7 +14,7 @@
     "clean": "rm package-lock.json && rm -rf node_modules",
     "websocket:client": "ts-node src/tests/WebsocketClient.ts"
   },
-  "author": "NebraskyTheWolf",
+  "author": "Vakea",
   "license": "ISC",
   "dependencies": {
     "@2pg/oauth": "^1.0.8",
