@@ -93,7 +93,7 @@ export default class CommandWhitelist extends BaseCommand {
   }
 
   private generateEmbedsResponse (member: GuildMember, titleKey: string, icon: string, color: string, fields: any, descriptionKey?: string) {
-    const title = `${this.getLanguageManager().translate(titleKey, { username: member.displayName })}`
+    const title = this.getLanguageManager().translate(titleKey, { username: member.displayName })
     const description = descriptionKey ? this.getLanguageManager().translate(descriptionKey) : null
 
     return {

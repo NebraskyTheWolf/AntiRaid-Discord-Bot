@@ -2,7 +2,7 @@ import BaseCommand from '@fluffici.ts/components/BaseCommand'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
 import { CommandInteraction, Guild, GuildMember } from 'discord.js'
-import {SlashCommandUserOption} from "@discordjs/builders";
+import {SlashCommandStringOption, SlashCommandUserOption} from "@discordjs/builders";
 import {fetchMember, isNull} from "@fluffici.ts/types";
 
 export default class CommandShow extends BaseCommand {
@@ -14,27 +14,26 @@ export default class CommandShow extends BaseCommand {
       "ADMINISTRATOR"
     );
 
-    this.addUserOption(
-      new SlashCommandUserOption()
+    this.addStringOption(
+      new SlashCommandStringOption()
         .setName("user")
-        .setDescription("Please select the user")
+        .setDescription("Please select the user id")
         .setRequired(true)
     )
   }
 
     async handler(inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
-        const user = inter.options.getUser('user', true)
-        const fMember = await fetchMember(guild.id, user.id);
-        const [fGuild, blacklisted, localBlacklist] = await this.fetchRequiredData(fMember);
+        const user = inter.options.getString('user', true)
+        const [fGuild, blacklisted, localBlacklist] = await this.fetchRequiredDataUser(guild.id, user);
 
-        const foundTitle = this.getLanguageManager().translate('command.show.found.title', { id: user.id });
+        const foundTitle = this.getLanguageManager().translate('command.show.found.title', { id: user });
         const foundDesc = this.getLanguageManager().translate('command.show.found.description');
         const reason = this.getLanguageManager().translate('common.reason');
         const staff = this.getLanguageManager().translate('common.staff');
 
         if (blacklisted || localBlacklist) {
             return await inter.reply({
-                embeds: this.buildBlackListEmbedMessage(fMember, blacklisted || localBlacklist, {
+                embeds: this.buildBlackListEmbedMessage(member, blacklisted || localBlacklist, {
                     foundTitle,
                     foundDesc,
                     reason,
@@ -43,11 +42,11 @@ export default class CommandShow extends BaseCommand {
             });
         }
 
-        const notFoundTitle = this.getLanguageManager().translate('command.show.not_found.title', { id: user.id });
+        const notFoundTitle = this.getLanguageManager().translate('command.show.not_found.title', { id: user });
         const notFoundDesc = this.getLanguageManager().translate('command.show.not_found.description');
 
         return await inter.reply({
-            embeds: this.buildEmbedMessage(fMember, {
+            embeds: this.buildEmbedMessage(member, {
                 icon: 'success',
                 color: 'GREEN',
                 title: notFoundTitle,

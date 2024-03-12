@@ -19,7 +19,7 @@ export default class CommandHelp extends BaseCommand {
       embeds: this.buildEmbedMessage(member, {
         icon: 'info',
         color: '#720c7e',
-        title: this.getLanguageManager().translate('command.help.title'),
+        title: this.getLanguageManager().translate('command.help.title', { name: member.displayName }),
         description: this.getLanguageManager().translate('command.help.description')
       }),
       components: [

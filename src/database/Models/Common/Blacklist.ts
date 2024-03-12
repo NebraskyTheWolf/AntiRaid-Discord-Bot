@@ -12,7 +12,7 @@ export interface IBlacklist {
 
 export default mongoose.model<IBlacklist & mongoose.Document>("Blacklist", new mongoose.Schema<IBlacklist & mongoose.Document>({
   type: { type: String, default: 'perm' },
-  endBan: { type: String },
+  endBan: { type: String, default: 'perm' },
   userID: { type: String },
   reason: { type: String },
   staffID: { type: String },

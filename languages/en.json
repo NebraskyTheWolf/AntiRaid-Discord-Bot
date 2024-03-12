@@ -3,6 +3,7 @@
   "command.common.button.wiki": "Wiki",
   "command.common.button.support": "Support Server",
   "command.common.button.message": "Flagged message",
+
   "command.help.title": ":name - Help",
   "command.help.description": "Here, you will find the important links.",
   "command.invite.description": "Here, you can find the invite link for the bot.",
@@ -12,6 +13,7 @@
   "command.show.not_found.description": "This member has a clean slate.",
   "command.support.title": "Support",
   "command.support.description": "Here, you will find the support server links.",
+
   "command.whitelist.whitelisted.title": ":username is whitelisted!",
   "command.whitelist.not_whitelisted.title": ":username is not whitelisted.",
   "command.whitelist.not_whitelisted.description": "You can add them using the command /whitelist add <user>",
@@ -27,6 +29,7 @@
   "command.whitelist.removed_success.description": "You have removed the user from the whitelist.",
   "command.whitelist.removed_failed": "Error",
   "command.whitelist.removed_failed.description": "We're unable to remove this user from the whitelist.",
+
   "command.blacklist.cannot_blacklist_bot_title": "Error",
   "command.blacklist.cannot_blacklist_bot_description": "You cannot blacklist a bot user.",
   "command.blacklist.user_already_blacklisted_title": "Error",
@@ -39,14 +42,16 @@
   "command.blacklist.error_description": "We're sorry, but we cannot blacklist this user.",
   "command.blacklist.user_unblacklisted_title": "Success",
   "command.blacklist.user_unblacklisted_description": ":user is now un-blacklisted.",
-  "command.blacklist.global.log.add.title": ":user added to the global blacklist.",
-  "command.blacklist.global.log.add.description": "The user is now blacklisted.",
-  "command.blacklist.global.log.remove.title": ":user removed from the global blacklist.",
-  "command.blacklist.global.log.remove.description": "The user is now free.",
-  "command.blacklist.local.log.add.title": ":user added to the local blacklist.",
-  "command.blacklist.local.log.add.description": "Added to the local blacklist.",
-  "command.blacklist.local.log.remove.title": ":user removed from the local blacklist.",
-  "command.blacklist.local.log.remove.description": "Removed from the local blacklist.",
+
+  "command.blacklist.add.log.global.title": ":user added to the global blacklist.",
+  "command.blacklist.add.log.global.description": "The user is now blacklisted.",
+  "command.blacklist.remove.log.global.title": ":user removed from the global blacklist.",
+  "command.blacklist.remove.log.global.description": "The user is now free.",
+
+  "command.blacklist.add.log.local.title": ":user added to the local blacklist.",
+  "command.blacklist.add.log.local.description": "Added to the local blacklist.",
+  "command.blacklist.remove.log.local.title": ":user removed from the local blacklist.",
+  "command.blacklist.remove.log.local.description": "Removed from the local blacklist.",
 
   "common.yes": "Yes",
   "common.no": "No",

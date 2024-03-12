@@ -174,7 +174,7 @@ export default class CommandSet extends BaseCommand {
   }
 
   async handleLog(inter: CommandInteraction<'cached'>, guild: FGuild) {
-    const channel = inter.options.getChannel('logging', true)
+    const channel = inter.options.getChannel('channel', true)
 
     const channelType = channel.type;
     if (channelType === 'GUILD_TEXT') {

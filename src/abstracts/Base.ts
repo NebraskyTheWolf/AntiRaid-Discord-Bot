@@ -76,6 +76,25 @@ export default abstract class Base {
     ])
   }
 
+  protected async fetchRequiredDataUser(guildId: string, userId: string) {
+    return Promise.all([
+      this.getGuild(guildId),
+      Blacklist.findOne({
+        userID: userId,
+        guildID: guildId
+      }),
+      LocalBlacklist.findOne({
+        userID: userId,
+        guildID: guildId
+      }),
+      Whitelist.findOne({
+        userID: userId,
+        guildID: guildId
+      }),
+      Staff.findOne({ userID: userId })
+    ])
+  }
+
   protected generateLogDetails(member: GuildMember, blacklisted: FBlacklisted, localBlacklist: FLocalBlacklist) {
     const yes = this.getLanguageManager().translate('common.yes');
     const no = this.getLanguageManager().translate('common.no');
