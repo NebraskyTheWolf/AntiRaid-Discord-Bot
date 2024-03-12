@@ -13,6 +13,7 @@ import discordModals from "discord-modals";
 
 import Logger from "@fluffici.ts/logger";
 import InitChecker from '@fluffici.ts/utils/InitChecker';
+import BaseCommand from "@fluffici.ts/components/BaseCommand";
 
 export default class Fluffici extends Client {
     public static instance: Fluffici
@@ -100,6 +101,10 @@ export default class Fluffici extends Client {
 
       this.manager = new CommandManager()
       this.manager.registerCommands()
+
+      const commandData = this.manager.toMap().map((getData: BaseCommand) => {
+        return getData.getCommand().toJSON();
+      });
 
       this.eventManager = new EventManager()
       this.eventManager.registerEvents()

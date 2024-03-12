@@ -16,7 +16,7 @@ import {
     ToAPIApplicationCommandOptions,
 } from '@discordjs/builders'
 import OptionMap from "@fluffici.ts/utils/OptionMap";
-import { CommandInteraction, Guild, GuildMember } from "discord.js";
+import {CommandInteraction, Guild, GuildMember, Permissions} from "discord.js";
 
 /**
  * Represents a category in the system.
@@ -38,7 +38,17 @@ export default abstract class BaseCommand extends Base {
         this.command = new SlashCommandBuilder();
         this.command.setName(this.name);
         this.command.setDescription(this.description || "No description set.");
-        this.command.setDMPermission(this.options.get("dmPermission") || false);
+
+        if (this.options.has("dmPermission")) {
+          this.command.setDMPermission(this.options.get("dmPermission"));
+        } else {
+          this.command.setDMPermission(false);
+        }
+
+        if (this.options.has("isProtected")) {
+            this.command.setDefaultMemberPermissions(8)
+        }
+
     }
 
     public abstract handler(inter: CommandInteraction, member: GuildMember, guild: Guild)

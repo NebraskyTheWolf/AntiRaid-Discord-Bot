@@ -12,15 +12,36 @@ export default class CommandReload extends BaseCommand {
     }
 
     async handler(inter: CommandInteraction, member: GuildMember, guild: Guild) {
+        this.reloadApplication();
+        return this.sendFollowUpMessage(inter);
+    }
+
+    private reloadApplication() {
         this.instance.reload();
-        return inter.followUp({
-            content: "Reloading...",
+    }
+
+    private async sendFollowUpMessage(inter: CommandInteraction) {
+      const followUpMessage = this.prepareFollowUpMessage();
+      const replyMessage = this.prepareReplyMessage();
+      const delay = 2 * 1000;
+
+      const m = await inter.followUp(followUpMessage);
+      return setTimeout(() => {
+        inter.reply(replyMessage);
+      }, delay);
+    }
+
+    private prepareFollowUpMessage(): { content: string, ephemeral: boolean } {
+        return {
+            content: 'Reloading...',
             ephemeral: true
-        }).then(m => setTimeout(() => {
-          inter.reply({
+        };
+    }
+
+    private prepareReplyMessage(): { content: string, ephemeral: boolean } {
+        return {
             content: 'The application was reloaded with success.',
             ephemeral: true
-          })
-        }, 2 * 1000))
+        };
     }
 }

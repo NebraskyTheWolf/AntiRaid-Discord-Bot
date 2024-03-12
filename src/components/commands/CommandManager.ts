@@ -82,9 +82,10 @@ export default class CommandManager {
     this.registerCommands();
   }
 
-  public toMap (): Collection<String, BaseCommand> {
+  public toMap(): Collection<String, BaseCommand> {
     return this.REGISTRY.getMap();
   }
+
 
   public toList () {
     return this.REGISTRY.getMap().map((value: BaseCommand) => {

@@ -40,12 +40,16 @@ export default class LanguageManager {
     throw new Error('Language file does not exist.');
   }
 
+  public hasLanguage(language: string): boolean {
+    const languageFilePath = path.join(__dirname, '..', '..', 'languages', `${language}.json`);
+    return fs.existsSync(languageFilePath);
+  }
+
   /**
    * Translates a key into the active language.
    *
    * @param {string} key - The key to translate.
    * @param {Record<string, string>} args - The arguments to replace in the translated text.
-   * @param _default - The default message in case the translation does not exist.
    * @return {string} The translated string or key if translation does not exist.
    */
   public translate(key: string, args: Record<string, string> = {}): string {

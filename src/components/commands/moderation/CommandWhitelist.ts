@@ -3,7 +3,7 @@ import BaseCommand from '@fluffici.ts/components/BaseCommand'
 import { getCurrentDate, isNull } from '@fluffici.ts/types'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
-import { CommandInteraction, Guild, GuildMember, User } from 'discord.js'
+import { CommandInteraction, Guild, GuildMember, InteractionReplyOptions, User} from 'discord.js'
 import {
   SlashCommandSubcommandBuilder, SlashCommandUserOption
 } from '@discordjs/builders'
@@ -51,7 +51,7 @@ export default class CommandWhitelist extends BaseCommand {
 
   }
 
-  async handler (inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
+  async handler(inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
     const command: string = inter.options.getSubcommand() || 'default'
     const user: User = inter.options.getUser('user') || member.user
     const whitelisted = await Whitelist.findOne({
