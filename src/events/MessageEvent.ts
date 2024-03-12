@@ -36,7 +36,7 @@ export default class MessageEvent extends BaseEvent {
   }
 
   private async callScamDetection (url: string): Promise<any> {
-    const apiUrl = this.getDefaultConfig().get('fluffici-api') + '/moderation/scam-detection/link?' + url
+    const apiUrl = this.getDefaultConfig().get('fluffici-api') + '/moderation/scam-detection/link?link=' + url
     const response = await fetch(apiUrl, {
       method: 'GET'
     })
