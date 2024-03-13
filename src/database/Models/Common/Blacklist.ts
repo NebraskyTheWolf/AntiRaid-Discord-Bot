@@ -8,6 +8,8 @@ export interface IBlacklist {
   staffID: string;
   staffName: string;
   date: string;
+  isRemote: boolean;
+  isAcknowledged: boolean;
 }
 
 export default mongoose.model<IBlacklist & mongoose.Document>("Blacklist", new mongoose.Schema<IBlacklist & mongoose.Document>({
@@ -17,5 +19,7 @@ export default mongoose.model<IBlacklist & mongoose.Document>("Blacklist", new m
   reason: { type: String },
   staffID: { type: String },
   staffName: { type: String },
-  date: { type: String }
+  date: { type: String },
+  isRemote: { type: Boolean },
+  isAcknowledged: { type: Boolean }
 }));

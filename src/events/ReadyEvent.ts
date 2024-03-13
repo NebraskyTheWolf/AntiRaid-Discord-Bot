@@ -29,6 +29,8 @@ export default class Ready extends BaseEvent {
             this.instance.loaded = true;
             this.instance.user.setStatus("online");
             this.instance.logger.info('The system is ready.');
+
+            await registerAppContext()
         });
     }
 }

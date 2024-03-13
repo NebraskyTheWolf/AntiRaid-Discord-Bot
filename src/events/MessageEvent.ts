@@ -3,7 +3,7 @@ import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
 
 import fetch from "node-fetch"
 
-import {Message} from "discord.js";
+import {Message, Permissions} from "discord.js";
 import {registerAppContext, registerCommands} from "@fluffici.ts/utils/registerCommand";
 import Migrated, {IMigrated} from "@fluffici.ts/database/Security/Migrated";
 
@@ -15,23 +15,28 @@ export default class MessageEvent extends BaseEvent {
       const guild = await this.getGuild(message.guildId)
 
       if (message.content.indexOf('frdb!') !== -1) {
-        const migrate: IMigrated = await Migrated.findOne({ guildId: message.guildId })
-        if (migrate) {
-          await message.reply({
-            content: this.getLanguageManager().translate('event.already_migrated')
-          })
-        } else {
-          await registerAppContext(message.guildId)
-          await registerCommands(
-            this.instance,
-            message.guild.id,
-            message.guild.name,
-            this.instance.manager
-          );
+        if (message.member.permissions.has('ADMINISTRATOR')) {
+          const migrate: IMigrated = await Migrated.findOne({guildId: message.guildId})
+          if (migrate) {
+            await message.reply({
+              content: this.getLanguageManager().translate('event.already_migrated')
+            })
+          } else {
+            await registerCommands(
+              this.instance,
+              message.guild.id,
+              message.guild.name,
+              this.instance.manager
+            );
 
-          await message.reply({
-            content: this.getLanguageManager().translate('event.transition')
-          })
+            await message.reply({
+              content: this.getLanguageManager().translate('event.transition')
+            })
+
+            await new Migrated({
+              guildId: message.guildId
+            }).save()
+          }
         }
       }
 

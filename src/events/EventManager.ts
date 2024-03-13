@@ -12,6 +12,7 @@ import MemberLeave from "./MemberLeaveEvent";
 import MemberUpdateEvent from "./MemberUpdateEvent";
 import MessageEvent from "./MessageEvent";
 import Ready from "./ReadyEvent";
+import ModalSubmit from "./ModalSubmitEvent";
 
 export default class EventManager {
     private REGISTRY: OptionMap<String, BaseEvent>;
@@ -28,6 +29,7 @@ export default class EventManager {
         this.registerEvent(new GuildAddEvent());
         this.registerEvent(new GuildDeleteEvent())
         this.registerEvent(new InteractionEvent());
+        this.registerEvent(new ModalSubmit());
         this.registerEvent(new MemberJoin());
         this.registerEvent(new MemberLeave());
         this.registerEvent(new MemberUpdateEvent())

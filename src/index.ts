@@ -25,6 +25,8 @@ import {SlashCommandBuilder} from "@discordjs/builders";
 
 import express from "express"
 import ContextMenuManager from "./components/context/ContextMenuManager";
+import ModalManager from "./components/modals/ModalManager";
+import TasksManager from "./components/tasks/TasksManager";
 
 const app = express();
 
@@ -41,6 +43,8 @@ export default class Fluffici extends Client {
     public contextMenuManager: ContextMenuManager
     public eventManager: EventManager
     public buttonManager: ButtonManager
+    public modalManager: ModalManager
+    public taskManager: TasksManager
     public loaded: boolean = false
 
     public readonly version: string = process.env.VERSION || "Unreferenced version."
@@ -112,6 +116,8 @@ export default class Fluffici extends Client {
     private load() {
       this.logger.info("Loading system...")
 
+      discordModals(this)
+
       this.manager = new CommandManager()
       this.manager.registerCommands()
 
@@ -124,6 +130,12 @@ export default class Fluffici extends Client {
       this.buttonManager = new ButtonManager()
       this.buttonManager.registerButtons()
 
+      this.modalManager = new ModalManager()
+      this.modalManager.registerModals()
+
+      this.taskManager = new TasksManager()
+      this.taskManager.registerAll()
+
       app.get('/', function (req, res) {
         return res.json({
           status: true,
@@ -131,10 +143,11 @@ export default class Fluffici extends Client {
         })
       })
 
-      this.login(process.env.TOKEN)
-
-      app.listen(4444, () => {
-        this.logger.info("WebApp is listening on port 4444")
+      this.login(process.env.TOKEN).then(r => {
+        app.listen(4444, () => {
+          this.logger.info("WebApp is listening on port 4444")
+          this.logger.info(`Client logged on ${r}`)
+        })
       })
     }
 

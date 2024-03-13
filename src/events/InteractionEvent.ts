@@ -22,7 +22,7 @@ export default class InteractionEvent extends BaseEvent {
         } else if (interaction.isButton() || interaction.isSelectMenu()) {
           await interaction.deferReply({ fetchReply: true, ephemeral: true})
           await this.handleButtonInteraction(interaction as ButtonInteraction<'cached'>, developer)
-        } else if (interaction.isContextMenu() || interaction.isUserContextMenu() || interaction.isMessageContextMenu()) {
+        } else if (interaction.isUserContextMenu()) {
           await interaction.deferReply({ fetchReply: true, ephemeral: true})
           await this.handleContextMenuInteraction(interaction, developer)
         }

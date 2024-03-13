@@ -41,6 +41,14 @@ export async function fetchMember(guildId: string, memberId: string): Promise<Gu
     return Riniya.instance.guilds.cache.get(guildId).members.cache.get(memberId);
 }
 
+export async function fetchMemberByStaff(memberName: string): Promise<GuildMember> {
+  const staff = await Staff.findOne({
+    name: memberName
+  })
+
+  return Riniya.instance.guilds.cache.get('606534136806637589').members.cache.get(staff.userID);
+}
+
 export function isNull(object: unknown): Boolean {
   return object === null || object === undefined;
 }

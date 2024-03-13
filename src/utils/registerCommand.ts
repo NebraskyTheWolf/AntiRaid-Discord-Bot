@@ -38,9 +38,12 @@ export async function registerCommands(
   try {
     const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
 
+    const test = []
+
     const commandData = commandManager.toMap().map((getData: BaseCommand) => {
       return getData.getCommand();
     });
+
 
     await rest.put(
       Routes.applicationGuildCommands(client.user?.id || "missing id", guildId),
@@ -57,15 +60,15 @@ export async function registerCommands(
   }
 };
 
-export async function registerAppContext(guildId: string) {
+export async function registerAppContext() {
   try {
     const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
 
     const commandData = Fluffici.instance.contextMenuManager.toMap().map((getData: BaseContextMenu) => {
-      return getData.getCommand();
+      return getData.getCommand().toJSON();
     });
 
-    await rest.put(Routes.applicationGuildCommands(Fluffici.instance.user.id, guildId), { body: commandData });
+    await rest.put(Routes.applicationCommands(Fluffici.instance.user.id), { body: commandData });
 
   } catch (error) {
     if (error.rawError?.code === 50001) {

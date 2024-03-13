@@ -123,6 +123,29 @@ export default abstract class Base {
     ]
   }
 
+  protected generateLogDetailsString(member: string, blacklisted: FBlacklisted, localBlacklist: FLocalBlacklist) {
+    const yes = this.getLanguageManager().translate('common.yes');
+    const no = this.getLanguageManager().translate('common.no');
+
+    return [
+      {
+        name: 'ID',
+        value: `${member}`,
+        inline: false
+      },
+      {
+        name: this.getLanguageManager().translate('common.globally_blacklisted'),
+        value: `${isNull(blacklisted) ? no : yes}`,
+        inline: false
+      },
+      {
+        name: this.getLanguageManager().translate('common.locally_blacklisted'),
+        value: `${isNull(localBlacklist) ? no : yes}`,
+        inline: false
+      }
+    ]
+  }
+
   protected getDefaultConfig (): ConfigManager {
     return this.defaultConfig;
   }
@@ -178,6 +201,16 @@ export default abstract class Base {
         {
           name: 'FurRaidDB Staff',
           value:  this.getEmojisConfig().get('staff') + ' ' + extra.get('isStaff'),
+          inline: false
+        }
+      );
+    }
+
+    if (extra.has('isRemote')) {
+      fields.push(
+        {
+          name: 'Remote service',
+          value: 'https://bot.fluffici.eu',
           inline: false
         }
       );
