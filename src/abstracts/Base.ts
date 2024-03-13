@@ -2,16 +2,17 @@ import OptionMap from "@fluffici.ts/utils/OptionMap";
 import Logger from "@fluffici.ts/logger";
 import Riniya from "@fluffici.ts";
 import LanguageManager from '@fluffici.ts/utils/LanguageManager'
-import Guild, { Guild as FGuild } from '@fluffici.ts/database/Guild/Guild'
+import Guild, {Guild as FGuild} from '@fluffici.ts/database/Guild/Guild'
 import ConfigManager from '@fluffici.ts/utils/ConfigManager'
-import { ColorResolvable, GuildMember, Message, MessageEmbed, TextChannel } from 'discord.js'
+import {ColorResolvable, GuildMember, Message, TextChannel} from 'discord.js'
 import Blacklist, {IBlacklist as FBlacklisted} from "@fluffici.ts/database/Common/Blacklist";
 import LocalBlacklist, {LocalBlacklist as FLocalBlacklist} from "@fluffici.ts/database/Common/LocalBlacklist";
 import Whitelist from "@fluffici.ts/database/Common/Whitelist";
 import Staff from "@fluffici.ts/database/Guild/Staff";
 import {getAmountOfDays, isNull} from "@fluffici.ts/types";
+import ActivityHelper from "@fluffici.ts/utils/ActivityHelper";
 
-export declare type ComponentType = 'BUTTON' | 'COMMAND' | 'MODAL' | 'TASK' | 'EVENT' | 'COMPONENT' | 'SERVER' | 'UNRELATED';
+export declare type ComponentType = 'BUTTON' | 'COMMAND' | 'MODAL' | 'TASK' | 'EVENT' | 'COMPONENT' | 'SERVER' | 'UNRELATED' | 'CONTEXT';
 
 export default abstract class Base {
   public readonly instance: Riniya = Riniya.instance;
@@ -231,5 +232,21 @@ export default abstract class Base {
         }
       }
     ]
+  }
+
+  protected writeAuditLog(guildId: string, authorId: string, type: string, action: string) {
+    const activity = new ActivityHelper()
+    activity.setOwner(authorId)
+    activity.setType(type)
+    activity.setContent(action)
+    activity.save(guildId).then(r => {
+      if (!r.status) {
+        this.instance.logger.error(`Cannot write audit log for ${guildId} from ${authorId} action ${action}`)
+      }
+    })
+  }
+
+  protected async getRaiderCount(): Promise<number> {
+    return await Blacklist.countDocuments({}).exec();
   }
 }

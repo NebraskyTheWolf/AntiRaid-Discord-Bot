@@ -3,6 +3,8 @@ import { Guild as DGuild, GuildMember, MessageEmbed, TextChannel } from "discord
 
 export default class MemberUpdateEvent extends BaseEvent {
     public constructor() {
-        super("guildMemberUpdate", async (oldMember: GuildMember, newMember: GuildMember) => { });
+        super("guildMemberUpdate", async (oldMember: GuildMember, newMember: GuildMember) => {
+
+        });
     }
 }

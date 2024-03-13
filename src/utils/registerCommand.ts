@@ -4,6 +4,7 @@ import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { Client, Snowflake } from "discord.js";
 import CommandManager from "../components/commands/CommandManager";
+import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
 
 export function deleteCommand() {
     Fluffici.instance.application.commands.cache.forEach(command => {
@@ -52,6 +53,26 @@ export async function registerCommands(
       return
     }
     console.log(`Register command error on ${guildId}`)
+    console.log(error)
+  }
+};
+
+export async function registerAppContext() {
+  try {
+    const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
+
+    const commandData = Fluffici.instance.contextMenuManager.toMap().map((getData: BaseContextMenu) => {
+      return getData.getCommand();
+    });
+
+    await rest.put(Routes.applicationCommands(Fluffici.instance.user.id), { body: commandData });
+
+  } catch (error) {
+    if (error.rawError?.code === 50001) {
+      console.log(`Missing Access"`)
+      return
+    }
+    console.log(`Register context error`)
     console.log(error)
   }
 };

@@ -1,19 +1,19 @@
 import Base from "../Base";
 import {
-    SlashCommandBuilder,
-    SlashCommandAttachmentOption,
-    SlashCommandBooleanOption,
-    SlashCommandChannelOption,
-    SlashCommandIntegerOption,
-    SlashCommandMentionableOption,
-    SlashCommandNumberOption,
-    SlashCommandRoleOption,
-    SlashCommandStringOption,
-    SlashCommandSubcommandBuilder,
-    SlashCommandSubcommandGroupBuilder,
-    SlashCommandSubcommandsOnlyBuilder,
-    SlashCommandUserOption,
-    ToAPIApplicationCommandOptions,
+  SlashCommandBuilder,
+  SlashCommandAttachmentOption,
+  SlashCommandBooleanOption,
+  SlashCommandChannelOption,
+  SlashCommandIntegerOption,
+  SlashCommandMentionableOption,
+  SlashCommandNumberOption,
+  SlashCommandRoleOption,
+  SlashCommandStringOption,
+  SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandGroupBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
+  SlashCommandUserOption,
+  ToAPIApplicationCommandOptions, ContextMenuCommandBuilder,
 } from '@discordjs/builders'
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import {CommandInteraction, Guild, GuildMember, Permissions} from "discord.js";

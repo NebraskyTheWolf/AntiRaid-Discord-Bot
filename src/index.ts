@@ -24,6 +24,7 @@ import InitChecker from '@fluffici.ts/utils/InitChecker';
 import {SlashCommandBuilder} from "@discordjs/builders";
 
 import express from "express"
+import ContextMenuManager from "./components/context/ContextMenuManager";
 
 const app = express();
 
@@ -37,6 +38,7 @@ export default class Fluffici extends Client {
 
     public readonly REGISTRY: SlashCommandBuilder
     public manager: CommandManager
+    public contextMenuManager: ContextMenuManager
     public eventManager: EventManager
     public buttonManager: ButtonManager
     public loaded: boolean = false
@@ -112,6 +114,9 @@ export default class Fluffici extends Client {
 
       this.manager = new CommandManager()
       this.manager.registerCommands()
+
+      this.contextMenuManager = new ContextMenuManager()
+      this.contextMenuManager.registerContextMenu()
 
       this.eventManager = new EventManager()
       this.eventManager.registerEvents()

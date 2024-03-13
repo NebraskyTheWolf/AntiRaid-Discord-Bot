@@ -119,6 +119,8 @@ export default class CommandWhitelist extends BaseCommand {
         guildID: guildId,
         date: getCurrentDate()
       }).save()
+
+      this.writeAuditLog(guildId, inter.member.id, "whitelist_added", `Whitelisted ${user.id}`)
       await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description'))
     } catch {
       await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_failed','error', 'RED', [], 'command.whitelist.added_failed.description'))
@@ -131,6 +133,7 @@ export default class CommandWhitelist extends BaseCommand {
         guildID: guildId,
         userID: user.id
       })
+      this.writeAuditLog(guildId, inter.member.id, "whitelist_removed", `Removed ${user.id} from the whitelist`)
       await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_success','success', 'ORANGE', [], 'command.whitelist.removed_success.description'))
     } catch {
       await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_failed','error', 'RED', [], 'command.whitelist.removed_failed.description'))

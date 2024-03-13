@@ -80,6 +80,7 @@ export default class CommandLocal extends BaseCommand {
         }
 
         await this.handleLog(guild, inter, user, 'add', 'local')
+        this.writeAuditLog(guild.guildID, inter.member.id, "local_blacklist_added", `Blacklisted ${user.id} reason ${reason} locally`)
 
         return await this.addMemberToBlacklist(inter, user, reason, member)
       }
@@ -90,6 +91,7 @@ export default class CommandLocal extends BaseCommand {
         }
 
         await this.handleLog(guild, inter, user, 'remove', 'local')
+        this.writeAuditLog(guild.guildID, inter.member.id, "local_blacklist_removed", `Unblacklisted ${user.id}`)
 
         return await this.removeMemberFromBlacklist(inter, user)
       }

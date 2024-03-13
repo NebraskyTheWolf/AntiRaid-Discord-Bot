@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ModalHelper.ts                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: alle.roy <alle.roy.student@42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/04 21:43:21 by NebraskyThe       #+#    #+#             */
-/*   Updated: 2023/02/04 20:20:24 by alle.roy         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-import Riniya from "@fluffici.ts";
+import Fluffici from "@fluffici.ts";
 import { Modal, SelectMenuComponent, TextInputComponent, showModal } from "discord-modals";
 import { Interaction } from "discord.js";
 
@@ -35,7 +23,7 @@ export default class ModalHelper {
 
     public generate(inter: Interaction<"cached">): Promise<Modal> {
         return showModal(this.modal, {
-            client: Riniya.instance,
+            client: Fluffici.instance,
             interaction: inter
         });
     }

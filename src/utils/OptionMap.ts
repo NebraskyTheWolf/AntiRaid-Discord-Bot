@@ -12,8 +12,8 @@ export default class OptionMap<T, V> {
         return this;
     }
 
-    public get(key: T): V {
-        return this.map.get(key);
+    public get(key: T, _default: any = null): V {
+        return this.map.get(key) || _default;
     }
 
     public has(key: T): boolean {

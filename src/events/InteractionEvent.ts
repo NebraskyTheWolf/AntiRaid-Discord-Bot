@@ -5,11 +5,11 @@ import Developer from "@fluffici.ts/database/Security/Developer";
 
 import {
   ButtonInteraction,
-  CommandInteraction,
+  CommandInteraction, ContextMenuInteraction,
   GuildMember,
   Interaction,
-  TextChannel
 } from 'discord.js'
+import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
 
 export default class InteractionEvent extends BaseEvent {
   public constructor () {
@@ -25,7 +25,11 @@ export default class InteractionEvent extends BaseEvent {
           await interaction.deferReply({ fetchReply: true, ephemeral: true})
           await this.handleCommandInteraction(interaction, developer)
         } else if (interaction.isButton() || interaction.isSelectMenu()) {
+          await interaction.deferReply({ fetchReply: true, ephemeral: true})
           await this.handleButtonInteraction(interaction as ButtonInteraction<'cached'>, developer)
+        } else if (interaction.isContextMenu() || interaction.isUserContextMenu() || interaction.isMessageContextMenu()) {
+          await interaction.deferReply({ fetchReply: true, ephemeral: true})
+          await this.handleContextMenuInteraction(interaction, developer)
         }
       } catch (err) {
         this.instance.logger.error(`InteractionEvent:(${interaction.id}) | ${err}`)
@@ -44,6 +48,28 @@ export default class InteractionEvent extends BaseEvent {
   private handleCommandInteraction (interaction: CommandInteraction<'cached'>, developer: any) {
     const commandName: string = interaction.commandName
     const handler: BaseCommand = this.instance.manager.getCommand(commandName)
+    if (!handler) return
+
+    if (handler.options.get('isDeveloper') && developer) {
+      return handler.handler(interaction, interaction.member as GuildMember, interaction.guild)
+    }
+    if (handler.options.get('isDeveloper') && !developer) {
+      return this.replyToInteraction(interaction, 'Only my developers can execute this command.')
+    }
+
+    if (handler.options.get('isProtected') && interaction.member.permissions.has('ADMINISTRATOR')) {
+      return handler.handler(interaction, interaction.member as GuildMember, interaction.guild)
+    }
+    if (handler.options.get('isProtected') && !interaction.member.permissions.has('ADMINISTRATOR')) {
+      return this.replyToInteraction(interaction, 'Sorry, you need to be Moderator to execute this command')
+    }
+
+    return handler.handler(interaction, interaction.member as GuildMember, interaction.guild)
+  }
+
+  private handleContextMenuInteraction(interaction: ContextMenuInteraction<'cached'>, developer: any) {
+    const commandName: string = interaction.commandName
+    const handler: BaseContextMenu = this.instance.contextMenuManager.getContextMenu(commandName)
     if (!handler) return
 
     if (handler.options.get('isDeveloper') && developer) {

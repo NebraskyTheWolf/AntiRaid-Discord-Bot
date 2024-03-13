@@ -1,5 +1,6 @@
 import Activity from "@fluffici.ts/database/Guild/Activity";
 import { Snowflake } from "discord.js"
+import {isNull} from "@fluffici.ts/types";
 
 export default class ActivityHelper {
     private type: String
@@ -31,6 +32,10 @@ export default class ActivityHelper {
             type: this.type,
             action: this.content,
             registeredAt: Date.now()
-        }).save().then()
+        }).save().then(r => {
+          return new Promise((resolve) => {
+            resolve({ status: !isNull(r._id), result: r._id });
+          })
+        })
     }
 }

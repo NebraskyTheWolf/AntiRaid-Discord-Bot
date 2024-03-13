@@ -184,6 +184,8 @@ export default class CommandSet extends BaseCommand {
         }
       })
 
+      this.writeAuditLog(guild.guildID, inter.member.id, "logging_changed", `Changed the logging channel to #${channel.name}`)
+
       await inter.followUp({
         content: `Logging channel has been set to ${channel.name}`,
         ephemeral: true
@@ -205,6 +207,8 @@ export default class CommandSet extends BaseCommand {
           language: language
         }
       })
+
+      this.writeAuditLog(guild.guildID, inter.member.id, "language_changed", `Changed the language to ${language}`)
 
       await inter.followUp({
         content: `Language has been set to ${language}`,

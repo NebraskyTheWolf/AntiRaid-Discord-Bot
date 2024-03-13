@@ -101,6 +101,8 @@ export default class CommandGlobal extends BaseCommand {
         }).save().then(async () => {
           await this.handleLog(guild, inter, user, 'add', 'global')
 
+          this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_added", `Blacklisted ${user.id} reason ${reason}`)
+
           return await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
         }).catch(async err => {
           return await this.respond(inter, 'command.blacklist.error_title', 'command.blacklist.error_description', 'RED', {}, 'error')
@@ -116,6 +118,8 @@ export default class CommandGlobal extends BaseCommand {
         await dGuild.bans.remove(user, 'FurRaidDB, Blacklist revoked by ' + inter.member.user.tag)
 
         await Blacklist.deleteOne({ userID: user.id })
+
+        this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_removed", `Unblacklisted ${user.id}`)
 
         await this.handleLog(guild, inter, user, 'remove', 'global')
       }
