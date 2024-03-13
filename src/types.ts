@@ -15,9 +15,7 @@ import Logger from "@fluffici.ts/logger";
 import GuildModel from "@fluffici.ts/database/Guild/Guild";
 
 import { GuildMember } from "discord.js"
-import Blacklist, { IBlacklist as FBlacklisted } from '@fluffici.ts/database/Common/Blacklist'
-import LocalBlacklist, { LocalBlacklist as FLocalBlacklist } from '@fluffici.ts/database/Common/LocalBlacklist'
-import Whitelist, { Whitelist as FWhitelisted } from '@fluffici.ts/database/Common/Whitelist'
+import { Whitelist as FWhitelisted } from '@fluffici.ts/database/Common/Whitelist'
 import Staff, { Staff as FStaff } from '@fluffici.ts/database/Guild/Staff'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
@@ -42,7 +40,7 @@ export async function fetchMember(guildId: string, memberId: string): Promise<Gu
 }
 
 export async function fetchMemberByStaff(memberName: string): Promise<GuildMember> {
-  const staff = await Staff.findOne({
+  const staff: FStaff = await Staff.findOne({
     name: memberName
   })
 

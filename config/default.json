@@ -4,5 +4,6 @@
   "wiki-link": "https://frdb.fluffici.eu",
   "fluffici-api": "https://api.fluffici.eu",
 
-  "max-errors": 40
+  "max-errors": 40,
+  "main-guild": "606534136806637589"
 }

@@ -144,7 +144,7 @@ export default class CommandGlobal extends BaseCommand {
       this.generateLogDetails(
         await fetchMember(guild.guildID, user.id),
         await Blacklist.findOne({ userID: user.id }),
-        await LocalBlacklist.findOne({ userID: user.id, guildId: inter.guildId })
+        await LocalBlacklist.findOne({ userID: user.id, guildID: inter.guildId })
       ));
   }
 }
