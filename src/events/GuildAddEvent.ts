@@ -1,5 +1,5 @@
 import BaseEvent from "@fluffici.ts/components/BaseEvent";
-import { registerCommands } from "@fluffici.ts/utils/registerCommand";
+import {registerAppContext, registerCommands} from "@fluffici.ts/utils/registerCommand";
 import { isNull } from "@fluffici.ts/types";
 import { Guild as DGuild } from 'discord.js'
 import Guild from '@fluffici.ts/database/Guild/Guild'
@@ -8,7 +8,7 @@ export default class GuildAddEvent extends BaseEvent {
     public constructor() {
         super("guildCreate", async (guild: DGuild) => {
             await this.registerGuildIfAbsent(guild)
-
+            await registerAppContext(guild.id)
             await registerCommands(
               this.instance,
               guild.id,

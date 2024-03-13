@@ -13,7 +13,6 @@ import CommandGlobal from "./moderation/CommandGlobal";
 import CommandWhitelist from "./moderation/CommandWhitelist";
 import CommandReload from "./owner/CommandReload";
 import CommandServers from "./owner/CommandServers";
-import CommandSpawnButton from "./owner/CommandSpawnButton";
 import CommandLocal from "./moderation/CommandLocal";
 
 export default class CommandManager {

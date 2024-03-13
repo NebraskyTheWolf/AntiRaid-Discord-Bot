@@ -3,7 +3,12 @@ import OptionMap from '@fluffici.ts/utils/OptionMap'
 import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
 
 import { Collection } from 'discord.js'
-import ContextInfo from "./default/ContextInfo";
+
+import ContextBlacklist from "./admin/ContextBlacklist";
+import ContextBlacklistDel from "./admin/ContextBlacklistDel";
+import ContextWhitelist from "./admin/ContextWhitelist";
+import ContextWhitelistDel from "./admin/ContextWhitelistDel";
+import ContextShow from "./admin/ContextShow";
 
 export default class ContextMenuManager {
   private REGISTRY: OptionMap<String, BaseContextMenu>;
@@ -15,7 +20,11 @@ export default class ContextMenuManager {
   }
 
   public registerContextMenu(): void {
-    this.registerContext(new ContextInfo())
+    this.registerContext(new ContextBlacklist())
+    this.registerContext(new ContextBlacklistDel())
+    this.registerContext(new ContextWhitelist())
+    this.registerContext(new ContextWhitelistDel())
+    this.registerContext(new ContextShow())
   }
 
   /**
@@ -26,14 +35,8 @@ export default class ContextMenuManager {
    * @returns {void}
    */
   public registerContext(base: BaseContextMenu): void {
-    if (this.REGISTRY.getMap().has(base.name))
-      throw new Error("You can't register the same contextMenu at once.");
-    if (base.options.get("isDisabled")) {
-      this.logger.warn(`${base.name} is disabled.`);
-    } else {
-      this.REGISTRY.add(base.name, base);
-      this.logger.info(`ContextMenu ${base.name} is now registered.`);
-    }
+    this.REGISTRY.add(base.name, base);
+    this.logger.info(`ContextMenu ${base.name} is now registered.`);
   }
 
   public getContextMenu (name: string): BaseContextMenu {

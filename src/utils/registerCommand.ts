@@ -57,7 +57,7 @@ export async function registerCommands(
   }
 };
 
-export async function registerAppContext() {
+export async function registerAppContext(guildId: string) {
   try {
     const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
 
@@ -65,7 +65,7 @@ export async function registerAppContext() {
       return getData.getCommand();
     });
 
-    await rest.put(Routes.applicationCommands(Fluffici.instance.user.id), { body: commandData });
+    await rest.put(Routes.applicationGuildCommands(Fluffici.instance.user.id, guildId), { body: commandData });
 
   } catch (error) {
     if (error.rawError?.code === 50001) {

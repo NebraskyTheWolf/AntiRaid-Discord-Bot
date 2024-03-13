@@ -3,12 +3,7 @@ import BaseEvent from "@fluffici.ts/components/BaseEvent";
 import BaseButton from "@fluffici.ts/components/BaseButton";
 import Developer from "@fluffici.ts/database/Security/Developer";
 
-import {
-  ButtonInteraction,
-  CommandInteraction, ContextMenuInteraction,
-  GuildMember,
-  Interaction,
-} from 'discord.js'
+import {ButtonInteraction, CommandInteraction, ContextMenuInteraction, GuildMember, Interaction,} from 'discord.js'
 import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
 
 export default class InteractionEvent extends BaseEvent {

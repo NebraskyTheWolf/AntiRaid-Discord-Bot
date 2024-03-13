@@ -29,13 +29,6 @@ export default class Ready extends BaseEvent {
             this.instance.loaded = true;
             this.instance.user.setStatus("online");
             this.instance.logger.info('The system is ready.');
-
-            // Registering all the context menu in ready state
-            const context = setTimeout(async () => {
-              await registerAppContext()
-              // Clearing timeout just after the end of this thread.
-              clearTimeout(context)
-            }, 1000)
         });
     }
 }

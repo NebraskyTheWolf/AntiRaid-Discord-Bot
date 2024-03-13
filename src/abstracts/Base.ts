@@ -247,6 +247,6 @@ export default abstract class Base {
   }
 
   protected async getRaiderCount(): Promise<number> {
-    return await Blacklist.countDocuments({}).exec();
+    return await Blacklist.countDocuments({}).exec() || 0;
   }
 }

@@ -66,5 +66,6 @@
   "event.message.log.title": "Detekce podvodu",
   "event.message.log.description": "Zpráva uživatele byla označena jako podezřelá, protože obsahovala potenciálně škodlivý odkaz.",
   "event.member_added.banned_globally": "Tento uživatel byl globálně zařazen na černou listinu.",
-  "event.transition": "Přešli jsme na využívání slash příkazů. Pro další pomoc, prosím použijte příkaz /help."
+  "event.transition": "Přešli jsme na využívání slash příkazů. Pro další pomoc, prosím použijte příkaz /help.",
+  "event.already_migrated": "Již byl převeden váš Discord server a nyní můžete použít příkazy se lomítkem pro interakci se mnou."
 }

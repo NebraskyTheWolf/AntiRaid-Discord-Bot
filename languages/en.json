@@ -66,5 +66,6 @@
   "event.message.log.title": "Scam detection",
   "event.message.log.description": "The user's message was flagged as suspicious because it contained a potentially harmful link.",
   "event.member_added.banned_globally": "This user was blacklisted globally.",
-  "event.transition": "We have transitioned to the utilization of slash commands. For further assistance, please employ the command /help."
+  "event.transition": "We have transitioned to the utilization of slash commands. For further assistance, please employ the command /help.",
+  "event.already_migrated": "Your discord server has been already migrated, you can now use the slash commands to interact with me."
 }
