@@ -1,9 +1,14 @@
 import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
-import {ContextMenuInteraction, Guild, GuildMember} from "discord.js";
+import {CommandInteraction, ContextMenuInteraction, Guild, GuildMember, MessageButton} from "discord.js";
 import {ApplicationCommandType} from "discord-api-types/v9";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import ModalHelper from "@fluffici.ts/utils/ModalHelper";
 import {TextInputComponent} from "discord-modals";
+import Staff from "@fluffici.ts/database/Guild/Staff";
+import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
+import {fetchMember, getCurrentDate, isBotOrSystem} from "@fluffici.ts/types";
+import Blacklist, {IBlacklist as FBlacklist} from "@fluffici.ts/database/Common/Blacklist";
+import LocalBlacklist from "@fluffici.ts/database/Common/LocalBlacklist";
 
 export default class ContextBlacklist extends BaseContextMenu {
 
@@ -11,31 +16,52 @@ export default class ContextBlacklist extends BaseContextMenu {
     super("Add to blacklist", new OptionMap<string, boolean>().add("isProtected", true));
   }
 
-  async handler(inter: ContextMenuInteraction<"cached">, member: GuildMember, guild: Guild): Promise<boolean> {
-    await this.getGuild(guild.id)
+  async handler(inter: ContextMenuInteraction<"cached">, member: GuildMember, guild: Guild): Promise<any> {
+    const fGuild = await this.getGuild(guild.id)
+    const globalBlacklist: FBlacklist = await Blacklist.findOne({ userID: inter.targetId })
+    const staff = await Staff.findOne({ userID: inter.member.id })
 
-    await new ModalHelper(
-      "row_blacklist_add",
-      this.getLanguageManager().translate("context.modal.blacklist.add")
-    ).addTextInput(
-      new TextInputComponent()
-        .setCustomId("row_blacklist_add_userid")
-        .setStyle("SHORT")
-        .setLabel("USER ID ( Do not edit )")
-        .setDefaultValue(inter.targetId)
-        .setMinLength(8)
-        .setMaxLength(64)
-        .setRequired(true)
-    ).addTextInput(
-      new TextInputComponent()
-        .setCustomId("row_blacklist_add_reason")
-        .setStyle("LONG")
-        .setLabel(this.getLanguageManager().translate("common.reason"))
-        .setMinLength(4)
-        .setMaxLength(2000)
-        .setPlaceholder(this.getLanguageManager().translate("context.modal.blacklist.description"))
-        .setRequired(true)
-    ).generate(inter);
-      return true;
+    if (!staff) {
+      return await this.respond(inter, 'command.blacklist.insufficient_permissions_title', 'command.blacklist.insufficient_permissions_description', 'RED', {}, 'error')
+    }
+
+    if (globalBlacklist) {
+      return await this.respond(inter, 'command.blacklist.user_already_blacklisted_title', 'command.blacklist.user_already_blacklisted_description', 'RED', {}, 'warning')
+    }
+
+    await member.ban({ reason: 'Raider' })
+    await new Blacklist({
+      userID: inter.targetId,
+      reason: 'Raider',
+      staffID: inter.member.id,
+      staffName: inter.member.displayName,
+      date: getCurrentDate()
+    }).save()
+
+    await this.handleLog(fGuild, inter, inter.targetId, 'add', 'global')
+    this.writeAuditLog(fGuild.guildID, inter.member.id, "global_blacklist_added", `Blacklisted ${inter.targetId} reason Raider`)
+    return await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
+  }
+
+  async respond (inter: ContextMenuInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
+    await inter.followUp({
+      embeds: this.buildEmbedMessage(inter.member, {
+        icon: icon,
+        color: color,
+        title: this.getLanguageManager().translate(titleKey, args),
+        description: this.getLanguageManager().translate(descKey, args)
+      }),
+      ephemeral: true
+    })
+  }
+
+  async handleLog(guild: FGuild, inter: ContextMenuInteraction<'cached'>, user: string, type: string, log: string) {
+    await this.sendLog(guild, inter.member, (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
+      this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
+      this.generateLogDetails(
+        await fetchMember(guild.guildID, user),
+        await Blacklist.findOne({ userID: user }),
+        await LocalBlacklist.findOne({ userID: user, guildID: inter.guildId })
+      ));
   }
 }

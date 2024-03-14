@@ -29,8 +29,8 @@ export default class CommandGlobal extends BaseCommand {
       new SlashCommandSubcommandBuilder()
         .setName("add")
         .setDescription("Add a user to the global blacklist.")
-        .addUserOption(
-          new SlashCommandUserOption()
+        .addStringOption(
+          new SlashCommandStringOption()
             .setName("user")
             .setDescription("Select a user")
             .setRequired(true)
@@ -70,9 +70,9 @@ export default class CommandGlobal extends BaseCommand {
   }
 
   async handleGlobalCommand (inter: CommandInteraction<'cached'>, command: string, guild: FGuild) {
-    const user = inter.options.getUser('user', true)
-    const globalBlacklist: FBlacklist = await Blacklist.findOne({ userID: user.id })
-    const member = await fetchMember(inter.guildId, user.id)
+    const user = inter.options.getString('user', true)
+    const globalBlacklist: FBlacklist = await Blacklist.findOne({ userID: user })
+    const member = await fetchMember(inter.guildId, user)
     const dGuild = await fetchDGuild(inter.guildId)
 
     switch (command) {
@@ -93,7 +93,7 @@ export default class CommandGlobal extends BaseCommand {
 
         await member.ban({ reason: reason })
         await new Blacklist({
-          userID: user.id,
+          userID: user,
           reason: reason,
           staffID: inter.member.id,
           staffName: inter.member.displayName,
@@ -101,7 +101,7 @@ export default class CommandGlobal extends BaseCommand {
         }).save().then(async () => {
           await this.handleLog(guild, inter, user, 'add', 'global')
 
-          this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_added", `Blacklisted ${user.id} reason ${reason}`)
+          this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_added", `Blacklisted ${user} reason ${reason}`)
 
           return await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
         }).catch(async err => {
@@ -110,13 +110,13 @@ export default class CommandGlobal extends BaseCommand {
         break
       }
       case "remove": {
-        const global = await Blacklist.findOne({ userID: user.id })
+        const global = await Blacklist.findOne({ userID: user })
         if (!global) {
-          return await this.respond(inter, 'command.blacklist.user_not_blacklisted_title', 'command.blacklist.user_not_blacklisted_description', 'RED', { user: user.tag }, 'error')
+          return await this.respond(inter, 'command.blacklist.user_not_blacklisted_title', 'command.blacklist.user_not_blacklisted_description', 'RED', { user: user }, 'error')
         }
 
-        await Blacklist.deleteOne({ userID: user.id })
-        this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_removed", `Unblacklisted ${user.id}`)
+        await Blacklist.deleteOne({ userID: user })
+        this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_removed", `Unblacklisted ${user}`)
         await this.handleLog(guild, inter, user, 'remove', 'global')
       }
     }
@@ -134,13 +134,13 @@ export default class CommandGlobal extends BaseCommand {
     })
   }
 
-  async handleLog(guild: FGuild, inter: CommandInteraction<'cached'>, user: User, type: string, log: string) {
+  async handleLog(guild: FGuild, inter: CommandInteraction<'cached'>, user: string, type: string, log: string) {
     await this.sendLog(guild, inter.member, (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
       this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
       this.generateLogDetails(
-        await fetchMember(guild.guildID, user.id),
-        await Blacklist.findOne({ userID: user.id }),
-        await LocalBlacklist.findOne({ userID: user.id, guildID: inter.guildId })
+        await fetchMember(guild.guildID, user),
+        await Blacklist.findOne({ userID: user }),
+        await LocalBlacklist.findOne({ userID: user, guildID: inter.guildId })
       ));
   }
 }

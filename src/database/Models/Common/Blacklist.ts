@@ -19,7 +19,7 @@ export default mongoose.model<IBlacklist & mongoose.Document>("Blacklist", new m
   reason: { type: String },
   staffID: { type: String },
   staffName: { type: String },
-  date: { type: String },
-  isRemote: { type: Boolean },
-  isAcknowledged: { type: Boolean }
+  date: { type: String, default: '' },
+  isRemote: { type: Boolean, default: false },
+  isAcknowledged: { type: Boolean, default: false }
 }));
