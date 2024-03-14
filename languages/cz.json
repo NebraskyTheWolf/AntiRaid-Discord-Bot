@@ -55,7 +55,7 @@
   "common.days": "dny",
   "common.joined": "Stáří účtu",
   "common.globally_blacklisted": "Je v globální databázi?",
-  "common.locally_blacklisted": "Je v localní databázi?",
+  "common.locally_blacklisted": "Je v lokální databázi?",
   "common.reason": "Důvod",
   "common.staff": "Personál",
   "event.member_added.title": "Uživatel :id se připojil",
