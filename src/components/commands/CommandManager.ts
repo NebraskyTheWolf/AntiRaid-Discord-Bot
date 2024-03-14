@@ -14,6 +14,7 @@ import CommandWhitelist from "./moderation/CommandWhitelist";
 import CommandReload from "./owner/CommandReload";
 import CommandServers from "./owner/CommandServers";
 import CommandLocal from "./moderation/CommandLocal";
+import CommandSpawnButton from "./owner/CommandSpawnButton";
 
 export default class CommandManager {
   private REGISTRY: OptionMap<String, BaseCommand>;
@@ -45,6 +46,7 @@ export default class CommandManager {
 
     this.registerCommand(new CommandReload())
     this.registerCommand(new CommandServers())
+    this.registerCommand(new CommandSpawnButton())
   }
 
   /**

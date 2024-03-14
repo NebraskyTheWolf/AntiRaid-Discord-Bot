@@ -16,7 +16,9 @@ export default class Ready extends BaseEvent {
             const docCount = await Blacklist.countDocuments({}).exec();
 
             this.activities.add(`${Fluffici.instance.guilds.cache.size} serverů`)
+            this.activities.add(`${Fluffici.instance.users.cache.size} uživatelů`)
             this.activities.add(`${docCount} raiderů`)
+            this.activities.add(`v${process.env.VERSION}`)
 
             setInterval(() => {
                 this.instance.user.setActivity({
