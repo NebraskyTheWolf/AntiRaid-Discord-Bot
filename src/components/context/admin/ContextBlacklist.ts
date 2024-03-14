@@ -18,7 +18,10 @@ export default class ContextBlacklist extends BaseContextMenu {
 
   async handler(inter: ContextMenuInteraction<"cached">, member: GuildMember, guild: Guild): Promise<any> {
     const fGuild = await this.getGuild(guild.id)
+
     const globalBlacklist: FBlacklist = await Blacklist.findOne({ userID: inter.targetId })
+    const bMember = await fetchMember(inter.guildId, inter.targetId)
+
     const staff = await Staff.findOne({ userID: inter.member.id })
 
     if (!staff) {
@@ -29,7 +32,6 @@ export default class ContextBlacklist extends BaseContextMenu {
       return await this.respond(inter, 'command.blacklist.user_already_blacklisted_title', 'command.blacklist.user_already_blacklisted_description', 'RED', {}, 'warning')
     }
 
-    await member.ban({ reason: 'Raider' })
     await new Blacklist({
       userID: inter.targetId,
       reason: 'Raider',
@@ -40,7 +42,9 @@ export default class ContextBlacklist extends BaseContextMenu {
 
     await this.handleLog(fGuild, inter, inter.targetId, 'add', 'global')
     this.writeAuditLog(fGuild.guildID, inter.member.id, "global_blacklist_added", `Blacklisted ${inter.targetId} reason Raider`)
-    return await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
+    await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
+
+    await member.ban({ reason: 'Raider' })
   }
 
   async respond (inter: ContextMenuInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
@@ -56,7 +60,7 @@ export default class ContextBlacklist extends BaseContextMenu {
   }
 
   async handleLog(guild: FGuild, inter: ContextMenuInteraction<'cached'>, user: string, type: string, log: string) {
-    await this.sendLog(guild, inter.member, (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
+    await this.sendLog(guild, await fetchMember(guild.guildID, user), (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
       this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
       this.generateLogDetails(
         await fetchMember(guild.guildID, user),

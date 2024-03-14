@@ -67,20 +67,6 @@ export default class InteractionEvent extends BaseEvent {
     const handler: BaseContextMenu = this.instance.contextMenuManager.getContextMenu(commandName)
     if (!handler) return
 
-    if (handler.options.get('isDeveloper') && developer) {
-      return handler.handler(interaction, interaction.member as GuildMember, interaction.guild)
-    }
-    if (handler.options.get('isDeveloper') && !developer) {
-      return this.replyToInteraction(interaction, 'Only my developers can execute this command.')
-    }
-
-    if (handler.options.get('isProtected') && interaction.member.permissions.has('ADMINISTRATOR')) {
-      return handler.handler(interaction, interaction.member as GuildMember, interaction.guild)
-    }
-    if (handler.options.get('isProtected') && !interaction.member.permissions.has('ADMINISTRATOR')) {
-      return this.replyToInteraction(interaction, 'Sorry, you need to be Moderator to execute this command')
-    }
-
     return handler.handler(interaction, interaction.member as GuildMember, interaction.guild)
   }
 

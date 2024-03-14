@@ -112,23 +112,19 @@ export default class CommandLocal extends BaseCommand {
       reason: reason,
       staff: inter.member.id,
       date: getCurrentDate()
-    }).save().then(async () => {
-      await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN', { user: user.tag })
-      await member.ban({ reason: reason })
-    }).catch(async (err) => {
-      await this.respond(inter, 'command.blacklist.error_title', 'command.blacklist.error_description', 'RED', {}, 'error')
-    })
+    }).save()
+
+    await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN', { user: user.tag })
+    await member.ban({ reason: reason })
   }
 
   async removeMemberFromBlacklist (inter: CommandInteraction<'cached'>, user: User) {
     await LocalBlacklist.deleteOne({
       guildId: inter.guildId,
       userID: user.id
-    }).then(async () => {
-      await this.respond(inter, 'command.blacklist.user_unblacklisted_title', 'command.blacklist.user_unblacklisted_description', 'GREEN', { user: user.tag })
-    }).catch(async err => {
-      await this.respond(inter, 'command.blacklist.error_title', 'command.blacklist.error_description', 'RED', {}, 'error')
     })
+
+    await this.respond(inter, 'command.blacklist.user_unblacklisted_title', 'command.blacklist.user_unblacklisted_description', 'GREEN', { user: user.tag })
   }
 
   async respond (inter: CommandInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
@@ -144,7 +140,7 @@ export default class CommandLocal extends BaseCommand {
   }
 
   async handleLog(guild: FGuild, inter: CommandInteraction<'cached'>, user: User, type: string, log: string) {
-    await this.sendLog(guild, inter.member, (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title', { user: user.tag }),
+    await this.sendLog(guild, await fetchMember(guild.guildID, user.id), (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title', { user: user.tag }),
       this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
       this.generateLogDetails(
         await fetchMember(guild.guildID, user.id),

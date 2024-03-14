@@ -16,15 +16,12 @@ export default class MemberJoin extends BaseEvent {
         blacklisted,
         localBlacklist,
         whitelist,
-        staff
       ] = await this.fetchRequiredData(member)
-
-      const extra = createExtraOptions(whitelist, staff)
 
       if (guild.logChannelID) {
         await this.sendLog(guild, member, 'warning', this.getLanguageManager().translate('event.member_added.title', {
           id: member.id
-        }), this.getLanguageManager().translate('event.member_added.description'), 'GREEN', this.generateLogDetails(member, blacklisted, localBlacklist), extra)
+        }), this.getLanguageManager().translate('event.member_added.description'), 'GREEN', this.generateLogDetails(member, blacklisted, localBlacklist))
 
         if (!whitelist) {
           await this.handleBan(guild, member, blacklisted, localBlacklist)
@@ -36,9 +33,8 @@ export default class MemberJoin extends BaseEvent {
   private async handleBan(guild: FGuild, member: GuildMember, blacklisted: FBlacklisted, locallyBlacklisted: FLocalBlacklist) {
     if (blacklisted) {
       await this.handleMember(member, blacklisted.reason)
-      await member.ban({ reason: blacklisted.reason })
 
-      return await this.sendLog(guild, member, 'ban', this.getLanguageManager().translate('event.member_added.banned_globally', {
+      await this.sendLog(guild, member, 'ban', this.getLanguageManager().translate('event.member_added.banned_globally', {
         username: member.user.tag
       }), '', '#640d85', [
         {
@@ -54,13 +50,14 @@ export default class MemberJoin extends BaseEvent {
           value: `${blacklisted.reason}`
         }
       ])
+
+      await member.ban({ reason: blacklisted.reason })
     }
 
     if (locallyBlacklisted) {
       await this.handleMember(member, locallyBlacklisted.reason)
-      await member.ban({ reason: locallyBlacklisted.reason })
 
-      return await this.sendLog(guild, member, 'ban', this.getLanguageManager().translate('event.member_added.banned_locally', {
+      await this.sendLog(guild, member, 'ban', this.getLanguageManager().translate('event.member_added.banned_locally', {
         username: member.user.tag
       }), '', '#640d85', [
         {
@@ -76,6 +73,8 @@ export default class MemberJoin extends BaseEvent {
           value: `${locallyBlacklisted.reason}`
         }
       ])
+
+      await member.ban({ reason: locallyBlacklisted.reason })
     }
   }
 
