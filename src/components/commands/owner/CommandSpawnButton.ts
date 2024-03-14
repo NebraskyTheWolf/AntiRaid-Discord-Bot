@@ -25,7 +25,7 @@ export default class CommandSpawnButton extends BaseCommand {
         const buttonHandler: BaseButton<unknown, unknown> = this.instance.buttonManager.getButton(buttonId);
 
         const replyMessageOnFailure = async (message: string) => {
-            await inter.reply({
+            await inter.followUp({
                 content: message,
                 ephemeral: true
             });
@@ -38,11 +38,11 @@ export default class CommandSpawnButton extends BaseCommand {
         if (!buttonHandler) {
             await replyMessageOnFailure(`Failed to summon ${buttonId}`);
         } else {
-            await inter.reply({
-                "components": [
+            await inter.followUp({
+                components: [
                     {
-                        "type": 1,
-                        "components": [buttonHandler.generate() as MessageButton]
+                        type: 1,
+                        components: [buttonHandler.generate() as MessageButton]
                     }
                 ],
                 embeds: [buttonHandler.message()]

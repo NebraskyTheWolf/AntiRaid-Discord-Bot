@@ -248,7 +248,7 @@ export default abstract class Base {
     });
   }
 
-  protected buildEmbedMessage(member: GuildMember, options: any) {
+  protected buildEmbedMessage(member: GuildMember, options: any): any {
     return [
       {
         title: this.getEmojisConfig().get(options.icon) + ' FurRaidDB - ' + options.title,
@@ -265,6 +265,19 @@ export default abstract class Base {
         }
       }
     ]
+  }
+
+  protected buildEmbedBody(options: any): any {
+    return {
+      title: this.getEmojisConfig().get(options.icon) + ' FurRaidDB - ' + options.title,
+      color: options.color,
+      description: options.description,
+      fields: options.fields,
+      footer: {
+        text: 'FurRaidBot',
+        icon_url: this.instance.user.avatarURL({ format: 'png' })
+      }
+    }
   }
 
   protected writeAuditLog(guildId: string, authorId: string, type: string, action: string) {

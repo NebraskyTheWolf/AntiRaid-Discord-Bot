@@ -5,6 +5,7 @@ import BaseComponent from "@fluffici.ts/components/BaseComponent";
 import { Snowflake, Collection, MessageButton, Interaction } from "discord.js";
 import Fragment from "./Fragment";
 import FragmentAction from "./FragmentAction";
+import ConfirmButton from "./admin/ConfirmButton";
 
 export default class ButtonManager {
     private BUTTONS: OptionMap<String, BaseButton<unknown, unknown>>;
@@ -19,7 +20,9 @@ export default class ButtonManager {
         this.logger = new Logger("ButtonRegistry");
     }
 
-    public registerButtons(): void { }
+    public registerButtons(): void {
+      this.addButton(new ConfirmButton())
+    }
 
     public addButton(button: BaseButton<unknown, unknown>): void {
         button.setting.add("isDynamic", false);
