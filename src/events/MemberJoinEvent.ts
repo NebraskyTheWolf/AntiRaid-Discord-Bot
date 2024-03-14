@@ -26,7 +26,9 @@ export default class MemberJoin extends BaseEvent {
           id: member.id
         }), this.getLanguageManager().translate('event.member_added.description'), 'GREEN', this.generateLogDetails(member, blacklisted, localBlacklist), extra)
 
-        await this.handleBan(guild, member, blacklisted, localBlacklist)
+        if (!whitelist) {
+          await this.handleBan(guild, member, blacklisted, localBlacklist)
+        }
       }
     })
   }
