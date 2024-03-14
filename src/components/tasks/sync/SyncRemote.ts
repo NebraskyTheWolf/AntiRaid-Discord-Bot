@@ -1,10 +1,11 @@
-import BaseTask from "@fluffici.ts/components/BaseTask";
-import Blacklist from "@fluffici.ts/database/Common/Blacklist";
-import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
-import {GuildMember} from "discord.js";
-import {fetchMemberByStaff} from "@fluffici.ts/types";
 import LocalBlacklist from "@fluffici.ts/database/Common/LocalBlacklist";
+import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
+import Blacklist from "@fluffici.ts/database/Common/Blacklist";
+import BaseTask from "@fluffici.ts/components/BaseTask";
+import {fetchMemberByStaff} from "@fluffici.ts/types";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
+
+import {GuildMember} from "discord.js";
 
 export default class SyncRemote extends BaseTask {
   public constructor() {
@@ -21,8 +22,7 @@ export default class SyncRemote extends BaseTask {
               isAcknowledged: true
             }
           }).then(async bl => {
-            await this.handleLog(guild, await fetchMemberByStaff(item.staffName), item.userID, "add", "log");
-            this.instance.logger.info(`${item._id} notified.`)
+            await this.handleLog(guild, await fetchMemberByStaff(item.staffName), item.userID, "add", "global");
           }).catch(err => {
             this.instance.logger.error(`Unable to synchronise ${item.userID} blacklist's from the dashboard : ${err}`)
           })

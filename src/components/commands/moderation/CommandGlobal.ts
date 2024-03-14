@@ -115,12 +115,8 @@ export default class CommandGlobal extends BaseCommand {
           return await this.respond(inter, 'command.blacklist.user_not_blacklisted_title', 'command.blacklist.user_not_blacklisted_description', 'RED', { user: user.tag }, 'error')
         }
 
-        await dGuild.bans.remove(user, 'FurRaidDB, Blacklist revoked by ' + inter.member.user.tag)
-
         await Blacklist.deleteOne({ userID: user.id })
-
         this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_removed", `Unblacklisted ${user.id}`)
-
         await this.handleLog(guild, inter, user, 'remove', 'global')
       }
     }
