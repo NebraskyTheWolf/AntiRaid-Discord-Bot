@@ -8,7 +8,7 @@ export default class FragmentAction extends BaseButton<MessageButton, void> {
     private readonly custom_id: string;
 
     public constructor(label: string, custom_id: string) {
-        super(`row_action_${custom_id}`, label, new OptionMap<string, unknown>());
+        super(`row_action_${custom_id}`, label);
 
         this.custom_id = custom_id;
     }

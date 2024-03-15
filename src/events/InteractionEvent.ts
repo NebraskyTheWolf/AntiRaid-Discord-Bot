@@ -20,7 +20,6 @@ export default class InteractionEvent extends BaseEvent {
           await interaction.deferReply({ fetchReply: true, ephemeral: true})
           await this.handleCommandInteraction(interaction, developer)
         } else if (interaction.isButton() || interaction.isSelectMenu()) {
-          await interaction.deferReply({ fetchReply: true, ephemeral: true})
           await this.handleButtonInteraction(interaction as ButtonInteraction<'cached'>, developer)
         } else if (interaction.isUserContextMenu()) {
           await interaction.deferReply({ fetchReply: true, ephemeral: true})
@@ -74,20 +73,6 @@ export default class InteractionEvent extends BaseEvent {
     const customId: string = interaction.customId
     const handler: BaseButton<unknown, unknown> = this.instance.buttonManager.getButton(customId)
     if (!handler) return
-
-    if (handler.setting.has('isDynamic') && handler.setting.get('ownerId') === interaction.member.id) {
-      return handler.handler(interaction)
-    }
-    if (handler.setting.has('isDynamic') && handler.setting.get('ownerId') !== interaction.member.id) {
-      return this.replyToInteraction(interaction, 'You are not allowed to click on this button.')
-    }
-
-    if (handler.setting.has('isProtected') && developer) {
-      return handler.handler(interaction)
-    }
-    if (handler.setting.has('isProtected') && !developer) {
-      return this.replyToInteraction(interaction, 'You are not allowed to click on this button.');
-    }
 
     return handler.handler(interaction);
   }

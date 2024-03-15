@@ -8,7 +8,7 @@ export default class Fragment extends BaseButton<MessageButton, void> {
     private readonly link: string;
 
     public constructor(label: string, link: string) {
-        super("row_temporary", label, new OptionMap<string, unknown>());
+        super("row_temporary", label);
 
         this.link = link;
     }

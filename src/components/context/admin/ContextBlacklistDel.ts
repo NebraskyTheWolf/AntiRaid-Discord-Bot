@@ -16,7 +16,7 @@ export default class ContextBlacklistDel extends BaseContextMenu {
       confirm.arguments.add('targetId', inter.targetId)
       confirm.arguments.add('ownerId', inter.member.id)
 
-      await inter.followUp({
+    const message = await inter.channel.send({
         embeds: [ confirm.message() ],
         components: [
           {
@@ -25,7 +25,12 @@ export default class ContextBlacklistDel extends BaseContextMenu {
               confirm.generate() as MessageButton
             ]
           }
-        ],
+        ]
+      })
+      confirm.arguments.add('messageId', message.id)
+
+      inter.reply({
+        content: 'Confirmation sent',
         ephemeral: true
       })
       return false;

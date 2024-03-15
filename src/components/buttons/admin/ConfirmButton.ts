@@ -18,10 +18,28 @@ export default class ConfirmButton extends BaseButton<MessageButton, void> {
 
     const targetId: string = this.arguments.get('targetId')
     const ownerId: string = this.arguments.get('ownerId')
+    const messageId: string = this.arguments.get('messageId')
 
     if (interaction.member.id !== ownerId) {
       return await this.respond(interaction, 'common.button.not_owned', 'common.button.not_owned.desc', 'RED', {}, 'error')
     }
+
+    await interaction.channel.messages.cache.get(messageId).edit({
+      embeds: [ this.message() ],
+      components: [
+        {
+          type: 1,
+          components: [
+            new MessageButton()
+              .setStyle(MessageButtonStyles.SUCCESS)
+              .setLabel("Confirmed")
+              .setDisabled(true)
+              .setEmoji(this.getEmojisConfig().get('success'))
+              .setCustomId(`row_confirm`)
+          ]
+        }
+      ],
+    })
 
     const global = await Blacklist.findOne({ userID: targetId })
     if (!global) {
@@ -32,7 +50,7 @@ export default class ConfirmButton extends BaseButton<MessageButton, void> {
     this.writeAuditLog(guild.guildID, interaction.member.id, "global_blacklist_removed", `Unblacklisted ${targetId}`)
     await this.handleLog(guild, interaction, targetId, 'remove', 'global')
 
-    return Promise.resolve(undefined);
+    return await this.respond(interaction, 'command.blacklist.user_unblacklisted_title', 'command.blacklist.user_unblacklisted_description', 'GREEN')
   }
 
   generate(): MessageButton {
@@ -46,14 +64,14 @@ export default class ConfirmButton extends BaseButton<MessageButton, void> {
   message(): MessageEmbed {
     return new MessageEmbed(this.buildEmbedBody({
       icon: 'warning',
-      title: this.getLanguageManager().translate('common.button.confirm.title'),
-      description: this.getLanguageManager().translate('common.button.confirm.description'),
+      title: 'Are you sure?',
+      description: 'If you continue you will remove the blacklist of the selected user.',
       fields: []
     }));
   }
 
   async respond (inter: ButtonInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
-    await inter.followUp({
+    await inter.reply({
       embeds: this.buildEmbedMessage(inter.member, {
         icon: icon,
         color: color,
