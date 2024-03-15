@@ -39,6 +39,8 @@ export default class ConfirmButton extends BaseButton<MessageButton, void> {
           ]
         }
       ],
+    }).then(msg => {
+      setTimeout(() => msg.delete(), 10000)
     })
 
     const global = await Blacklist.findOne({ userID: targetId })
