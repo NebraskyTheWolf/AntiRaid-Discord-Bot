@@ -75,17 +75,17 @@ export default class InteractionEvent extends BaseEvent {
     const handler: BaseButton<unknown, unknown> = this.instance.buttonManager.getButton(customId)
     if (!handler) return
 
-    if (handler.setting.get('isDynamic') && handler.setting.get('ownerId') === interaction.member.id) {
+    if (handler.setting.has('isDynamic') && handler.setting.get('ownerId') === interaction.member.id) {
       return handler.handler(interaction)
     }
-    if (handler.setting.get('isDynamic') && handler.setting.get('ownerId') !== interaction.member.id) {
+    if (handler.setting.has('isDynamic') && handler.setting.get('ownerId') !== interaction.member.id) {
       return this.replyToInteraction(interaction, 'You are not allowed to click on this button.')
     }
 
-    if (handler.setting.get('isProtected') && developer) {
+    if (handler.setting.has('isProtected') && developer) {
       return handler.handler(interaction)
     }
-    if (handler.setting.get('isProtected') && !developer) {
+    if (handler.setting.has('isProtected') && !developer) {
       return this.replyToInteraction(interaction, 'You are not allowed to click on this button.');
     }
 

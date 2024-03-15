@@ -66,5 +66,8 @@
   "event.message.log.title": "Scam detection",
   "event.message.log.description": "The user's message was flagged as suspicious because it contained a potentially harmful link.",
   "event.member_added.banned_globally": "This user was blacklisted globally.",
-  "event.transition": "We have transitioned to the utilization of slash commands. For further assistance, please employ the command /help."
+  "event.transition": "We have transitioned to the utilization of slash commands. For further assistance, please employ the command /help.",
+  "common.button.not_owned": "You cannot interact with this button as you are not the owner of this request.",
+  "common.button.confirm.title": "Are you sure?",
+  "common.button.confirm.description": "If you continue you will remove the blacklist of the selected user."
 }

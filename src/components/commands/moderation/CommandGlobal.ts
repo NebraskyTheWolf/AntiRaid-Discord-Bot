@@ -129,7 +129,7 @@ export default class CommandGlobal extends BaseCommand {
   }
 
   async handleLog(guild: FGuild, inter: CommandInteraction<'cached'>, user: string, type: string, log: string) {
-    await this.sendLog(guild, await fetchMember(guild.guildID, user), (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
+    await this.sendLog(guild, await fetchMember(guild.guildID, user), (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title', { user: user }),
       this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
       this.generateLogDetails(
         await fetchMember(guild.guildID, user),

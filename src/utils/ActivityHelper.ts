@@ -26,16 +26,16 @@ export default class ActivityHelper {
         status: boolean
         result?: String
     }> {
-        return await new Activity({
+        const result = await new Activity({
             guildId: guildId,
             memberId: this.owner,
             type: this.type,
             action: this.content,
             registeredAt: Date.now()
-        }).save().then(r => {
-          return new Promise((resolve) => {
-            resolve({ status: !isNull(r._id), result: r._id });
-          })
-        })
+        }).save()
+
+      return new Promise((resolve) => {
+        resolve({ status: true, result: result._id });
+      })
     }
 }

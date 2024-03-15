@@ -44,7 +44,7 @@ export default class ContextBlacklist extends BaseContextMenu {
     this.writeAuditLog(fGuild.guildID, inter.member.id, "global_blacklist_added", `Blacklisted ${inter.targetId} reason Raider`)
     await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
 
-    await member.ban({ reason: 'Raider' })
+    await bMember.ban({ reason: 'Raider' })
   }
 
   async respond (inter: ContextMenuInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
@@ -60,7 +60,7 @@ export default class ContextBlacklist extends BaseContextMenu {
   }
 
   async handleLog(guild: FGuild, inter: ContextMenuInteraction<'cached'>, user: string, type: string, log: string) {
-    await this.sendLog(guild, await fetchMember(guild.guildID, user), (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title'),
+    await this.sendLog(guild, await fetchMember(guild.guildID, user), (type === "add" ? 'ban' : 'info'), this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.title', { user: user }),
       this.getLanguageManager().translate('command.blacklist.' + type + '.log.' + log + '.description'), 'RED',
       this.generateLogDetails(
         await fetchMember(guild.guildID, user),

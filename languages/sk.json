@@ -66,5 +66,8 @@
   "event.message.log.title": "Detekcia podvodu",
   "event.message.log.description": "Správa užívateľa bola označená ako podozrivá, pretože obsahovala potenciálne škodlivý odkaz.",
   "event.member_added.banned_globally": "Tento užívateľ bol globálne zaradený na čiernu listinu.",
-  "event.transition": "Čas na upgrade! Prešli sme na používanie príkazov so znakom /. Pre ďalšiu pomoc, prosím použite príkaz /help"
+  "event.transition": "Čas na upgrade! Prešli sme na používanie príkazov so znakom /. Pre ďalšiu pomoc, prosím použite príkaz /help",
+  "common.button.not_owned": "Nemůžete interagovat s tímto tlačítkem, protože nejste vlastníkem této žádosti.",
+  "common.button.confirm.title": "Jste si jistý?",
+  "common.button.confirm.description": "Pokud budete pokračovat, odstraníte blacklist pro vybraného uživatele."
 }

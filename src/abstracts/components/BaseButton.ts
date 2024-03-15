@@ -5,11 +5,13 @@ import { Interaction, MessageEmbed } from "discord.js";
 export default abstract class BaseButton<T, V> extends Base {
     public readonly customId: string;
     public readonly setting: OptionMap<string, unknown>;
+    public readonly arguments: OptionMap<string, string>;
 
-    protected constructor(name: string, label: string, setting?: OptionMap<string, unknown>) {
+    protected constructor(name: string, label: string) {
         super(name, label, "BUTTON");
         this.customId = this.name;
-        this.setting = setting || new OptionMap<string, unknown>();
+        this.setting = new OptionMap<string, unknown>();
+        this.arguments = new OptionMap<string, string>();
     }
 
     public abstract handler(interaction: Interaction<"cached">): Promise<V>;
@@ -18,5 +20,9 @@ export default abstract class BaseButton<T, V> extends Base {
 
     protected getComponent(customId: string): T {
         return this.instance.buttonManager.getButton(customId).generate() as T;
+    }
+
+    protected getArguments():  OptionMap<string, string> {
+      return this.arguments
     }
 }
