@@ -91,6 +91,7 @@
   "event.message.log.title.spam": ":id - Čas vypršel",
 
   "verification.enforced.author": "Je požadována žádost o ověření.",
+  "verification.enforced.verified": "Nový člen byl právě ověřen!",
   "verification.enforced.title": ":appName Žádost o ověření",
   "verification.enforced.username": "Uživatelské jméno:",
   "verification.enforced.discriminator": "Diskriminator:",

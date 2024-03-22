@@ -79,7 +79,7 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
 
           const embed = new MessageEmbed()
             .setColor("ORANGE")
-            .setAuthor(this.getLanguageManager().translate("verification.enforced.author"), this.instance.user.avatarURL({format: 'png'}))
+            .setAuthor(this.getLanguageManager().translate("verification.enforced.verified"), this.instance.user.avatarURL({format: 'png'}))
             .setDescription(`**Jste furry? Pokud ano, popište nám vaši fursonu (není pravidlem pro připojení):** \`\`\`${form.answers[0].content}\`\`\` ** Napište pár slov o sobě:** \`\`\`${form.answers[1].content}\`\`\` **Jaký máte vztah k furry komunitě?:** \`\`\`${form.answers[2].content}\`\`\` **Jak jste našli náš server?:** \`\`\`${form.answers[3].content}\`\`\``)
             .addField("Username", member.user.username, false)
             .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.jpeg`);
