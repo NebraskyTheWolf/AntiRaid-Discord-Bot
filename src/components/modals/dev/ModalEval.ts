@@ -25,7 +25,8 @@ export default class ModalEval extends BaseModal {
 
     if (!code) {
       return inter.reply({
-        content: 'Code is required.'
+        content: 'Code is required.',
+        ephemeral: false
       })
     }
 
@@ -67,14 +68,15 @@ export default class ModalEval extends BaseModal {
 
     for (const keyword of blockedKeywords) {
       if (code.includes(keyword)) {
-        return await inter.followUp({
+        return await inter.reply({
           embeds: [
             {
               title: 'FurRaidDB - Code evaluation : failed.',
               description: `The decorator '${keyword}' is not permitted.`,
               color: "RED"
             }
-          ]
+          ],
+          ephemeral: false
         })
       }
     }
@@ -90,24 +92,26 @@ export default class ModalEval extends BaseModal {
       });
 
       const result = vm.run(code);
-      return await inter.followUp({
+      return await inter.reply({
         embeds: [
           {
             title: `FurRaidDB - Code evaluation : success. '${isDecorated ? 'Decorated' : ''}'`,
             description: `**Result:**\`\`\`${result}\`\`\``,
             color: "GREEN"
           }
-        ]
+        ],
+        ephemeral: false
       })
     } catch (error) {
-      return await inter.followUp({
+      return await inter.reply({
         embeds: [
           {
             title: `FurRaidDB - Code evaluation : failed. '${isDecorated ? 'Decorated' : ''}'`,
             description: `**Result:**\`\`\`${error.message}\`\`\``,
             color: "RED"
           }
-        ]
+        ],
+        ephemeral: false
       })
     }
   }

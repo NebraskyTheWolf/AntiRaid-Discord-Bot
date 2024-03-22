@@ -17,7 +17,9 @@ export default class InteractionEvent extends BaseEvent {
         const developer = await Developer.findOne({ userId: interaction.member.id })
 
         if (interaction.isCommand()) {
-          await interaction.deferReply({ fetchReply: true, ephemeral: true})
+          if (interaction.commandName != "eval") {
+            await interaction.deferReply({ fetchReply: true, ephemeral: true})
+          }
           await this.handleCommandInteraction(interaction, developer)
         } else if (interaction.isButton() || interaction.isSelectMenu()) {
           await this.handleButtonInteraction(interaction as ButtonInteraction<'cached'>, developer)
@@ -39,7 +41,7 @@ export default class InteractionEvent extends BaseEvent {
     })
   }
 
-  private handleCommandInteraction (interaction: CommandInteraction<'cached'>, developer: any) {
+  private async handleCommandInteraction (interaction: CommandInteraction<'cached'>, developer: any) {
     const commandName: string = interaction.commandName
     const handler: BaseCommand = this.instance.manager.getCommand(commandName)
     if (!handler) return

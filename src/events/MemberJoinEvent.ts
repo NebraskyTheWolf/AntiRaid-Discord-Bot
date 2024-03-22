@@ -10,7 +10,7 @@ import OptionMap from "@fluffici.ts/utils/OptionMap";
 import PreventedRaid from "@fluffici.ts/database/Security/PreventedRaid";
 
 const RAID_MEMBER_THRESHOLD = 10;
-const JOIN_RATE_TIME = 25 * 1000;  // Interval (ms) to consider multiple joins as a raid.
+const JOIN_RATE_TIME = 10 * 1000;  // Interval (ms) to consider multiple joins as a raid.
 const affectedMembers: string[] = [];
 
 export interface Joined {
@@ -46,59 +46,56 @@ export default class MemberJoin extends BaseEvent {
 
     if (!this.joinTimestamps.has(guildID)) {
       this.joinTimestamps.add(guildID, new OptionMap<Snowflake, Joined>());
-    }
-
-    const guildJoinTimestamps = this.joinTimestamps.get(guildID);
-    guildJoinTimestamps.add(member.id, joined);
-    guildJoinTimestamps.setMap(guildJoinTimestamps.getMap().filter((value, key) => Date.now() - value.joinedAt >= JOIN_RATE_TIME))
-
-    let counter = this.joinCounters.get(guildID) || 0;
-
-    if (Date.now() - (this.counterTimestamps.get(guildID) || 0) > JOIN_RATE_TIME) {
-      counter = 0;
       this.counterTimestamps.add(guildID, Date.now());
     }
 
-    for (const [, value] of guildJoinTimestamps.getMap()) {
-      if (counter >= 10) break;
-      if (Date.now() - value.joinedAt <= JOIN_RATE_TIME) counter += 1;
-    }
+    const guildJoinTimestamps = this.joinTimestamps.get(guildID);
+    guildJoinTimestamps.add(guildID, joined);
 
-    this.joinCounters.add(guildID, counter);
+    // The Counter reset
+    if (Date.now() - this.counterTimestamps.get(guildID) >= JOIN_RATE_TIME) {
+      this.joinCounters.remove(guildID);
+      this.joinTimestamps.remove(guildID);
+      this.counterTimestamps.remove(guildID);
+      guildJoinTimestamps.remove(guildID)
+    } else {
+      let counter = this.joinCounters.get(guildID, 0);
+      counter += 1;
+      this.joinCounters.add(guildID, counter);
 
-    if (counter >= RAID_MEMBER_THRESHOLD) {
-      let session = v4()
+      if (counter >= RAID_MEMBER_THRESHOLD) {
+        let session = v4()
 
-      for (const [, m] of guildJoinTimestamps.getMap()) {
-        if (Date.now() - m.joinedAt <= JOIN_RATE_TIME) {
-          try {
-            m.member.timeout(600 * 1000).catch(console.error)
-            affectedMembers.push(`${m.member.user.username}#${m.member.user.discriminator}`);
-            new RaidSession({
-              session: session,
-              userId: m.member.id
-            }).save()
-          } catch (err) {
-            console.error(err);
+        for (const [, m] of guildJoinTimestamps.getMap()) {
+          if (Date.now() - m.joinedAt <= JOIN_RATE_TIME) {
+            try {
+              m.member.timeout(600 * 1000).catch(console.error)
+              affectedMembers.push(`${m.member.user.username}#${m.member.user.discriminator}`);
+              new RaidSession({
+                session: session,
+                userId: m.member.id
+              }).save()
+            } catch (err) {
+              console.error(err);
+            }
+
+            m.hasBeenLocked = true;
           }
-
-          m.hasBeenLocked = true;
         }
+
+        new PreventedRaid({
+          session: session
+        }).save()
+
+        this.handleRaidLog(session, guild)
       }
 
-      new PreventedRaid({
-        session: session
-      }).save()
-
-      this.handleRaidLog(session, guild)
-    }
-
-
-    this.instance.logger.info(`[Debug] Handled raid protection for guild ${guildID} with current details:\n
+      this.instance.logger.info(`[Debug] Handled raid protection for guild ${guildID} with current details:\n
         Total join timestamps stored: ${guildJoinTimestamps.getMap().size}
-        Counter: ${counter}\n
+        Counter: ${counter}\n Timestamp: ${this.counterTimestamps.get(guildID)}\n
         Members potentially involved in the raid (${affectedMembers.length}): ${affectedMembers.join(', ')}\n
       `);
+    }
   }
 
   private async handleRaidLog(session: string, guild: FGuild) {
