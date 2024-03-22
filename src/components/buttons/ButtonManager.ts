@@ -6,6 +6,9 @@ import { Snowflake, Collection, MessageButton, Interaction } from "discord.js";
 import Fragment from "./Fragment";
 import FragmentAction from "./FragmentAction";
 import ConfirmButton from "./admin/ConfirmButton";
+import ConfirmBulkBlacklist from "./admin/bulk/ConfirmBulkBlacklist";
+import CancelButton from "./admin/bulk/CancelButton";
+import SyncButton from "./admin/SyncButton";
 
 export default class ButtonManager {
     private BUTTONS: OptionMap<String, BaseButton<unknown, unknown>>;
@@ -22,6 +25,13 @@ export default class ButtonManager {
 
     public registerButtons(): void {
       this.addButton(new ConfirmButton())
+
+      // Bulk blacklist on lockdown.
+      this.addButton(new ConfirmBulkBlacklist())
+      this.addButton(new CancelButton())
+
+      // Dev button
+      this.addButton(new SyncButton())
     }
 
     public addButton(button: BaseButton<unknown, unknown>): void {

@@ -7,9 +7,6 @@
 **.gitattributes
 **.gitignore
 **.md
-
-/src/dashboard/vendor/orchid/platform/node_modules
-/node_modules/
 .github
 .idea
 docker

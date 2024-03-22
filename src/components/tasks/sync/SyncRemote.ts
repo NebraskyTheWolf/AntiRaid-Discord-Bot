@@ -2,7 +2,7 @@ import LocalBlacklist from "@fluffici.ts/database/Common/LocalBlacklist";
 import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
 import Blacklist from "@fluffici.ts/database/Common/Blacklist";
 import BaseTask from "@fluffici.ts/components/BaseTask";
-import {fetchMemberByStaff} from "@fluffici.ts/types";
+import {fetchMember, fetchMemberByStaff} from "@fluffici.ts/types";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 
 import {GuildMember} from "discord.js";
@@ -22,6 +22,10 @@ export default class SyncRemote extends BaseTask {
               isAcknowledged: true
             }
           }).then(async bl => {
+            const member = await fetchMember(guild.guildID, item.userID)
+            if (member) {
+              await member.ban({ reason: `Blacklisted from the dashboard by ${item.staffName}` });
+            }
             await this.handleLog(guild, await fetchMemberByStaff(item.staffName), item.userID, "add", "global");
           }).catch(err => {
             this.instance.logger.error(`Unable to synchronise ${item.userID} blacklist's from the dashboard : ${err}`)

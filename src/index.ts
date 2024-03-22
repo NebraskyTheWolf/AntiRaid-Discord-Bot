@@ -27,6 +27,8 @@ import express from "express"
 import ContextMenuManager from "./components/context/ContextMenuManager";
 import ModalManager from "./components/modals/ModalManager";
 import TasksManager from "./components/tasks/TasksManager";
+import {createClient, RedisClientType} from "@redis/client";
+import ServerManager from "./api";
 
 const app = express();
 
@@ -34,6 +36,7 @@ export default class Fluffici extends Client {
     public static instance: Fluffici
 
     public database: mongoose.Mongoose
+    public redisClient: RedisClientType
 
     public readonly logger: Logger
     public readonly checker: InitChecker
@@ -46,6 +49,8 @@ export default class Fluffici extends Client {
     public modalManager: ModalManager
     public taskManager: TasksManager
     public loaded: boolean = false
+
+    public serverManager: ServerManager
 
     public readonly version: string = process.env.VERSION || "Unreferenced version."
     public readonly revision: string = process.env.REVISION || "Unreferenced revision code."
@@ -104,13 +109,18 @@ export default class Fluffici extends Client {
       this.logger.info(`Revision: ${this.revision}`)
     }
 
-    private connectToDBAndLoad (): void {
+    private async connectToDBAndLoad (): Promise<void> {
       this.logger.info("Connecting to MongoDB")
       mongoose.connect(process.env.MONGODB, {}).then(db => {
         this.database = db;
         this.logger.info("Connected to MongoDB.");
         this.load();
       }).catch(err => { this.logger.warn("Failed to contact the database.") });
+
+      this.redisClient = createClient({
+        url: process.env['REDIS_URL']
+      })
+      await this.redisClient.connect()
     }
 
     private load() {
@@ -136,18 +146,12 @@ export default class Fluffici extends Client {
       this.taskManager = new TasksManager()
       this.taskManager.registerAll()
 
-      app.get('/', function (req, res) {
-        return res.json({
-          status: true,
-          message: 'FurRaidDB is alive.'
-        })
-      })
+      this.serverManager = new ServerManager()
+      this.serverManager.registerServers()
 
       this.login(process.env.TOKEN).then(r => {
-        app.listen(4444, () => {
-          this.logger.info("WebApp is listening on port 4444")
-          this.logger.info(`Client logged on ${r}`)
-        })
+        // Load the backend only once the bot is logged.
+        this.serverManager.initServers()
       })
     }
 

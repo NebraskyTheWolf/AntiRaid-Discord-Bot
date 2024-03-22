@@ -1,7 +1,7 @@
 import { Collection } from "discord.js";
 
 export default class OptionMap<T, V> {
-    private readonly map: Collection<T, V>;
+    private map: Collection<T, V>;
 
     public constructor() {
         this.map = new Collection();
@@ -30,5 +30,9 @@ export default class OptionMap<T, V> {
 
     public getMap(): Collection<T, V> {
         return this.map;
+    }
+
+    public setMap(collection: Collection<T, V>) {
+      this.map = collection
     }
 }

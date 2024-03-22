@@ -80,6 +80,8 @@ export default class CommandSet extends BaseCommand {
                 .addChoices({ name: 'Czech', value: 'cz' })
                 .addChoices({ name: 'Slovak', value: 'sk' })
                 .addChoices({ name: 'English', value: 'en' })
+                .addChoices({ name: 'Pirate', value: 'pirate' })
+                .addChoices({ name: 'Cat miaow', value: 'cat' })
                 .setMinLength(2)
                 .setMaxLength(12)
             )

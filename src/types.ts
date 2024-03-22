@@ -1,22 +1,10 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   types.ts                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: alle.roy <alle.roy.student@42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/03 06:23:57 by NebraskyThe       #+#    #+#             */
-/*   Updated: 2023/02/08 16:01:53 by alle.roy         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import Riniya from "@fluffici.ts";
 import Logger from "@fluffici.ts/logger";
 import GuildModel from "@fluffici.ts/database/Guild/Guild";
 
-import { GuildMember } from "discord.js"
-import { Whitelist as FWhitelisted } from '@fluffici.ts/database/Common/Whitelist'
-import Staff, { Staff as FStaff } from '@fluffici.ts/database/Guild/Staff'
+import {GuildMember, User} from "discord.js"
+import {Whitelist as FWhitelisted} from '@fluffici.ts/database/Common/Whitelist'
+import Staff, {Staff as FStaff} from '@fluffici.ts/database/Guild/Staff'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
 export function getInstance(): Riniya {
@@ -37,6 +25,10 @@ export async function fetchGuild(guildId: string) {
 
 export async function fetchMember(guildId: string, memberId: string): Promise<GuildMember> {
     return Riniya.instance.guilds.cache.get(guildId).members.cache.get(memberId);
+}
+
+export async function fetchUser(userId: string): Promise<User> {
+  return await Riniya.instance.users.fetch(userId, {force: true, cache: false});
 }
 
 export async function fetchMemberByStaff(memberName: string): Promise<GuildMember> {

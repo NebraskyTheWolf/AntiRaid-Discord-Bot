@@ -1,8 +1,6 @@
 import ora from "ora"
 import { v4 } from "uuid"
 
-export declare type Result = "SUCCEED" | "FAILED" | "TIMEDOUT"
-
 export default abstract class BaseTest {
   private readonly name: string
   private readonly spinner: ora.Ora
@@ -23,7 +21,6 @@ export default abstract class BaseTest {
     process.on('unhandledRejection', () => { })
 
     this.updateTheme()
-
     this.handle()
     const timeout = setInterval(() => {
       if (this.isRunning)

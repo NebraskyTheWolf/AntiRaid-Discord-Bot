@@ -1,6 +1,7 @@
 import BaseModal from "@fluffici.ts/components/BaseModal";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import ModalBlacklistAdd from "./admin/ModalBlacklistAdd";
+import ModalEval from "./dev/ModalEval";
 
 export default class ModalManager {
     private MODALS: OptionMap<string, BaseModal>;
@@ -11,6 +12,7 @@ export default class ModalManager {
 
     public registerModals(): void {
       this.registerModal(new ModalBlacklistAdd())
+      this.registerModal(new ModalEval())
     }
 
     public registerModal(modal: BaseModal): void {

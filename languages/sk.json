@@ -69,5 +69,17 @@
   "event.transition": "Čas na upgrade! Prešli sme na používanie príkazov so znakom /. Pre ďalšiu pomoc, prosím použite príkaz /help",
   "common.button.not_owned": "Nemůžete interagovat s tímto tlačítkem, protože nejste vlastníkem této žádosti.",
   "common.button.confirm.title": "Jste si jistý?",
-  "common.button.confirm.description": "Pokud budete pokračovat, odstraníte blacklist pro vybraného uživatele."
+  "common.button.confirm.description": "Pokud budete pokračovat, odstraníte blacklist pro vybraného uživatele.",
+  "event.message.log.title.muted": "Užívateľ :username dostal timeout kvôli spamovaniu podvodov.",
+  "common.alert.message.one": "Detekovaný potenciálny nájazd.",
+  "common.raid.value": "Detaily:",
+  "common.action": "Akcia",
+  "common.alert.message.two": ":affected sa pripojilo za menej ako :ratelimit",
+  "common.alert.message.three": "Členovia boli dočasne vypojení na 10 minút, kým nebude podniknutá ďalšia akcia.",
+  "command.blacklist.bulk.blacklist.session_not_found": "Chyba",
+  "command.blacklist.bulk.blacklist.session_not_found.desc": "Nebolo nájdené žiadne sedenie.",
+  "command.blacklist.bulk.blacklist.success": "Úspech",
+  "command.blacklist.bulk.blacklist.success.desc": "Potvrdili ste blacklist.",
+  "command.blacklist.bulk.blacklist.cancelled": "Zrušené",
+  "command.blacklist.bulk.blacklist.cancelled.desc": "Po uplynutí 60 sekúnd sa zruší časový limit pre všetkých členov v zozname."
 }

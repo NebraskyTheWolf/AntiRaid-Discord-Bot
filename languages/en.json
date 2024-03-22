@@ -69,5 +69,18 @@
   "event.transition": "We have transitioned to the utilization of slash commands. For further assistance, please employ the command /help.",
   "common.button.not_owned": "You cannot interact with this button as you are not the owner of this request.",
   "common.button.confirm.title": "Are you sure?",
-  "common.button.confirm.description": "If you continue you will remove the blacklist of the selected user."
+  "common.button.confirm.description": "If you continue you will remove the blacklist of the selected user.",
+  "event.message.log.title.muted": "The user :username was given a timeout due to spam of suspicious links.",
+
+  "common.alert.message.one": "Potential raid detected.",
+  "common.raid.value": "Details:",
+  "common.action": "Action",
+  "common.alert.message.two": ":affected members joined in less than :ratelimit",
+  "common.alert.message.three": "The members was temporarily timed-out for 10 minutes until further action.",
+  "command.blacklist.bulk.blacklist.session_not_found": "Error",
+  "command.blacklist.bulk.blacklist.session_not_found.desc": "No session was found.",
+  "command.blacklist.bulk.blacklist.success": "Success",
+  "command.blacklist.bulk.blacklist.success.desc": "You confirmed the blacklist.",
+  "command.blacklist.bulk.blacklist.cancelled": "Cancelled",
+  "command.blacklist.bulk.blacklist.cancelled.desc": "All members in the list will be released of the timeout in 60 seconds."
 }

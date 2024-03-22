@@ -98,6 +98,7 @@
     "socket.io-client": "^4.5.4",
     "socket.io-json-parser": "^3.0.0",
     "twitter-api-sdk": "^1.2.1",
+    "vm2": "^3.9.19",
     "wss": "^3.3.4"
   },
   "devDependencies": {
