@@ -28,10 +28,6 @@ export default class ConfirmBulkBlacklist extends BaseButton<MessageButton, void
     if (!members) {
       return await this.respond(interaction, 'command.blacklist.bulk.blacklist.session_not_found', 'command.blacklist.bulk.blacklist.session_not_found.desc', 'RED')
     }
-
-    if (!interaction.member.permissions.has("ADMINISTRATOR")) {
-      return await this.respond(interaction, 'common.button.not_owned', 'common.button.not_owned.desc', 'RED', {}, 'error')
-    }
     members.forEach(async m => {
       let member = await fetchMember(guild.guildID, m.userId)
 
