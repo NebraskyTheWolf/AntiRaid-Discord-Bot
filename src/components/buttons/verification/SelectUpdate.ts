@@ -84,7 +84,7 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
             .addField("Username", member.user.username, false)
             .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.jpeg`);
 
-          const verifLog = interaction.guild.channels.cache.get("606534136806637594") as TextChannel
+          const verifLog = interaction.guild.channels.cache.get("963133802316714066") as TextChannel
           verifLog.send({embeds: [embed]})
 
           const embedGeneral = new MessageEmbed()
@@ -93,7 +93,7 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
             .setDescription(`Přivítejte ho mezi Fluffíky! :green_heart:`)
             .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.jpeg`);
 
-          const general = interaction.guild.channels.cache.get("963133802316714066") as TextChannel
+          const general = interaction.guild.channels.cache.get("606534136806637594") as TextChannel
           general.send({embeds: [embedGeneral]})
 
           await new AcitivityHelper()
