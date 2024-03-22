@@ -2,10 +2,12 @@ import Riniya from "@fluffici.ts";
 import Logger from "@fluffici.ts/logger";
 import GuildModel from "@fluffici.ts/database/Guild/Guild";
 
-import {GuildMember, User} from "discord.js"
+import {GuildMember, TextChannel, User} from "discord.js"
 import {Whitelist as FWhitelisted} from '@fluffici.ts/database/Common/Whitelist'
 import Staff, {Staff as FStaff} from '@fluffici.ts/database/Guild/Staff'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
+import Guild from "@fluffici.ts/database/Guild/Guild";
+import Interaction from "@fluffici.ts/database/Guild/Interaction";
 
 export function getInstance(): Riniya {
     return Riniya.instance;
@@ -73,4 +75,30 @@ export function getAmountOfDays(timestamp: Date): number {
   const diffInTime = now.getTime() - timestamp.getTime()
 
   return Math.ceil(diffInTime / (1000 * 60 * 60 * 24))
+}
+
+export async function updateVerification(target: GuildMember, message: string) {
+  const channel: TextChannel = Riniya.instance.guilds.cache.get("606534136806637589").channels.cache.get("1220695667887046677") as TextChannel;
+  const interMessage = await Interaction.findOne({
+    guildId: '606534136806637589',
+    memberId: target.id,
+    deleted: false
+  })
+
+  if (isNull(interMessage)) {
+    return;
+  }
+
+  await channel.messages.fetch(interMessage.messageId).then(r => r.edit({
+    components: [
+      {
+        type: 1,
+        components: [
+          Riniya.instance.buttonManager.createLinkButton(message, "https://fluffici.eu")
+        ]
+      }
+    ]
+  }))
+
+  await Interaction.deleteOne({ _id: interMessage._id })
 }

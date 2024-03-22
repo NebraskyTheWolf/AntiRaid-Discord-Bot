@@ -17,6 +17,8 @@ import CommandLocal from "./moderation/CommandLocal";
 import CommandSpawnButton from "./owner/CommandSpawnButton";
 import ForceResync from "./owner/ForceResync";
 import CommandEval from "./owner/CommandEval";
+import DisableSpamProtection from "./owner/DisableSpamProtection";
+import CommandTicket from "./admin/CommandTicket";
 
 export default class CommandManager {
   private REGISTRY: OptionMap<String, BaseCommand>;
@@ -41,6 +43,7 @@ export default class CommandManager {
     this.registerCommand(new CommandHelp())
     this.registerCommand(new CommandInvite())
     this.registerCommand(new CommandSupport())
+    this.registerCommand(new CommandTicket())
 
     this.registerCommand(new CommandGlobal())
     this.registerCommand(new CommandLocal())
@@ -51,6 +54,8 @@ export default class CommandManager {
     this.registerCommand(new CommandSpawnButton())
     this.registerCommand(new ForceResync())
     this.registerCommand(new CommandEval())
+    this.registerCommand(new DisableSpamProtection())
+
   }
 
   /**

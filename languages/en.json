@@ -82,5 +82,33 @@
   "command.blacklist.bulk.blacklist.success": "Success",
   "command.blacklist.bulk.blacklist.success.desc": "You confirmed the blacklist.",
   "command.blacklist.bulk.blacklist.cancelled": "Cancelled",
-  "command.blacklist.bulk.blacklist.cancelled.desc": "All members in the list will be released of the timeout in 60 seconds."
+  "command.blacklist.bulk.blacklist.cancelled.desc": "All members in the list will be released of the timeout in 60 seconds.",
+
+  "common.dont.spam.everyone": "Please don't use @ everyone too often.",
+  "common.dont.repeat": "Please don't repeat yourself too often.",
+  "common.dont.spam": "Please don't spam the chat.",
+
+  "event.message.spam.detected.everyone": "Sent :messages everyone mention in less than :ratelimit seconds.",
+  "event.message.spam.detected": "Sent :messages messages in less than :ratelimit seconds.",
+  "event.message.log.title.spam": ":id - Timed out",
+
+  "verification.enforced.author": "Enforced verification required.",
+  "verification.enforced.title": ":appName Verification request",
+  "verification.enforced.username": "Username:",
+  "verification.enforced.discriminator": "Discriminator:",
+  "verification.enforced.sent": "Success",
+  "verification.enforced.description": "Your verification request has been sent, please wait at least 24 hours.",
+
+  "verification.result.failed.author": "Verification result from :author",
+  "verification.result.failed.title": "Verification denied.",
+  "verification.result.failed.description": "Your verification request has been denied for the following reason.",
+  "verification.result.failed.denied.admin": "Verification denied.",
+
+  "verification.accepted.author": "Verification result from :author",
+  "verification.accepted.title": ":server Verification accepted.",
+  "verification.accepted.description": "Your verification has been accepted. :3",
+
+  "ticket.already.channel": "Your ticket channel",
+  "ticket.ticket.created": "Your ticket channel has been created.",
+  "ticket.blocked": "Regrettably, you are no longer permitted to create tickets due to non-compliance with the server's established rules."
 }

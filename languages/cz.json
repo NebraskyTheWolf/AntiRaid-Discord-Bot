@@ -81,5 +81,32 @@
   "command.blacklist.bulk.blacklist.success": "Úspěch",
   "command.blacklist.bulk.blacklist.success.desc": "Potvrdili jste blacklist.",
   "command.blacklist.bulk.blacklist.cancelled": "Zrušeno",
-  "command.blacklist.bulk.blacklist.cancelled.desc": "Časový limit pro všechny členy v seznamu bude zrušen za 60 sekund."
+  "command.blacklist.bulk.blacklist.cancelled.desc": "Časový limit pro všechny členy v seznamu bude zrušen za 60 sekund.",
+  "common.dont.spam.everyone": "Prosím nepoužívejte příliš často @ everyone.",
+  "common.dont.repeat": "Prosím nepřehánějte se příliš často.",
+  "common.dont.spam": "Prosím nezaplněte chat zprávami.",
+
+  "event.message.spam.detected.everyone": "Odesláno :messages zmínek @everyone do :ratelimit sekund.",
+  "event.message.spam.detected": "Odesláno :messages zpráv do :ratelimit sekund.",
+  "event.message.log.title.spam": ":id - Čas vypršel",
+
+  "verification.enforced.author": "Je požadována žádost o ověření.",
+  "verification.enforced.title": ":appName Žádost o ověření",
+  "verification.enforced.username": "Uživatelské jméno:",
+  "verification.enforced.discriminator": "Diskriminator:",
+  "verification.enforced.sent": "Úspěšně odesláno",
+  "verification.enforced.description": "Tvoje žádost o ověření byla odeslána, prosíme o ztrpení.",
+
+  "verification.result.failed.author": "Výsledek ověření od :author",
+  "verification.result.failed.title": "Ověření bylo zamítnuto.",
+  "verification.result.failed.description": "Tvoje žádost o ověření byla zamítnuta z následujícího důvodu.",
+  "verification.result.failed.denied.admin": "Žádost zamítnuta.",
+
+  "verification.accepted.author": "Výsledek ověření od :author",
+  "verification.accepted.title": ":server Ověření bylo úspěšné.",
+  "verification.accepted.description": "Tvoje ověření bylo úspěšné. :3",
+
+  "ticket.already.channel": "Tvůj ticket",
+  "ticket.created": "Tvůj ticket byl nyní vytvořen.",
+  "ticket.blocked": "Bohužel, již vám není dovoleno vytvářet lístky kvůli nedodržení stanovených pravidel serveru."
 }

@@ -81,5 +81,12 @@
   "command.blacklist.bulk.blacklist.success": "Úspech",
   "command.blacklist.bulk.blacklist.success.desc": "Potvrdili ste blacklist.",
   "command.blacklist.bulk.blacklist.cancelled": "Zrušené",
-  "command.blacklist.bulk.blacklist.cancelled.desc": "Po uplynutí 60 sekúnd sa zruší časový limit pre všetkých členov v zozname."
+  "command.blacklist.bulk.blacklist.cancelled.desc": "Po uplynutí 60 sekúnd sa zruší časový limit pre všetkých členov v zozname.",
+
+  "common.dont.spam.everyone": "Prosím, nepoužívajte príliš často @ everyone.",
+  "common.dont.repeat": "Prosím, neopakujte sa príliš často.",
+  "common.dont.spam": "Prosím, nezaplavujte chat správami.",
+  "event.message.spam.detected.everyone": "Odoslané :messages @everyone zmienky za menej ako :ratelimit sekúnd.",
+  "event.message.spam.detected": "Odoslané :messages správy za menej ako :ratelimit sekúnd.",
+  "event.message.log.title.spam": ":id - Čas vypršal"
 }

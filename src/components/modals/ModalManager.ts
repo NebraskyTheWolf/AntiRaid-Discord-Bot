@@ -2,6 +2,8 @@ import BaseModal from "@fluffici.ts/components/BaseModal";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import ModalBlacklistAdd from "./admin/ModalBlacklistAdd";
 import ModalEval from "./dev/ModalEval";
+import ModalVerificationDenied from "./verify/ModalVerificationDenied";
+import ModalVerificationSubmit from "./verify/ModalVerificationSubmit";
 
 export default class ModalManager {
     private MODALS: OptionMap<string, BaseModal>;
@@ -13,6 +15,9 @@ export default class ModalManager {
     public registerModals(): void {
       this.registerModal(new ModalBlacklistAdd())
       this.registerModal(new ModalEval())
+
+      this.registerModal(new ModalVerificationDenied())
+      this.registerModal(new ModalVerificationSubmit())
     }
 
     public registerModal(modal: BaseModal): void {

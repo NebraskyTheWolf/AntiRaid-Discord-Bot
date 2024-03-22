@@ -172,15 +172,6 @@ export default abstract class Base {
             icon_url: this.instance.user.avatarURL({ format: 'png' })
           }
         }
-      ],
-      components: [
-        {
-          type: 1,
-          components: [
-            this.instance.buttonManager.createLinkButton(this.getLanguageManager()
-              .translate('command.common.button.message'), `https://discord.com/channels/${guild.guildID}/${message.channelId}/${message.id}`)
-          ]
-        }
       ]
     })
   }

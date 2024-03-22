@@ -9,6 +9,9 @@ import ConfirmButton from "./admin/ConfirmButton";
 import ConfirmBulkBlacklist from "./admin/bulk/ConfirmBulkBlacklist";
 import CancelButton from "./admin/bulk/CancelButton";
 import SyncButton from "./admin/SyncButton";
+import ButtonVerify from "./verification/ButtonVerify";
+import SelectUpdate from "./verification/SelectUpdate";
+import SupportTicket from "./support/SupportTicket";
 
 export default class ButtonManager {
     private BUTTONS: OptionMap<String, BaseButton<unknown, unknown>>;
@@ -31,7 +34,12 @@ export default class ButtonManager {
       this.addButton(new CancelButton())
 
       // Dev button
-      this.addButton(new SyncButton())
+      this.addButton(new ButtonVerify())
+      this.addButton(new SelectUpdate())
+
+
+      // Support ticket
+      this.addButton(new SupportTicket())
     }
 
     public addButton(button: BaseButton<unknown, unknown>): void {

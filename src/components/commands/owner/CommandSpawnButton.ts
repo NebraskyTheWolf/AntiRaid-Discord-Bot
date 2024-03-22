@@ -38,15 +38,38 @@ export default class CommandSpawnButton extends BaseCommand {
         if (!buttonHandler) {
             await replyMessageOnFailure(`Failed to summon ${buttonId}`);
         } else {
-            await inter.followUp({
+            if (buttonId == "row_verify") {
+
+              const support = this.instance.buttonManager.getButton("row_support_ticket")
+
+              inter.channel.send({
                 components: [
-                    {
-                        type: 1,
-                        components: [buttonHandler.generate() as MessageButton]
-                    }
+                  {
+                    type: 1,
+                    components: [
+                      buttonHandler.generate() as MessageButton,
+                      support.generate() as MessageButton
+                    ]
+                  }
                 ],
                 embeds: [buttonHandler.message()]
-            });
+              })
+
+              await inter.followUp({
+                content: 'Interaction summoned.',
+                ephemeral: false
+              });
+            } else {
+              await inter.followUp({
+                components: [
+                  {
+                    type: 1,
+                    components: [buttonHandler.generate() as MessageButton]
+                  }
+                ],
+                embeds: [buttonHandler.message()]
+              });
+            }
         }
     }
 }

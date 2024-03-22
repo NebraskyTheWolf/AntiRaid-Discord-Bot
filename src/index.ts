@@ -49,6 +49,7 @@ export default class Fluffici extends Client {
     public modalManager: ModalManager
     public taskManager: TasksManager
     public loaded: boolean = false
+    public spamProtectionEnabled: boolean = true
 
     public serverManager: ServerManager
 

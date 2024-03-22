@@ -1,23 +1,33 @@
 import BaseEvent from "@fluffici.ts/components/BaseEvent";
-import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
+import guild, {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
 
 import fetch from "node-fetch"
 
-import {Message, Snowflake} from "discord.js";
+import {Message, Snowflake, TextChannel} from "discord.js";
 import {registerCommands} from "@fluffici.ts/utils/registerCommand";
 import Migrated, {IMigrated} from "@fluffici.ts/database/Security/Migrated";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
-import {isBotOrSystem} from "@fluffici.ts/types";
+import {fetchDGuild, isBotOrSystem} from "@fluffici.ts/types";
+import Ticket from "@fluffici.ts/database/Guild/Ticket";
+import PreventTicket from "@fluffici.ts/database/Security/PreventTicket";
 
 
 interface Offence {
   timestamp: number;
   count: number;
+  lastMessage?: string;
+  lastMessageTimestamp?: number;
 }
 
 export default class MessageEvent extends BaseEvent {
 
   private readonly offences: OptionMap<Snowflake, Offence> = new OptionMap<Snowflake, Offence>()
+  private readonly everyoneOffences: OptionMap<Snowflake, Offence> = new OptionMap<Snowflake, Offence>()
+  private messageThreshold: number = 25;
+  private everyoneThreshold: number = 3;
+  private timePeriod: number = 10000;
+  private repeatTimePeriod: number = 10000;
+  private messageTimePeriod: number = 10000;
 
   public constructor () {
     super('messageCreate', async (message: Message) => {
@@ -29,12 +39,12 @@ export default class MessageEvent extends BaseEvent {
         await this.handleMigrationCommand(message);
       }
 
-      if (guild.scamLinks) {
-        await this.handleScamLinks(message, guild);
+      if (this.instance.spamProtectionEnabled) {
+        await this.handleOffence(message, guild);
       }
 
-      if (message.embeds.length > 0) {
-        await this.handleUserEmbed(message)
+      if (guild.scamLinks) {
+        await this.handleScamLinks(message, guild);
       }
     })
   }
@@ -68,20 +78,59 @@ export default class MessageEvent extends BaseEvent {
     const scamUrl = await this.findScamUrl(urls);
 
     if (scamUrl) {
-      await this.handleOffence(message);
       await this.handleScam(guild, message, scamUrl);
     }
   }
 
-  async handleOffence(message: Message): Promise<void> {
-
-    const offence = this.offences.get(message.member.id);
+  async handleOffence(message: Message, guild: FGuild): Promise<void> {
     const currentTime = Date.now();
 
-    if (this.offences.has(message.member.id)) {
+    const isTicket = await Ticket.findOne({
+      channelId: message.channelId,
+      userId: message.author.id,
+      isClosed: false
+    })
 
+    if (this.offences.has(message.member.id)) {
+      let offence: Offence = this.offences.get(message.author.id) || { timestamp: currentTime, lastMessage: '', lastMessageTimestamp: currentTime, count: 0 };
+
+      if (currentTime <= offence.timestamp + this.timePeriod) {
+        offence.count++;
+      } else {
+        offence.count = 1;
+      }
+
+      if (message.content === offence.lastMessage && currentTime <= offence.timestamp + this.repeatTimePeriod) {
+        message.reply({ content: `${this.getLanguageManager().translate("common.dont.repeat")}`}).then(m => setTimeout(() => m.delete(), this.repeatTimePeriod))
+        message.delete()
+        return
+      }
+
+      // Update the timestamp
+      offence.timestamp = currentTime;
+      offence.lastMessage = message.content;
+      offence.lastMessageTimestamp = currentTime;
+
+      // If the count exceeds the threshold, take action
+      if (offence.count > this.messageThreshold) {
+        message.reply({ content: `${this.getLanguageManager().translate("common.dont.spam")}`})
+        message.member.timeout(600 * 1000, "Spam")
+
+        if (isTicket) {
+          const guild = await fetchDGuild(message.guildId)
+          guild.channels.cache.get(isTicket.channelId).delete("Spamming in a support ticket.")
+          new PreventTicket({
+            userId: message.author.id
+          }).save()
+        }
+
+        await this.handleSpamLog(guild, message, offence, false)
+      }
+
+      // Save the updated offence back to the map
+      this.offences.add(message.author.id, offence);
     } else {
-      this.offences.add(message.member.id, { timestamp: Date.now(), count: 1});
+      this.offences.add(message.member.id, { timestamp: Date.now(), lastMessage: message.content, lastMessageTimestamp: currentTime, count: 1});
     }
   }
 
@@ -142,21 +191,48 @@ export default class MessageEvent extends BaseEvent {
     await this.sendScamLog(guild, message, title, desc, logDetails)
   }
 
-  private extractUrls (text: string): string {
-    return text.match('((https?:\\/\\/)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(\\/\\S*)?)')[0]
-      .replace('https://', '')
-      .replace('http://', '')
-      .replace('/', '');
+  private async handleSpamLog(guild: FGuild, message: Message, offence: Offence, isEveryone: boolean = false) {
+    const logDetails = [
+      {
+        name: `${isEveryone ? '[Spam of @ everyone]' : '[Message spamming]' }`,
+        value: this.getLanguageManager().translate(isEveryone ? "event.message.spam.detected.everyone" : "event.message.spam.detected", {
+          messages: `${offence.count}`,
+          ratelimit: `${this.messageTimePeriod/1000}`
+        }),
+        inline: false
+      },
+      {
+        name: `ID:`,
+        value: `${message.author.id}`,
+        inline: false
+      },
+      {
+        name: `Username:`,
+        value: `${message.author.displayName}`,
+        inline: false
+      }
+    ]
+
+    const title = this.getLanguageManager().translate('event.message.log.title.spam', {
+      id: message.author.id
+    })
+    await this.sendScamLog(guild, message, title, 'blep', logDetails)
   }
 
-  private async handleUserEmbed(message: Message) {
-    if (message.author.bot) return;
-    if (message.author.system) return;
+  private extractUrls (text: string): string {
+    let cleanedText = text;
+    let markdownLinkPattern = '[(.*?)\]\((.*?))';
 
-    await message.reply({
-      content: this.getLanguageManager().translate('event.embed_detected'),
-    }).then(m => setTimeout(() => m.delete(), 10 * 1000));
+    if (text.match(markdownLinkPattern)) {
+      cleanedText = text.replace(markdownLinkPattern, "");
+    }
 
-    await message.member.timeout(600 * 1000,'Self-bot prevention - Embed detected');
+    let urlMatch = cleanedText.match("((https?://)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(/\\S*)?)");
+
+    console.log(urlMatch)
+
+    return urlMatch[0].replace(/https?:\/\//, '')
+      .replace('/', '')
+      .replace(')', '');
   }
 }

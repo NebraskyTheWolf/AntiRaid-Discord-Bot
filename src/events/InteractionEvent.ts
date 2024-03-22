@@ -17,7 +17,8 @@ export default class InteractionEvent extends BaseEvent {
         const developer = await Developer.findOne({ userId: interaction.member.id })
 
         if (interaction.isCommand()) {
-          if (interaction.commandName != "eval") {
+          // @ts-ignore
+          if (interaction.commandName != "eval" || interaction.commandName != "spawn") {
             await interaction.deferReply({ fetchReply: true, ephemeral: true})
           }
           await this.handleCommandInteraction(interaction, developer)
