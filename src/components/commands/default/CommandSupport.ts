@@ -14,7 +14,7 @@ export default class CommandSupport extends BaseCommand {
 
   async handler (inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
     await this.getGuild(guild.id)
-    await inter.followUp({
+    await inter.reply({
       embeds: this.buildEmbedMessage(member, {
         icon: 'info',
         color: '#720c7e',

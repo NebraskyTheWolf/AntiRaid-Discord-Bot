@@ -21,7 +21,7 @@ export default class ForceResync extends BaseCommand {
         this.instance.manager
       );
 
-      await inter.followUp({
+      await inter.reply({
         content: 'Command map reloaded with success.'
       })
     }

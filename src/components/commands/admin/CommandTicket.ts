@@ -34,12 +34,12 @@ export default class CommandTicket extends BaseCommand {
       ticketChannel.delete()
       await currentTicket.updateOne({ isClosed: true });
 
-      await inter.followUp({
+      await inter.reply({
         content: `<@${currentTicket.userId}> is now closed.`,
         ephemeral: true
       })
     } else {
-      await inter.followUp({
+      await inter.reply({
         content: `This channel is not a support ticket.`,
         ephemeral: true
       })

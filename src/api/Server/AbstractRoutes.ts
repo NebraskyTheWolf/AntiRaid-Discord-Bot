@@ -33,15 +33,9 @@ export default abstract class RouteBase extends Base {
     public abstract selfRegister(): void;
 
     protected handleError(res: Response, errorType: ErrorType): void {
-        const errorResponsePayload = this.prepareErrorResponsePayload(errorType)
-        res.status(errorType.valueOf()).json(errorResponsePayload).end()
-    }
-
-    protected prepareErrorResponsePayload(errorType: ErrorType) {
-        return {
-            status: false,
-            error: errorType.valueOf()
-        }
+        res.status(401).json({
+          status: false
+        })
     }
 
     protected sendSuccessResponse(res: any, responseData: any) {

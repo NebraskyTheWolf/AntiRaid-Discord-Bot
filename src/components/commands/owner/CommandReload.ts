@@ -26,7 +26,7 @@ export default class CommandReload extends BaseCommand {
       const delay = 2 * 1000;
 
       return setTimeout(() => {
-        inter.followUp(replyMessage);
+        inter.reply(replyMessage);
       }, delay);
     }
 

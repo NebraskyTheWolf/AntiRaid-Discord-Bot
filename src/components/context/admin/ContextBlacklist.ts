@@ -48,7 +48,7 @@ export default class ContextBlacklist extends BaseContextMenu {
   }
 
   async respond (inter: ContextMenuInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
-    await inter.followUp({
+    await inter.reply({
       embeds: this.buildEmbedMessage(inter.member, {
         icon: icon,
         color: color,

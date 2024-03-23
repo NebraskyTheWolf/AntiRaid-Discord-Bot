@@ -19,7 +19,7 @@ export default class ContextShow extends BaseContextMenu {
     const staff = this.getLanguageManager().translate('common.staff');
 
     if (blacklisted) {
-      return await inter.followUp({
+      return await inter.reply({
         embeds: this.buildBlackListEmbedMessage(member, {
           userID: blacklisted.userID,
           reason: blacklisted.reason,
@@ -29,12 +29,13 @@ export default class ContextShow extends BaseContextMenu {
           foundDesc,
           reason,
           staff
-        })
+        }),
+        ephemeral: true
       });
     }
 
     if (localBlacklist) {
-      return await inter.followUp({
+      return await inter.reply({
         embeds: this.buildBlackListEmbedMessage(member, {
           userID: localBlacklist.userID,
           reason: localBlacklist.reason,
@@ -44,20 +45,22 @@ export default class ContextShow extends BaseContextMenu {
           foundDesc,
           reason,
           staff
-        })
+        }),
+        ephemeral: true
       });
     }
 
     const notFoundTitle = this.getLanguageManager().translate('command.show.not_found.title', {id: user});
     const notFoundDesc = this.getLanguageManager().translate('command.show.not_found.description');
 
-    return await inter.followUp({
+    return await inter.reply({
       embeds: this.buildEmbedMessage(member, {
         icon: 'success',
         color: 'GREEN',
         title: notFoundTitle,
         description: notFoundDesc
-      })
+      }),
+      ephemeral: true
     });
   }
 

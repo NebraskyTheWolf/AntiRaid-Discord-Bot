@@ -17,15 +17,10 @@ export default class InteractionEvent extends BaseEvent {
         const developer = await Developer.findOne({ userId: interaction.member.id })
 
         if (interaction.isCommand()) {
-          // @ts-ignore
-          if (interaction.commandName != "eval" || interaction.commandName != "spawn") {
-            await interaction.deferReply({ fetchReply: true, ephemeral: true})
-          }
           await this.handleCommandInteraction(interaction, developer)
         } else if (interaction.isButton() || interaction.isSelectMenu()) {
           await this.handleButtonInteraction(interaction as ButtonInteraction<'cached'>, developer)
         } else if (interaction.isUserContextMenu()) {
-          await interaction.deferReply({ fetchReply: true, ephemeral: true})
           await this.handleContextMenuInteraction(interaction, developer)
         }
       } catch (err) {
@@ -54,10 +49,10 @@ export default class InteractionEvent extends BaseEvent {
       return this.replyToInteraction(interaction, 'Only my developers can execute this command.')
     }
 
-    if (handler.options.get('isProtected') && interaction.member.permissions.has('ADMINISTRATOR')) {
+    if (handler.options.get('isProtected') && interaction.member.permissions.has('MODERATE_MEMBERS')) {
       return handler.handler(interaction, interaction.member as GuildMember, interaction.guild)
     }
-    if (handler.options.get('isProtected') && !interaction.member.permissions.has('ADMINISTRATOR')) {
+    if (handler.options.get('isProtected') && !interaction.member.permissions.has('MODERATE_MEMBERS')) {
       return this.replyToInteraction(interaction, 'Sorry, you need to be Moderator to execute this command')
     }
 

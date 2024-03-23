@@ -8,6 +8,7 @@ import Staff, {Staff as FStaff} from '@fluffici.ts/database/Guild/Staff'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 import Guild from "@fluffici.ts/database/Guild/Guild";
 import Interaction from "@fluffici.ts/database/Guild/Interaction";
+import Verification from "@fluffici.ts/database/Guild/Verification";
 
 export function getInstance(): Riniya {
     return Riniya.instance;
@@ -18,7 +19,7 @@ export function getLogger(): Logger {
 }
 
 export async function fetchDGuild(guildId: string) {
-  return getInstance().guilds.cache.get(guildId)
+  return getInstance().guilds.fetch(guildId)
 }
 
 export async function fetchGuild(guildId: string) {
@@ -89,12 +90,21 @@ export async function updateVerification(target: GuildMember, message: string) {
     return;
   }
 
+  const verificationId = await Verification.findOne({
+    guildId: interMessage.guildId,
+    memberId: interMessage.memberId
+  }, null, {
+    sort: {
+      registeredAt: 1
+    }
+  })
+
   await channel.messages.fetch(interMessage.messageId).then(r => r.edit({
     components: [
       {
         type: 1,
         components: [
-          Riniya.instance.buttonManager.createLinkButton(message, "https://fluffici.eu")
+          Riniya.instance.buttonManager.createLinkButton(message, `https://bot.fluffici.eu/verifications/edit/${verificationId._id}`)
         ]
       }
     ]

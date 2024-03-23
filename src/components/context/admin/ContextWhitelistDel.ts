@@ -40,9 +40,9 @@ export default class ContextWhitelistDel extends BaseContextMenu {
         userID: user,
       })
       this.writeAuditLog(guildId, inter.member.id, "whitelist_removed", `Removed ${user} from the whitelist`)
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_success','success', 'ORANGE', [], 'command.whitelist.removed_success.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.removed_success','success', 'ORANGE', [], 'command.whitelist.removed_success.description'))
     } catch {
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_failed','error', 'RED', [], 'command.whitelist.removed_failed.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.removed_failed','error', 'RED', [], 'command.whitelist.removed_failed.description'))
     }
   }
 }

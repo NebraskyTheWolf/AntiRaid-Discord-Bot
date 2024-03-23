@@ -90,7 +90,7 @@
   "event.message.spam.detected": "Odesláno :messages zpráv do :ratelimit sekund.",
   "event.message.log.title.spam": ":id - Čas vypršel",
 
-  "verification.enforced.author": "Je požadována žádost o ověření.",
+  "verification.enforced.author": "Žádost o ověření.",
   "verification.enforced.verified": "Nový člen byl právě ověřen!",
   "verification.enforced.title": ":appName Žádost o ověření",
   "verification.enforced.username": "Uživatelské jméno:",

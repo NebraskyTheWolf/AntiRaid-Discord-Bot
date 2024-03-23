@@ -1,8 +1,7 @@
 import AbstractRoutes, {ErrorType} from "../../Server/AbstractRoutes";
 import {Request, Response} from "express";
-import {fetchDGuild, fetchGuild, fetchUser, getAmountOfDays, isNull} from "@fluffici.ts/types";
+import {fetchDGuild, fetchUser, getAmountOfDays, isNull} from "@fluffici.ts/types";
 import {Snowflake} from "discord.js";
-import guild from "@fluffici.ts/database/Guild/Guild";
 
 interface CachedMember {
   id: Snowflake,
@@ -29,18 +28,28 @@ export default class UserRoutes extends AbstractRoutes {
 
   private async getServerInformation(req: Request, res: Response) {
     if (isNull(req.params.id)) {
-      return this.handleError(res, ErrorType.MISSING_ARGUMENTS)
+      return res.json({
+        status: false,
+        data: {}
+      })
     }
 
-    const guild = await fetchDGuild(req.params.id);
-    if (isNull(guild)) {
-      return this.handleError(res, ErrorType.MISSING_SIGNATURE);
-    }
+   try {
+     const guild = await fetchDGuild(req.params.id);
+     if (!guild) {
+       return res.json({
+         status: false,
+         data: {}
+       })
+     }
 
-    return this.sendSuccessResponse(res, {
-      status: true,
-      data: guild
-    });
+     return this.sendSuccessResponse(res, guild);
+   } catch (e) {
+     return res.json({
+       status: false,
+       data: {}
+     })
+   }
   }
 
   private async getMemberInformation(req: Request, res: Response) {

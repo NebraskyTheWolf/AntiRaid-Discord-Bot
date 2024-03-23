@@ -91,7 +91,7 @@ export default class ModalBlacklistAdd extends BaseModal {
   }
 
   async respond (inter: ModalSubmitInteraction, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
-    await inter.followUp({
+    await inter.reply({
       embeds: this.buildEmbedMessage(inter.member, {
         icon: icon,
         color: color,

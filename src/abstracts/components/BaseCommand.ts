@@ -17,6 +17,7 @@ import {
 } from '@discordjs/builders'
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import {CommandInteraction, Guild, GuildMember, Permissions} from "discord.js";
+import {PermissionFlagsBits} from "discord-api-types/v10";
 
 export declare type Category = 'ADMINISTRATOR' | 'MODERATION' | 'OWNER' | 'DEFAULT';
 
@@ -42,12 +43,12 @@ export default abstract class BaseCommand extends Base {
         }
 
         if (this.options.has("isProtected")) {
-            this.command.setDefaultMemberPermissions(8)
+            this.command.setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         }
 
     }
 
-    public abstract handler(inter: CommandInteraction, member: GuildMember, guild: Guild)
+    public abstract handler(inter: CommandInteraction, member: GuildMember, guild: Guild): any
 
     protected addAttachmentOption(handle: SlashCommandAttachmentOption): BaseCommand {
         this.command.addAttachmentOption(handle);

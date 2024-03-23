@@ -5,6 +5,7 @@ import {
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import {ContextMenuInteraction, Guild, GuildMember} from "discord.js";
 import {ApplicationCommandType} from "discord-api-types/v9";
+import {PermissionFlagsBits} from "discord-api-types/v10";
 
 export default abstract class BaseContextMenu extends Base {
 
@@ -19,7 +20,7 @@ export default abstract class BaseContextMenu extends Base {
     this.command.setName(this.name);
     this.command.setType(ApplicationCommandType.User)
     this.command.setDMPermission(this.options.get("dmPermission", false));
-    this.command.setDefaultMemberPermissions(this.options.get("isProtected", false) ? 8 : undefined)
+    this.command.setDefaultMemberPermissions(this.options.get("isProtected", false) ? PermissionFlagsBits.ModerateMembers : undefined)
   }
 
   public abstract handler(inter: ContextMenuInteraction<'cached'>, member: GuildMember, guild: Guild): any

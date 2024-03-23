@@ -14,8 +14,9 @@ export default class DisableSpamProtection extends BaseCommand {
     async handler(inter: CommandInteraction, member: GuildMember, guild: Guild) {
       this.instance.spamProtectionEnabled = false
 
-      await inter.followUp({
-        content: 'Command map reloaded with success.'
+      await inter.reply({
+        content: 'Command map reloaded with success.',
+        ephemeral: true
       })
     }
 }

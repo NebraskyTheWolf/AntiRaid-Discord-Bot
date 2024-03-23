@@ -128,7 +128,7 @@ export default class CommandLocal extends BaseCommand {
   }
 
   async respond (inter: CommandInteraction<"cached">, titleKey: string, descKey: string, color: string, args = {}, icon: string = 'success') {
-    await inter.followUp({
+    await inter.reply({
       embeds: this.buildEmbedMessage(inter.member, {
         icon: icon,
         color: color,

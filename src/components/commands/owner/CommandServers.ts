@@ -17,7 +17,7 @@ export default class CommandServers extends BaseCommand {
             `> ** ${guild.name} ** - ID: ${guild.id} - Owner: ${guild.ownerId}\n`
         ).join('');
 
-        await inter.followUp({
+        await inter.reply({
             content: servers,
             ephemeral: true
         })

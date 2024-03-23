@@ -77,7 +77,7 @@ export default class CommandWhitelist extends BaseCommand {
           inline: false
         }] : []
         const color = isWhitelisted ? 'ORANGE' : 'RED'
-        await inter.followUp(this.generateEmbedsResponse(member, titleKey,'info', color, fields, descriptionKey, { username: user.tag }))
+        await inter.reply(this.generateEmbedsResponse(member, titleKey,'info', color, fields, descriptionKey, { username: user.tag }))
         break
       case 'add':
         await this.handleAddCommand(inter, member, guild.id, user, whitelisted)
@@ -86,7 +86,7 @@ export default class CommandWhitelist extends BaseCommand {
         await this.handleRemoveCommand(inter, member, guild.id, user)
         break
       default:
-        await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.title', 'warning', 'RED', [], 'command.whitelist.description'))
+        await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.title', 'warning', 'RED', [], 'command.whitelist.description'))
         break
     }
   }
@@ -109,7 +109,7 @@ export default class CommandWhitelist extends BaseCommand {
 
   private async handleAddCommand (inter: CommandInteraction<'cached'>, member: GuildMember, guildId: string, user: User, whitelisted: any): Promise<any> {
     if (whitelisted) {
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.already_whitelisted.title','info', 'ORANGE', [], 'command.whitelist.already_whitelisted.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.already_whitelisted.title','info', 'ORANGE', [], 'command.whitelist.already_whitelisted.description'))
     }
 
     try {
@@ -121,9 +121,9 @@ export default class CommandWhitelist extends BaseCommand {
       }).save()
 
       this.writeAuditLog(guildId, inter.member.id, "whitelist_added", `Whitelisted ${user.id}`)
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description'))
     } catch {
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_failed','error', 'RED', [], 'command.whitelist.added_failed.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.added_failed','error', 'RED', [], 'command.whitelist.added_failed.description'))
     }
   }
 
@@ -134,9 +134,9 @@ export default class CommandWhitelist extends BaseCommand {
         userID: user.id
       })
       this.writeAuditLog(guildId, inter.member.id, "whitelist_removed", `Removed ${user.id} from the whitelist`)
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_success','success', 'ORANGE', [], 'command.whitelist.removed_success.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.removed_success','success', 'ORANGE', [], 'command.whitelist.removed_success.description'))
     } catch {
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.removed_failed','error', 'RED', [], 'command.whitelist.removed_failed.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.removed_failed','error', 'RED', [], 'command.whitelist.removed_failed.description'))
     }
   }
 }

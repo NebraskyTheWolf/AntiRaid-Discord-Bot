@@ -32,7 +32,7 @@ export default class CommandShow extends BaseCommand {
     const staff = this.getLanguageManager().translate('common.staff');
 
     if (blacklisted) {
-      return await inter.followUp({
+      return await inter.reply({
         embeds: this.buildBlackListEmbedMessage(member, {
           userID: blacklisted.userID,
           reason: blacklisted.reason,
@@ -47,7 +47,7 @@ export default class CommandShow extends BaseCommand {
     }
 
     if (localBlacklist) {
-      return await inter.followUp({
+      return await inter.reply({
         embeds: this.buildBlackListEmbedMessage(member, {
           userID: localBlacklist.userID,
           reason: localBlacklist.reason,
@@ -64,7 +64,7 @@ export default class CommandShow extends BaseCommand {
     const notFoundTitle = this.getLanguageManager().translate('command.show.not_found.title', {id: user});
     const notFoundDesc = this.getLanguageManager().translate('command.show.not_found.description');
 
-    return await inter.followUp({
+    return await inter.reply({
       embeds: this.buildEmbedMessage(member, {
         icon: 'success',
         color: 'GREEN',

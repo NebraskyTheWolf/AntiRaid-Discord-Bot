@@ -116,7 +116,7 @@ export default class CommandSet extends BaseCommand {
             return this.handleLanguage(inter, fGuild)
           }
           default:
-            await inter.followUp({
+            await inter.reply({
               embeds: this.buildEmbedMessage(member, {
                 icon: 'info',
                 title: this.getLanguageManager().translate('command.config.not_found.title'),
@@ -139,7 +139,7 @@ export default class CommandSet extends BaseCommand {
       }
     })
 
-    await inter.followUp({
+    await inter.reply({
       content: `Scam detection set to ${scamLink ? 'Enabled' : 'Disabled'}`,
       ephemeral: true
     });
@@ -154,7 +154,7 @@ export default class CommandSet extends BaseCommand {
       }
     })
 
-    await inter.followUp({
+    await inter.reply({
       content: `Global database set to ${global ? 'Enabled' : 'Disabled'}`,
       ephemeral: true
     });
@@ -169,7 +169,7 @@ export default class CommandSet extends BaseCommand {
       }
     })
 
-    await inter.followUp({
+    await inter.reply({
       content: `Local database set to ${local ? 'Enabled' : 'Disabled'}`,
       ephemeral: true
     });
@@ -188,12 +188,12 @@ export default class CommandSet extends BaseCommand {
 
       this.writeAuditLog(guild.guildID, inter.member.id, "logging_changed", `Changed the logging channel to #${channel.name}`)
 
-      await inter.followUp({
+      await inter.reply({
         content: `Logging channel has been set to ${channel.name}`,
         ephemeral: true
       });
     } else {
-      await inter.followUp({
+      await inter.reply({
         content: `Invalid channel type. Please select a text channel.`,
         ephemeral: true
       });
@@ -212,12 +212,12 @@ export default class CommandSet extends BaseCommand {
 
       this.writeAuditLog(guild.guildID, inter.member.id, "language_changed", `Changed the language to ${language}`)
 
-      await inter.followUp({
+      await inter.reply({
         content: `Language has been set to ${language}`,
         ephemeral: true
       });
     } else {
-      await inter.followUp({
+      await inter.reply({
         content: `Invalid language. Please select a valid language.`,
         ephemeral: true
       });
