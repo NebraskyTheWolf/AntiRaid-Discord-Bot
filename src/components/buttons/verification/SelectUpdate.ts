@@ -107,7 +107,7 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
             ephemeral: true
           })
 
-          await updateVerification(member, 'Verification accepted by ' + interaction.member.displayName)
+          await updateVerification(member, 'Žádost schválena ' + interaction.user.tag)
         }
           break
         case "refused": {
