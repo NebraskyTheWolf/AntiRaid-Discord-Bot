@@ -7,7 +7,7 @@ import {Message, Snowflake, TextChannel} from "discord.js";
 import {registerCommands} from "@fluffici.ts/utils/registerCommand";
 import Migrated, {IMigrated} from "@fluffici.ts/database/Security/Migrated";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
-import {fetchDGuild, isBotOrSystem} from "@fluffici.ts/types";
+import {fetchDGuild, isBotOrSystem, isNull} from "@fluffici.ts/types";
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
 import PreventTicket from "@fluffici.ts/database/Security/PreventTicket";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
@@ -262,8 +262,9 @@ export default class MessageEvent extends BaseEvent {
     }
 
     let urlMatch = cleanedText.match("((https?://)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(/\\S*)?)");
-
-    console.log(urlMatch)
+    if (isNull(urlMatch[0])) {
+      return "null"
+    }
 
     return urlMatch[0].replace(/https?:\/\//, '')
       .replace('/', '')

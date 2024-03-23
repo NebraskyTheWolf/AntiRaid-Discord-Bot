@@ -10,7 +10,13 @@ export default class Tuple<T> {
     }
 
     public add(type: T): void {
-        this.data.add(this.index++, type);
+        if (this.index <= 0) {
+          this.data.add(0, type);
+          this.index++
+        } else {
+          this.data.add(this.index++, type);
+        }
+
     }
 
     public random(): T {
