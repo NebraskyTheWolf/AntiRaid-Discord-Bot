@@ -104,12 +104,12 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
             .setContent(`${member.user.username} verification confirmed.`)
             .save(interaction.guildId)
 
+          await updateVerification(member, `Žádost schválena ${interaction.user.displayName}`)
+
           await interaction.reply({
             content: `Member ${member.user.username} is now verified.`,
             ephemeral: true
           })
-
-          await updateVerification(member, 'Žádost schválena ' + interaction.user.tag)
         }
           break
         case "refused": {
@@ -157,12 +157,12 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
 
           member.ban({reason: 'Banned on verification. '})
 
+          await updateVerification(member, 'Banned by ' + interaction.member.displayName)
+
           await interaction.reply({
             content: `You Banned ${member.user}`,
             ephemeral: true
           })
-
-          await updateVerification(member, 'Banned by ' + interaction.member.displayName)
         }
           break
       }
