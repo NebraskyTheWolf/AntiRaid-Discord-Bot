@@ -108,11 +108,13 @@ export default class MessageEvent extends BaseEvent {
   }
 
   async handleScamLinks(message: Message, guild: FGuild): Promise<void> {
-    const urls = this.extractUrls(message.content);
-    const scamUrl = await this.findScamUrl(urls);
+    if (message.content.indexOf('https://') !== -1 || message.content.indexOf('http://') !== -1) {
+      const urls = this.extractUrls(message.content);
+      const scamUrl = await this.findScamUrl(urls);
 
-    if (scamUrl) {
-      await this.handleScam(guild, message, scamUrl);
+      if (scamUrl) {
+        await this.handleScam(guild, message, scamUrl);
+      }
     }
   }
 
@@ -262,10 +264,6 @@ export default class MessageEvent extends BaseEvent {
     }
 
     let urlMatch = cleanedText.match("((https?://)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(/\\S*)?)");
-    if (isNull(urlMatch[0])) {
-      return "null"
-    }
-
     return urlMatch[0].replace(/https?:\/\//, '')
       .replace('/', '')
       .replace(')', '');
