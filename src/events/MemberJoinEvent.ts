@@ -129,7 +129,8 @@ export default class MemberJoin extends BaseEvent {
               name: this.getLanguageManager().translate("common.action"),
               value: this.getLanguageManager().translate("common.alert.message.three")
             },
-          ]
+          ],
+          timestamp: Date.now()
         }
       ],
       components: [
@@ -234,9 +235,10 @@ export default class MemberJoin extends BaseEvent {
           footer: {
             text: 'FurRaidDB',
             iconURL: this.instance.user.avatarURL({ format: 'png' })
-          }
+          },
+          timestamp: Date.now()
         }
-      ]
+      ],
     })
   }
 }

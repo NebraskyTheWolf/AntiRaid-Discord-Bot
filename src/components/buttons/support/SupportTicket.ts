@@ -86,7 +86,7 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
           channelId: channel.id,
           userId: interaction.user.id
         }).save()
-
+        const closeButton = this.instance.buttonManager.getButton("row_support_ticket_close")
         channel.sendTyping().then(() => setTimeout(async () => {
           await channel.send({
             embeds: [
@@ -108,6 +108,14 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
                 \u2022 **Follow Up Appropriately**: If you've not heard back within the expected timeframe, it's okay to follow up on your support ticket. However, multiple messages in a short period can often slowdown the support process.`,
                 timestamp: Date.now(),
                 provider: { name: 'FurRaidDB', url: 'https://fluffici.eu' }
+              }
+            ],
+            components: [
+              {
+                type: 1,
+                components: [
+                  closeButton.generate() as MessageButton
+                ]
               }
             ]
           })

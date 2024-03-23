@@ -170,7 +170,8 @@ export default abstract class Base {
           footer: {
             text: 'FurRaidBot',
             icon_url: this.instance.user.avatarURL({ format: 'png' })
-          }
+          },
+          timestamp: Date.now()
         }
       ]
     })
@@ -233,7 +234,8 @@ export default abstract class Base {
           footer: {
             text: 'FurRaidBot',
             icon_url: this.instance.user.avatarURL({ format: 'png' })
-          }
+          },
+          timestamp: Date.now()
         }
       ]
     });
@@ -253,7 +255,8 @@ export default abstract class Base {
         footer: {
           text: 'FurRaidBot',
           icon_url: this.instance.user.avatarURL({ format: 'png' })
-        }
+        },
+        timestamp: Date.now()
       }
     ]
   }

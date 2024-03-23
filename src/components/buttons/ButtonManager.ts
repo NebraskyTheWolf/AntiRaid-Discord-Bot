@@ -12,6 +12,7 @@ import SyncButton from "./admin/SyncButton";
 import ButtonVerify from "./verification/ButtonVerify";
 import SelectUpdate from "./verification/SelectUpdate";
 import SupportTicket from "./support/SupportTicket";
+import CloseTicket from "./support/CloseTicket";
 
 export default class ButtonManager {
     private BUTTONS: OptionMap<String, BaseButton<unknown, unknown>>;
@@ -40,6 +41,7 @@ export default class ButtonManager {
 
       // Support ticket
       this.addButton(new SupportTicket())
+      this.addButton(new CloseTicket())
     }
 
     public addButton(button: BaseButton<unknown, unknown>): void {

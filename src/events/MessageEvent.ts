@@ -10,6 +10,7 @@ import OptionMap from "@fluffici.ts/utils/OptionMap";
 import {fetchDGuild, isBotOrSystem} from "@fluffici.ts/types";
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
 import PreventTicket from "@fluffici.ts/database/Security/PreventTicket";
+import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
 
 
 interface Offence {
@@ -22,9 +23,7 @@ interface Offence {
 export default class MessageEvent extends BaseEvent {
 
   private readonly offences: OptionMap<Snowflake, Offence> = new OptionMap<Snowflake, Offence>()
-  private readonly everyoneOffences: OptionMap<Snowflake, Offence> = new OptionMap<Snowflake, Offence>()
   private messageThreshold: number = 25;
-  private everyoneThreshold: number = 3;
   private timePeriod: number = 10000;
   private repeatTimePeriod: number = 10000;
   private messageTimePeriod: number = 10000;
@@ -39,14 +38,49 @@ export default class MessageEvent extends BaseEvent {
         await this.handleMigrationCommand(message);
       }
 
-      if (this.instance.spamProtectionEnabled) {
-        await this.handleOffence(message, guild);
+      try {
+        this.handleTicketMessage(message)
+      } catch (e) {
+        this.instance.logger.error(e)
       }
 
-      if (guild.scamLinks) {
-        await this.handleScamLinks(message, guild);
+      try {
+        if (this.instance.spamProtectionEnabled) {
+          await this.handleOffence(message, guild);
+        }
+      } catch (e) {
+        this.instance.logger.error(e)
+      }
+
+      try {
+        if (guild.scamLinks) {
+          await this.handleScamLinks(message, guild);
+        }
+      } catch (e) {
+        this.instance.logger.error(e)
       }
     })
+  }
+
+  async handleTicketMessage(message: Message) {
+    if (message.channel.type === 'GUILD_TEXT') {
+      const channel = message.channel as TextChannel;
+      const guild = channel.guild;
+      const member = guild.members.cache.get(message.author.id);
+      if (member) {
+        const isTicket = await Ticket.findOne({
+          channelId: channel.id,
+          isClosed: false
+        });
+        if (isTicket) {
+          new TicketMessage({
+            ticketId: isTicket._id,
+            userId: member.id,
+            message: message.content
+          }).save()
+        }
+      }
+    }
   }
 
   async handleMigrationCommand(message: Message): Promise<void> {

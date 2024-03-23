@@ -82,7 +82,8 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
             .setAuthor(this.getLanguageManager().translate("verification.enforced.verified"), this.instance.user.avatarURL({format: 'png'}))
             .setDescription(`**Jste furry? Pokud ano, popište nám vaši fursonu (není pravidlem pro připojení):** \`\`\`${form.answers[0].content}\`\`\` ** Napište pár slov o sobě:** \`\`\`${form.answers[1].content}\`\`\` **Jaký máte vztah k furry komunitě?:** \`\`\`${form.answers[2].content}\`\`\` **Jak jste našli náš server?:** \`\`\`${form.answers[3].content}\`\`\``)
             .addField("Username", member.user.username, false)
-            .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.jpeg`);
+            .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.jpeg`)
+            .setTimestamp(Date.now());
 
           const verifLog = interaction.guild.channels.cache.get("963133802316714066") as TextChannel
           verifLog.send({embeds: [embed]})
@@ -91,7 +92,8 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
             .setColor("GREEN")
             .setTitle(`<:gchecks:1220755094673293343> ${member.user.displayName} byl právě ověřen!`)
             .setDescription(`Přivítejte ho mezi Fluffíky! :green_heart:`)
-            .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.jpeg`);
+            .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.jpeg`)
+            .setTimestamp(Date.now());
 
           const general = interaction.guild.channels.cache.get("606534136806637594") as TextChannel
           general.send({embeds: [embedGeneral]})
