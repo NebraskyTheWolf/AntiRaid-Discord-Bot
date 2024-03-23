@@ -56,14 +56,62 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
           },
           {
             id: interaction.user.id,
-            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES'],
           },
-        ]
+          {
+            id: interaction.guild.roles.cache.get("606535408117088277").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("606540681867034634").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("782578470135660585").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("606540994909044756").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("943216911980822569").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          }
+        ],
+        reason: `${interaction.user.tag} ticket channel`,
+        nsfw: false
       }).then(async channel => {
         new Ticket({
           channelId: channel.id,
           userId: interaction.user.id
         }).save()
+
+        channel.sendTyping().then(() => setTimeout(async () => {
+          await channel.send({
+            embeds: [
+              {
+                title: 'FurRaidDB - Ticket created.',
+                description: `Hello ${interaction.user.username}, You created a new ticket. Type in your issue and staff will be with you soon.`,
+                timestamp: Date.now(),
+                provider: { name: 'FurRaidDB', url: 'https://fluffici.eu' }
+              },
+              {
+                title: 'FurRaidDB - Ticket rules.',
+                description: `
+                \u2022 **Provide Detailed Information**: The more specific the information provided, the more quickly and effectively the support team can address your issue. This includes steps you took before encountering the problem, any specific error messages you've seen, and what you've tried already to resolve the issue.\n\n
+                \u2022 **Be Clear and Concise**: Clearly describe the problem you're experiencing. Avoid using jargon or non-specific terms such as "it's not working".\n\n
+                \u2022 **Use Relevant Subject Lines**: The subject line should briefly summarize the issue. This helps the support team prioritize and categorize your ticket.\n\n
+                \u2022 **One Issue Per Ticket**: If you have multiple issues, it's better to submit separate tickets for each one. This allows each problem to be addressed individually and prevents any potential confusion.\n\n
+                \u2022 **Include Any Necessary Attachments**: If you have screenshots or logs that illustrate the issue you're facing, include them with your initial submission.\n\n
+                \u2022 **Stay Patient and Respectful**: Remember, the support team is there to help you. It's important to treat them with respect and remember that some issues may take time to resolve.\n\n
+                \u2022 **Follow Up Appropriately**: If you've not heard back within the expected timeframe, it's okay to follow up on your support ticket. However, multiple messages in a short period can often slowdown the support process.`,
+                timestamp: Date.now(),
+                provider: { name: 'FurRaidDB', url: 'https://fluffici.eu' }
+              }
+            ]
+          })
+        }, 2000))
 
         channelId = channel.id
       })
@@ -74,7 +122,7 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
           {
             type: 1,
             components: [
-              this.instance.buttonManager.createLinkButton(this.getLanguageManager().translate("ticket.already.channel"), `https://discord.com/channels/606534136806637589/${channelId}`)
+              this.instance.buttonManager.createLinkButton(this.getLanguageManager().translate("ticket.already.channel"), `https://discord.com/channels/606534136806637589/` + channelId)
             ]
           }
         ],
