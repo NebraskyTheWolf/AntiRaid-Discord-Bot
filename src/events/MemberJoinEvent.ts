@@ -31,8 +31,8 @@ export default class MemberJoin extends BaseEvent {
 
       const guild = await this.getGuild(member.guild.id)
 
-      this.handleBLCheck(member)
-      this.handleRaidProtection(member, guild)
+      await this.handleBLCheck(member)
+      await this.handleRaidProtection(member, guild)
     })
   }
 

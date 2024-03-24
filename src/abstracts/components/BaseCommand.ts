@@ -16,7 +16,7 @@ import {
   ToAPIApplicationCommandOptions,
 } from '@discordjs/builders'
 import OptionMap from "@fluffici.ts/utils/OptionMap";
-import {CommandInteraction, Guild, GuildMember, Permissions} from "discord.js";
+import {CommandInteraction, Guild, GuildMember} from "discord.js";
 import {PermissionFlagsBits} from "discord-api-types/v10";
 
 export declare type Category = 'ADMINISTRATOR' | 'MODERATION' | 'OWNER' | 'DEFAULT';
