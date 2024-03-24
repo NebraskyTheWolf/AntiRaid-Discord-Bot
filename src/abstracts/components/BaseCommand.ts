@@ -13,7 +13,7 @@ import {
   SlashCommandSubcommandGroupBuilder,
   SlashCommandSubcommandsOnlyBuilder,
   SlashCommandUserOption,
-  ToAPIApplicationCommandOptions, ContextMenuCommandBuilder,
+  ToAPIApplicationCommandOptions,
 } from '@discordjs/builders'
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import {CommandInteraction, Guild, GuildMember, Permissions} from "discord.js";

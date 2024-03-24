@@ -1,7 +1,5 @@
 import Verification from "@fluffici.ts/database/Guild/Verification";
 import BaseModal from "@fluffici.ts/components/BaseModal";
-import Guild from "@fluffici.ts/database/Guild/Guild";
-
 import { MessageEmbed, TextChannel } from "discord.js";
 import { ModalSubmitInteraction } from "discord-modals";
 import Interaction from '@fluffici.ts/database/Guild/Interaction'

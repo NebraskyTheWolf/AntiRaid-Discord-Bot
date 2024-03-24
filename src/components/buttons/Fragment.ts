@@ -1,5 +1,4 @@
 import BaseButton from "@fluffici.ts/components/BaseButton";
-import OptionMap from "@fluffici.ts/utils/OptionMap";
 
 import { ButtonInteraction, MessageButton, MessageEmbed } from "discord.js";
 

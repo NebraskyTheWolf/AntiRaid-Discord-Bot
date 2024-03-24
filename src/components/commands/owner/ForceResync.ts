@@ -2,7 +2,6 @@ import BaseCommand from "@fluffici.ts/components/BaseCommand";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 
 import { GuildMember, Guild, CommandInteraction } from "discord.js";
-import Blacklist from "@fluffici.ts/database/Common/Blacklist";
 import {registerCommands} from "@fluffici.ts/utils/registerCommand";
 
 export default class ForceResync extends BaseCommand {

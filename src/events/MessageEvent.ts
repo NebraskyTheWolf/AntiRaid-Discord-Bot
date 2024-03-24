@@ -1,5 +1,5 @@
 import BaseEvent from "@fluffici.ts/components/BaseEvent";
-import guild, {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
+import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
 
 import fetch from "node-fetch"
 

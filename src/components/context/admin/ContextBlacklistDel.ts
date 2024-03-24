@@ -1,6 +1,5 @@
 import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
 import {ContextMenuInteraction, Guild, GuildMember, MessageButton} from "discord.js";
-import {ApplicationCommandType} from "discord-api-types/v9";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 
 export default class ContextBlacklistDel extends BaseContextMenu {

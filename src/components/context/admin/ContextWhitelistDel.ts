@@ -1,6 +1,5 @@
 import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
-import {CommandInteraction, ContextMenuInteraction, Guild, GuildMember, User} from "discord.js";
-import {ApplicationCommandType} from "discord-api-types/v9";
+import {ContextMenuInteraction, Guild, GuildMember} from "discord.js";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import Whitelist from "@fluffici.ts/database/Common/Whitelist";
 

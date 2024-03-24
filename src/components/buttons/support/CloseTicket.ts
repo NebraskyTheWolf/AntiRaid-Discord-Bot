@@ -2,7 +2,6 @@ import BaseButton from "@fluffici.ts/components/BaseButton";
 import {ButtonInteraction, MessageButton, MessageEmbed, TextChannel} from "discord.js";
 import {MessageButtonStyles} from "discord.js/typings/enums";
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
-import PreventTicket from "@fluffici.ts/database/Security/PreventTicket";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
 import fs from "fs";
 import path from "path";

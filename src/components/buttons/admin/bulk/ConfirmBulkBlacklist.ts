@@ -1,11 +1,8 @@
 import BaseButton from "@fluffici.ts/components/BaseButton";
-import {ButtonInteraction, CommandInteraction, MessageButton, MessageEmbed} from "discord.js";
+import {ButtonInteraction, MessageButton, MessageEmbed} from "discord.js";
 import {MessageButtonStyles} from "discord.js/typings/enums";
-import OptionMap from "@fluffici.ts/utils/OptionMap";
 import Blacklist from "@fluffici.ts/database/Common/Blacklist";
-import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
 import {fetchMember} from "@fluffici.ts/types";
-import LocalBlacklist from "@fluffici.ts/database/Common/LocalBlacklist";
 import RaidSession from "@fluffici.ts/database/Security/RaidSession";
 
 export default class ConfirmBulkBlacklist extends BaseButton<MessageButton, void> {

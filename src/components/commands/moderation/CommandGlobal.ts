@@ -8,16 +8,12 @@ import {
   fetchDGuild,
   fetchMember,
   getCurrentDate,
-  isBotOrSystem,
-  isNull
 } from '@fluffici.ts/types'
 
-import { CommandInteraction, Guild, GuildMember, User } from 'discord.js'
+import { CommandInteraction, Guild, GuildMember } from 'discord.js'
 import {
   SlashCommandStringOption,
   SlashCommandSubcommandBuilder,
-  SlashCommandSubcommandGroupBuilder,
-  SlashCommandUserOption
 } from '@discordjs/builders'
 
 export default class CommandGlobal extends BaseCommand {

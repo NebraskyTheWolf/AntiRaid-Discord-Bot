@@ -2,8 +2,6 @@ import BaseCommand from "@fluffici.ts/components/BaseCommand";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 
 import { GuildMember, Guild, CommandInteraction } from "discord.js";
-import Blacklist from "@fluffici.ts/database/Common/Blacklist";
-import { VM } from 'vm2';
 import ModalHelper from "@fluffici.ts/utils/ModalHelper";
 import {TextInputComponent} from "discord-modals";
 

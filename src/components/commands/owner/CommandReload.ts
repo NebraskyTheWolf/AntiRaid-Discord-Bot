@@ -2,7 +2,6 @@ import BaseCommand from "@fluffici.ts/components/BaseCommand";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 
 import { GuildMember, Guild, CommandInteraction } from "discord.js";
-import Blacklist from "@fluffici.ts/database/Common/Blacklist";
 
 export default class CommandReload extends BaseCommand {
     public constructor() {

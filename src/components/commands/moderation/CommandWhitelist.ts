@@ -3,7 +3,7 @@ import BaseCommand from '@fluffici.ts/components/BaseCommand'
 import { getCurrentDate, isNull } from '@fluffici.ts/types'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
-import { CommandInteraction, Guild, GuildMember, InteractionReplyOptions, User} from 'discord.js'
+import { CommandInteraction, Guild, GuildMember, User} from 'discord.js'
 import {
   SlashCommandSubcommandBuilder, SlashCommandUserOption
 } from '@discordjs/builders'

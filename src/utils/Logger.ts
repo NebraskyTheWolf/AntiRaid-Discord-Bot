@@ -1,4 +1,3 @@
-import fs from "fs"
 import moment from "moment";
 
 export default class Logger {

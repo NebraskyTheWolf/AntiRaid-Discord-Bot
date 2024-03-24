@@ -2,8 +2,7 @@ import BaseCommand from '@fluffici.ts/components/BaseCommand'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
 import { CommandInteraction, Guild, GuildMember } from 'discord.js'
-import {SlashCommandStringOption, SlashCommandUserOption} from "@discordjs/builders";
-import {fetchMember, isNull} from "@fluffici.ts/types";
+import {SlashCommandStringOption} from "@discordjs/builders";
 
 export default class CommandShow extends BaseCommand {
 

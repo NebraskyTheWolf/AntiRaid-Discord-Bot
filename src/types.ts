@@ -6,7 +6,6 @@ import {GuildMember, TextChannel, User} from "discord.js"
 import {Whitelist as FWhitelisted} from '@fluffici.ts/database/Common/Whitelist'
 import Staff, {Staff as FStaff} from '@fluffici.ts/database/Guild/Staff'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
-import Guild from "@fluffici.ts/database/Guild/Guild";
 import Interaction from "@fluffici.ts/database/Guild/Interaction";
 import Verification from "@fluffici.ts/database/Guild/Verification";
 

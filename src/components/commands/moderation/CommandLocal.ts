@@ -1,22 +1,18 @@
-import Blacklist, { IBlacklist as FBlacklist } from '@fluffici.ts/database/Common/Blacklist'
+import Blacklist from '@fluffici.ts/database/Common/Blacklist'
 import LocalBlacklist from '@fluffici.ts/database/Common/LocalBlacklist'
 import { Guild as FGuild } from '@fluffici.ts/database/Guild/Guild'
 import BaseCommand from '@fluffici.ts/components/BaseCommand'
-import Staff from '@fluffici.ts/database/Guild/Staff'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 import {
-  fetchDGuild,
   fetchMember,
   getCurrentDate,
   isBotOrSystem,
-  isNull
 } from '@fluffici.ts/types'
 
 import { CommandInteraction, Guild, GuildMember, User } from 'discord.js'
 import {
   SlashCommandStringOption,
   SlashCommandSubcommandBuilder,
-  SlashCommandSubcommandGroupBuilder,
   SlashCommandUserOption
 } from '@discordjs/builders'
 

@@ -8,7 +8,6 @@ import FragmentAction from "./FragmentAction";
 import ConfirmButton from "./admin/ConfirmButton";
 import ConfirmBulkBlacklist from "./admin/bulk/ConfirmBulkBlacklist";
 import CancelButton from "./admin/bulk/CancelButton";
-import SyncButton from "./admin/SyncButton";
 import ButtonVerify from "./verification/ButtonVerify";
 import SelectUpdate from "./verification/SelectUpdate";
 import SupportTicket from "./support/SupportTicket";

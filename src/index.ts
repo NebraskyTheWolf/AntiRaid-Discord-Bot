@@ -11,7 +11,7 @@ declare global {
 
 
 import 'module-alias/register';
-import {Client, Intents, Message} from "discord.js";
+import {Client, Intents} from "discord.js";
 import mongoose from "mongoose";
 
 import CommandManager from "./components/commands/CommandManager";

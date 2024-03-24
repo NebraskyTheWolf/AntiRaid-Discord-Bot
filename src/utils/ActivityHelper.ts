@@ -1,6 +1,5 @@
 import Activity from "@fluffici.ts/database/Guild/Activity";
 import { Snowflake } from "discord.js"
-import {isNull} from "@fluffici.ts/types";
 
 export default class ActivityHelper {
     private type: String
