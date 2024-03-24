@@ -7,8 +7,8 @@ import CommandManager from "../components/commands/CommandManager";
 import BaseContextMenu from "@fluffici.ts/components/BaseContextMenu";
 
 export function deleteCommand() {
-    Fluffici.instance.application.commands.cache.forEach(command => {
-        removeApplicationCommands(command.id)
+    Fluffici.instance.application.commands.cache.forEach(async command => {
+        await removeApplicationCommands(command.id)
     })
 }
 
@@ -18,17 +18,12 @@ export async function removeApplicationCommands(commandId: Snowflake) {
 
         await rest.delete(
             Routes.applicationCommand(Fluffici.instance.user.id, commandId)
-        );
+        )
     } catch(error) {
         console.log(`Delete command error on ${commandId}`)
         console.log(error)
     }
 }
-
-export function getRest(): REST {
-    return new REST({ version: "9" }).setToken(process.env.TOKEN);
-}
-
 
 export async function registerCommands(
   client: Client,
@@ -37,9 +32,6 @@ export async function registerCommands(
   commandManager: CommandManager) {
   try {
     const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
-
-    const test = []
-
     const commandData = commandManager.toMap().map((getData: BaseCommand) => {
       return getData.getCommand();
     });
@@ -58,7 +50,7 @@ export async function registerCommands(
     console.log(`Register command error on ${guildId}`)
     console.log(error)
   }
-};
+}
 
 export async function registerAppContext() {
   try {
@@ -78,4 +70,4 @@ export async function registerAppContext() {
     console.log(`Register context error`)
     console.log(error)
   }
-};
+}

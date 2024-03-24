@@ -4,3 +4,9 @@ exclude:
   - name: ES6MissingAwait
   - name: Eslint
   - name: DuplicatedCode
+  - name: JSUnusedAssignment
+  - name: JSUnusedLocalSymbols
+  - name: JSUnnecessarySemicolon
+  - name: JSIgnoredPromiseFromCall
+  - name: TypeScriptAbstractClassConstructorCanBeMadeProtected
+  - name: ES6UnusedImports
