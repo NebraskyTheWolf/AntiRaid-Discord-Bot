@@ -10,3 +10,5 @@ exclude:
   - name: JSIgnoredPromiseFromCall
   - name: TypeScriptAbstractClassConstructorCanBeMadeProtected
   - name: ES6UnusedImports
+include:
+  - name: CheckDependencyLicenses
