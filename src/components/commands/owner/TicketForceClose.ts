@@ -43,7 +43,7 @@ export default class TicketForceClose extends BaseCommand {
             fields: [
               {
                 name: 'Ticket ID',
-                value: vacantTicket._id,
+                value: `${vacantTicket._id}`,
                 inline: false
               }
             ]

@@ -5,6 +5,7 @@ import Ticket from "@fluffici.ts/database/Guild/Ticket";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
 import fs from "fs";
 import path from "path";
+import {fetchMember} from "@fluffici.ts/types";
 
 export default class CloseTicket extends BaseButton<MessageButton, void> {
 
@@ -25,13 +26,27 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       const messages = await TicketMessage.find({
         ticketId: currentTicket._id
       })
-      messages.forEach(data => {
-        contentArray.push(`${data.userId}: ${data.message}`);
+
+      let uniqueUserIds = new Set(messages.map(data => data.userId));
+      let memberFetchPromises = Array.from(uniqueUserIds).map(userId => fetchMember(interaction.guildId, userId));
+      let members = await Promise.all(memberFetchPromises);
+
+      contentArray.push(`Involved users : `)
+      members.forEach(members => {
+        contentArray.push(` -> [${members.id}]${members.user.username}`)
       })
+      contentArray.push('---')
+
+      contentArray.push(`Messages : `)
+      messages.forEach(async data => {
+        let member = await fetchMember(interaction.guildId, data.userId)
+        contentArray.push(`[${new Date(data.createdAt * 1000).toLocaleString()}] - ${member.user.tag}: ${data.message}`);
+      })
+      contentArray.push('---')
 
       try {
         if (contentArray.length > 0) {
-          const filePath = path.join(__dirname, `transcripts/transcript-${currentTicket._id}.txt`);
+          const filePath = path.join(__dirname, '..', '..', '..', '..', 'data', 'transcripts', `transcript-${currentTicket._id}.txt`);
           // Write transcription data to a .txt file
           fs.writeFile(filePath, contentArray.join('\n'), async (err) => {
             if (err) {
@@ -43,6 +58,12 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
                   {
                     title: 'FurRaidDB - New ticket closed',
                     description: 'The transcript has been generated.',
+                    fields: [
+                      {
+                        name: 'Closed by',
+                        value: `${interaction.user.tag}`
+                      }
+                    ],
                     footer: {
                       text: `Ticket id ${currentTicket._id}`,
                       iconURL: this.instance.user.avatarURL({ format: 'png' })

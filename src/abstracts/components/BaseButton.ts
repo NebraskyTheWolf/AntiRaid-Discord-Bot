@@ -4,13 +4,12 @@ import { Interaction, MessageEmbed } from "discord.js";
 
 export default abstract class BaseButton<T, V> extends Base {
     public readonly customId: string;
-    public readonly setting: OptionMap<string, unknown>;
+    public readonly setting: OptionMap<string, unknown> = new OptionMap<string, unknown>();
     public readonly arguments: OptionMap<string, string>;
 
     protected constructor(name: string, label: string) {
         super(name, label, "BUTTON");
         this.customId = this.name;
-        this.setting = new OptionMap<string, unknown>();
         this.arguments = new OptionMap<string, string>();
     }
 
