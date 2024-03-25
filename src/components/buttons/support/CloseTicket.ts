@@ -5,7 +5,7 @@ import Ticket from "@fluffici.ts/database/Guild/Ticket";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
 import fs from "fs";
 import path from "path";
-import {fetchMember} from "@fluffici.ts/types";
+import {fetchMember, fetchSyncMember} from "@fluffici.ts/types";
 
 export default class CloseTicket extends BaseButton<MessageButton, void> {
 
@@ -33,16 +33,16 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
 
       contentArray.push(`Involved users : `)
       members.forEach(members => {
-        contentArray.push(` -> [${members.id}]${members.user.username}`)
+        contentArray.push(` -> [${members.id}] ${members.user.username}`)
       })
-      contentArray.push('---')
+      contentArray.push('---\n')
 
       contentArray.push(`Messages : `)
-      messages.forEach(async data => {
-        let member = await fetchMember(interaction.guildId, data.userId)
+      messages.forEach(data => {
+        let member = fetchSyncMember(interaction.guildId, data.userId)
         contentArray.push(`[${new Date(data.createdAt * 1000).toLocaleString()}] - ${member.user.tag}: ${data.message}`);
       })
-      contentArray.push('---')
+      contentArray.push('---\n')
 
       try {
         if (contentArray.length > 0) {

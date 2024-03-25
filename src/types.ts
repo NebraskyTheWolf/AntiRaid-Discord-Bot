@@ -29,6 +29,10 @@ export async function fetchMember(guildId: string, memberId: string): Promise<Gu
     return Riniya.instance.guilds.cache.get(guildId).members.cache.get(memberId);
 }
 
+export function fetchSyncMember(guildId: string, memberId: string): GuildMember {
+  return Riniya.instance.guilds.cache.get(guildId).members.cache.get(memberId);
+}
+
 export async function fetchUser(userId: string): Promise<User> {
   return await Riniya.instance.users.fetch(userId, {force: true, cache: false});
 }

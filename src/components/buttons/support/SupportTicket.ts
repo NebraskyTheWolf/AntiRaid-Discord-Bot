@@ -45,7 +45,7 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
           ephemeral: true
         })
     } else {
-      let channelId = ""
+      let channelId: string
       interaction.guild.channels.create(`${interaction.user.tag}-ticket`, {
         type: "GUILD_TEXT",
         parent: categoryChannel.id,
@@ -122,19 +122,19 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
         }, 5000))
 
         channelId = channel.id
-      })
-
-      await interaction.reply({
-        content: this.getLanguageManager().translate("ticket.created"),
-        components: [
-          {
-            type: 1,
-            components: [
-              this.instance.buttonManager.createLinkButton(this.getLanguageManager().translate("ticket.already.channel"), `https://discord.com/channels/606534136806637589/` + channelId)
-            ]
-          }
-        ],
-        ephemeral: true
+      }).finally(async () => {
+        await interaction.reply({
+          content: this.getLanguageManager().translate("ticket.created"),
+          components: [
+            {
+              type: 1,
+              components: [
+                this.instance.buttonManager.createLinkButton(this.getLanguageManager().translate("ticket.already.channel"), `https://discord.com/channels/606534136806637589/${channelId}`)
+              ]
+            }
+          ],
+          ephemeral: true
+        })
       })
     }
   }
