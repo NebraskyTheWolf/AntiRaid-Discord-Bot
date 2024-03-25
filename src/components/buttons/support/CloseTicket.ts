@@ -40,12 +40,12 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       })
       contentArray.push('---\n')
 
-      contentArray.push(`Messages : `)
+      contentArray.push(`Messages : \n`)
       messages.forEach(data => {
         let member = fetchSyncMember(interaction.guildId, data.userId)
-        contentArray.push(`Sent at : ${new Date(data.createdAt).toLocaleString()}\n`);
-        contentArray.push(`Author : ${member.user.tag}\n`);
-        contentArray.push(`Message : ${data.message}\n\n`);
+        contentArray.push(`Sent at : ${new Date(data.createdAt).toLocaleString()}`);
+        contentArray.push(`Author : ${member.user.tag}`);
+        contentArray.push(`Message : ${data.message}\n`);
       })
       contentArray.push('---\n')
 
@@ -96,7 +96,7 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
                       }
                     ],
                     footer: {
-                      text: `Ticket id ${currentTicket._id}`,
+                      text: `Ticket ${currentTicket._id}`,
                       iconURL: this.instance.user.avatarURL({ format: 'png' })
                     },
                     timestamp: Date.now()
@@ -106,6 +106,7 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
                   {
                     type: 1,
                     components: [
+                      this.instance.buttonManager.createLinkButton(`Archived channel`, `https://discord.com/channels/606534136806637589/${interaction.channel.id}`),
                       this.instance.buttonManager.createLinkButton(`transcript-${currentTicket._id}.txt`, `https://frdbapi.fluffici.eu/api/transcripts/${currentTicket._id}`)
                     ]
                   }
@@ -121,7 +122,39 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
 
       await currentTicket.updateOne({ isClosed: true });
 
-      await interaction.channel.delete("Closing support ticket")
+      await interaction.channel.edit({
+        permissionOverwrites: [
+          {
+            id: interaction.guild.roles.everyone.id,
+            deny: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+          },
+          {
+            id: currentTicket.userId,
+            deny: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("606535408117088277").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("606540681867034634").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("782578470135660585").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("606540994909044756").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          },
+          {
+            id: interaction.guild.roles.cache.get("943216911980822569").id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
+          }
+        ],
+        name: `${interaction.channel.name}-closed`
+      })
       await interaction.reply({
         content: 'Ticket closed.',
         ephemeral: true
