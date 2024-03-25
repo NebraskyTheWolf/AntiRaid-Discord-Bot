@@ -23,6 +23,7 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
 
     if (currentTicket) {
       let contentArray = [];
+      let userInTranscript = [];
       const messages = await TicketMessage.find({
         ticketId: currentTicket._id
       })
@@ -31,20 +32,24 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       let memberFetchPromises = Array.from(uniqueUserIds).map(userId => fetchMember(interaction.guildId, userId));
       let members = await Promise.all(memberFetchPromises);
 
-      contentArray.push(`Involved users : `)
+      contentArray.push(`Users in transcript : `)
       members.forEach(members => {
-        contentArray.push(` -> [${members.id}] ${members.user.username}`)
+        let i = 0;
+        userInTranscript.push(`${i++} - <@${members.user.id}> - ${members.user.tag}`)
+        contentArray.push(`${i++} - <@${members.user.id}> - ${members.user.tag}`)
       })
       contentArray.push('---\n')
 
       contentArray.push(`Messages : `)
       messages.forEach(data => {
         let member = fetchSyncMember(interaction.guildId, data.userId)
-        contentArray.push(`Sent at : ${new Date(data.createdAt * 1000).toLocaleString()}\n`);
+        contentArray.push(`Sent at : ${new Date(data.createdAt).toLocaleString()}\n`);
         contentArray.push(`Author : ${member.user.tag}\n`);
         contentArray.push(`Message : ${data.message}\n\n`);
       })
       contentArray.push('---\n')
+
+      const ticketOwner = fetchSyncMember(interaction.guildId, currentTicket.userId)
 
       try {
         if (contentArray.length > 0) {
@@ -58,12 +63,36 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
               await uploadChannel.send({
                 embeds: [
                   {
-                    title: 'FurRaidDB - New ticket closed',
-                    description: 'The transcript has been generated.',
+                    color: 'RED',
+                    author: {
+                      name: interaction.user.tag,
+                      iconURL: interaction.user.avatarURL({ format: 'png' })
+                    },
                     fields: [
                       {
-                        name: 'Closed by',
-                        value: `${interaction.user.tag}`
+                        name: 'Ticket Owner',
+                        value: `<@${ticketOwner.user.id}>`,
+                        inline: true
+                      },
+                      {
+                        name: 'Ticket Name',
+                        value: `${interaction.channel.name}`,
+                        inline: true
+                      },
+                      {
+                        name: 'Panel Name',
+                        value: `${interaction.channel.parent.name}`,
+                        inline: true
+                      },
+                      {
+                        name: 'Direct Transcript',
+                        value: `Use button`,
+                        inline: true
+                      },
+                      {
+                        name: 'Users in transcript',
+                        value: `${userInTranscript.join('\n')}`,
+                        inline: true
                       }
                     ],
                     footer: {
@@ -73,10 +102,14 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
                     timestamp: Date.now()
                   }
                 ],
-                files: [{
-                  attachment: filePath,
-                  name: `transcript-${currentTicket._id}.txt`
-                }]
+                components: [
+                  {
+                    type: 1,
+                    components: [
+                      this.instance.buttonManager.createLinkButton(`transcript-${currentTicket._id}.txt`, `https://frdbapi.fluffici.eu/api/transcripts/${currentTicket._id}`)
+                    ]
+                  }
+                ]
               });
             }
           });
