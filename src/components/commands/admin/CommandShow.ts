@@ -41,7 +41,8 @@ export default class CommandShow extends BaseCommand {
           foundDesc,
           reason,
           staff
-        })
+        }),
+        ephemeral: true
       });
     }
 
@@ -56,7 +57,8 @@ export default class CommandShow extends BaseCommand {
           foundDesc,
           reason,
           staff
-        })
+        }),
+        ephemeral: true
       });
     }
 
@@ -69,7 +71,8 @@ export default class CommandShow extends BaseCommand {
         color: 'GREEN',
         title: notFoundTitle,
         description: notFoundDesc
-      })
+      }),
+      ephemeral: true
     });
   }
 

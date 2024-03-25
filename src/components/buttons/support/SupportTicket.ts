@@ -91,21 +91,11 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
           await channel.send({
             embeds: [
               {
-                title: 'FurRaidDB - Ticket created.',
-                description: `Hello ${interaction.user.username}, You created a new ticket. Type in your issue and staff will be with you soon.`,
-                timestamp: Date.now(),
-                provider: { name: 'FurRaidDB', url: 'https://fluffici.eu' }
-              },
-              {
-                title: 'FurRaidDB - Ticket rules.',
+                title: 'FurRaidDB - Nový ticket',
                 description: `
-                \u2022 **Provide Detailed Information**: The more specific the information provided, the more quickly and effectively the support team can address your issue. This includes steps you took before encountering the problem, any specific error messages you've seen, and what you've tried already to resolve the issue.\n\n
-                \u2022 **Be Clear and Concise**: Clearly describe the problem you're experiencing. Avoid using jargon or non-specific terms such as "it's not working".\n\n
-                \u2022 **Use Relevant Subject Lines**: The subject line should briefly summarize the issue. This helps the support team prioritize and categorize your ticket.\n\n
-                \u2022 **One Issue Per Ticket**: If you have multiple issues, it's better to submit separate tickets for each one. This allows each problem to be addressed individually and prevents any potential confusion.\n\n
-                \u2022 **Include Any Necessary Attachments**: If you have screenshots or logs that illustrate the issue you're facing, include them with your initial submission.\n\n
-                \u2022 **Stay Patient and Respectful**: Remember, the support team is there to help you. It's important to treat them with respect and remember that some issues may take time to resolve.\n\n
-                \u2022 **Follow Up Appropriately**: If you've not heard back within the expected timeframe, it's okay to follow up on your support ticket. However, multiple messages in a short period can often slowdown the support process.`,
+                ${this.getEmojisConfig().get('line').repeat(20)}
+                \u2022 **Právě jsi vytvořil nový ticket**: Popiš prosím podrobně, s čím máš problém a náš moderátorský tým se ti bude co nejdříve věnovat. Prosíme o trpělivost.\n\n
+                \u2022 **Note for foreign speakers**: This server's primary language is Czech / Slovakian. Although you can join as an English speaker, please note that communication across all of the chats should be in CZ / SK language.\n\n`,
                 timestamp: Date.now(),
                 provider: { name: 'FurRaidDB', url: 'https://fluffici.eu' }
               }

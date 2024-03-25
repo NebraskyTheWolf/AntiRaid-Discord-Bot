@@ -40,7 +40,9 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       contentArray.push(`Messages : `)
       messages.forEach(data => {
         let member = fetchSyncMember(interaction.guildId, data.userId)
-        contentArray.push(`[${new Date(data.createdAt * 1000).toLocaleString()}] - ${member.user.tag}: ${data.message}`);
+        contentArray.push(`Sent at : ${new Date(data.createdAt * 1000).toLocaleString()}\n`);
+        contentArray.push(`Author : ${member.user.tag}\n`);
+        contentArray.push(`Message : ${data.message}\n\n`);
       })
       contentArray.push('---\n')
 
