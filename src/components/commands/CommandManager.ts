@@ -19,6 +19,7 @@ import ForceResync from "./owner/ForceResync";
 import CommandEval from "./owner/CommandEval";
 import DisableSpamProtection from "./owner/DisableSpamProtection";
 import CommandTicket from "./admin/CommandTicket";
+import TicketForceClose from "./owner/TicketForceClose";
 
 export default class CommandManager {
   private REGISTRY: OptionMap<String, BaseCommand>;
@@ -55,6 +56,7 @@ export default class CommandManager {
     this.registerCommand(new ForceResync())
     this.registerCommand(new CommandEval())
     this.registerCommand(new DisableSpamProtection())
+    this.registerCommand(new TicketForceClose())
 
   }
 

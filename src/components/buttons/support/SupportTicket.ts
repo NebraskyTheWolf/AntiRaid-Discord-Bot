@@ -119,7 +119,7 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
               }
             ]
           })
-        }, 2000))
+        }, 5000))
 
         channelId = channel.id
       })

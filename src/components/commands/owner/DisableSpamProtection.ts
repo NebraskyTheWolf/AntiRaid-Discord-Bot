@@ -15,7 +15,7 @@ export default class DisableSpamProtection extends BaseCommand {
       this.instance.spamProtectionEnabled = false
 
       await inter.reply({
-        content: 'Command map reloaded with success.',
+        content: 'Spam protection disabled.',
         ephemeral: true
       })
     }

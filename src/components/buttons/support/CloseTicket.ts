@@ -63,6 +63,8 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
         this.instance.logger.error(e)
       }
 
+      await currentTicket.updateOne({ isClosed: true });
+
       await interaction.channel.delete("Closing support ticket")
       await interaction.reply({
         content: 'Ticket closed.',

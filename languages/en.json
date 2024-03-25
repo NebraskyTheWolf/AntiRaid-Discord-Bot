@@ -110,5 +110,6 @@
 
   "ticket.already.channel": "Your ticket channel",
   "ticket.ticket.created": "Your ticket channel has been created.",
-  "ticket.blocked": "Regrettably, you are no longer permitted to create tickets due to non-compliance with the server's established rules."
+  "ticket.blocked": "Regrettably, you are no longer permitted to create tickets due to non-compliance with the server's established rules.",
+  "ticket.already.exist": "Sorry, but you already got one channel."
 }
