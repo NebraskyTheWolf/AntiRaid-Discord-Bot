@@ -133,11 +133,15 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
     return new MessageButton()
       .setStyle(MessageButtonStyles.PRIMARY)
       .setLabel(this.description)
-      .setEmoji(this.getEmojisConfig().get('winfo'))
+      .setEmoji(this.getEmojisConfig().get('ticket'))
       .setCustomId(this.customId);
   }
 
   message(): MessageEmbed {
-    return new MessageEmbed();
+    return new MessageEmbed()
+      .setTitle("Podpora")
+      .setColor("GREEN")
+      .setDescription(`K vytvoření ticketu zareaguj s ${this.getEmojisConfig().get("ticket")}`)
+      .setTimestamp(Date.now());
   }
 }
