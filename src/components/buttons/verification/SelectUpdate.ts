@@ -96,7 +96,10 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
             .setTimestamp(Date.now());
 
           const general = interaction.guild.channels.cache.get("606534136806637594") as TextChannel
-          general.send({embeds: [embedGeneral]})
+          general.send({
+            content: `<@${member.id}>`,
+            embeds: [embedGeneral]
+          })
 
           await new AcitivityHelper()
             .setOwner(interaction.member.id)
