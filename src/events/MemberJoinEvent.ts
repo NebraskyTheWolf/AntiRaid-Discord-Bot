@@ -150,7 +150,6 @@ export default class MemberJoin extends BaseEvent {
       guild,
       blacklisted,
       localBlacklist,
-      whitelist,
     ] = await this.fetchRequiredData(member)
 
     if (guild.logChannelID) {
@@ -158,9 +157,7 @@ export default class MemberJoin extends BaseEvent {
         id: member.id
       }), this.getLanguageManager().translate('event.member_added.description'), 'GREEN', this.generateLogDetails(member, blacklisted, localBlacklist))
 
-      if (!whitelist) {
-        await this.handleBan(guild, member, blacklisted, localBlacklist)
-      }
+      await this.handleBan(guild, member, blacklisted, localBlacklist)
     }
   }
 

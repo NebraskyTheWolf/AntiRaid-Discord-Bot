@@ -5,7 +5,7 @@ import Ticket from "@fluffici.ts/database/Guild/Ticket";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
 import fs from "fs";
 import path from "path";
-import {fetchMember, fetchSyncMember} from "@fluffici.ts/types";
+import {fetchMember, fetchSyncMember, fetchSyncUser, fetchUser} from "@fluffici.ts/types";
 
 export default class CloseTicket extends BaseButton<MessageButton, void> {
 
@@ -29,22 +29,22 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       })
 
       let uniqueUserIds = new Set(messages.map(data => data.userId));
-      let memberFetchPromises = Array.from(uniqueUserIds).map(userId => fetchMember(interaction.guildId, userId));
+      let memberFetchPromises = Array.from(uniqueUserIds).map(userId => fetchUser(userId));
       let members = await Promise.all(memberFetchPromises);
 
       contentArray.push(`Users in transcript : `)
       members.forEach(members => {
         let i = 0;
-        userInTranscript.push(`${i++} - <@${members.user.id}> - ${members.user.tag}`)
-        contentArray.push(`${i++} - <@${members.user.id}> - ${members.user.tag}`)
+        userInTranscript.push(`${i++} - <@${members.id}> - ${members.tag}`)
+        contentArray.push(`${i++} - <@${members.id}> - ${members.tag}`)
       })
       contentArray.push('---\n')
 
       contentArray.push(`Messages : \n`)
       messages.forEach(data => {
-        let member = fetchSyncMember(interaction.guildId, data.userId)
+        let member = fetchSyncUser(data.userId)
         contentArray.push(`Sent at : ${new Date(data.createdAt).toLocaleString()}`);
-        contentArray.push(`Author : ${member.user.tag}`);
+        contentArray.push(`Author : ${member.tag}`);
         contentArray.push(`Message : ${data.message}\n`);
       })
       contentArray.push('---\n')

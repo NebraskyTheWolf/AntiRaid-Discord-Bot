@@ -37,6 +37,13 @@ export async function fetchUser(userId: string): Promise<User> {
   return await Riniya.instance.users.fetch(userId, {force: true, cache: false});
 }
 
+export function fetchSyncUser(userId: string): User {
+  let user: User;
+  Riniya.instance.users.fetch(userId, {force: true, cache: false}).then(users => user = users);
+  return user
+}
+
+
 export async function fetchMemberByStaff(memberName: string): Promise<GuildMember> {
   const staff: FStaff = await Staff.findOne({
     name: memberName
