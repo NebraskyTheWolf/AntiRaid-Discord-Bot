@@ -1,5 +1,5 @@
 import BaseTask from "@fluffici.ts/components/BaseTask";
-import {fetchMember, updateVerification} from "@fluffici.ts/types";
+import {fetchMember, forceUpdateVerification, updateVerification} from "@fluffici.ts/types";
 import Verification from "@fluffici.ts/database/Guild/Verification";
 
 export default class SyncVerification extends BaseTask {
@@ -12,7 +12,13 @@ export default class SyncVerification extends BaseTask {
         verifications.forEach(async verification => {
           const member = await fetchMember(verification.guildId, verification.memberId);
           if (!member) {
-            await updateVerification(member, "The user left before getting verified.");
+            await forceUpdateVerification(verification.memberId, "The user left before getting verified.");
+
+            await Verification.updateOne({ _id: verification._id, status: 'pending'}, {
+              $set: {
+                status: 'expired'
+              }
+            })
           }
         })
       })

@@ -122,3 +122,38 @@ export async function updateVerification(target: GuildMember, message: string) {
 
   await Interaction.deleteOne({ _id: interMessage._id })
 }
+
+export async function forceUpdateVerification(target: string, message: string) {
+  const channel: TextChannel = Riniya.instance.guilds.cache.get("606534136806637589").channels.cache.get("1220695667887046677") as TextChannel;
+  const interMessage = await Interaction.findOne({
+    guildId: '606534136806637589',
+    memberId: target,
+    deleted: false
+  })
+
+  if (isNull(interMessage)) {
+    return;
+  }
+
+  const verificationId = await Verification.findOne({
+    guildId: interMessage.guildId,
+    memberId: interMessage.memberId
+  }, null, {
+    sort: {
+      registeredAt: 1
+    }
+  })
+
+  await channel.messages.fetch(interMessage.messageId).then(r => r.edit({
+    components: [
+      {
+        type: 1,
+        components: [
+          Riniya.instance.buttonManager.createLinkButton(message, `https://bot.fluffici.eu/verifications/edit/${verificationId._id}`)
+        ]
+      }
+    ]
+  }))
+
+  await Interaction.deleteOne({ _id: interMessage._id })
+}
