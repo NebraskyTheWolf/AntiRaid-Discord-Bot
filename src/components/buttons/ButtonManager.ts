@@ -12,6 +12,8 @@ import ButtonVerify from "./verification/ButtonVerify";
 import SelectUpdate from "./verification/SelectUpdate";
 import SupportTicket from "./support/SupportTicket";
 import CloseTicket from "./support/CloseTicket";
+import KickButton from "./verification/KickButton";
+import RemindButton from "./verification/RemindButton";
 
 export default class ButtonManager {
     private BUTTONS: OptionMap<String, BaseButton<unknown, unknown>>;
@@ -36,6 +38,8 @@ export default class ButtonManager {
       // Dev button
       this.addButton(new ButtonVerify())
       this.addButton(new SelectUpdate())
+      this.addButton(new KickButton())
+      this.addButton(new RemindButton())
 
 
       // Support ticket

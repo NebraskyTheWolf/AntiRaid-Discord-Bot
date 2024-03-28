@@ -8,6 +8,7 @@ import RaidSession from "@fluffici.ts/database/Security/RaidSession";
 import {v4} from "uuid";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
 import PreventedRaid from "@fluffici.ts/database/Security/PreventedRaid";
+import Reminder from "@fluffici.ts/database/Security/Reminder";
 
 const RAID_MEMBER_THRESHOLD = 10;
 const JOIN_RATE_TIME = 10 * 1000;  // Interval (ms) to consider multiple joins as a raid.
@@ -30,6 +31,12 @@ export default class MemberJoin extends BaseEvent {
       if (isBotOrSystem(member)) return
 
       const guild = await this.getGuild(member.guild.id)
+
+      let reminder = new Reminder({
+        memberId: member.id
+      })
+
+      this.instance.logger.info(`Adding ${member.id} to the reminder list (RID: ${reminder._id}`)
 
       await this.handleBLCheck(member)
       await this.handleRaidProtection(member, guild)

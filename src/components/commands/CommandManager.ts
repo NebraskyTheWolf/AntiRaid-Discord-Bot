@@ -21,6 +21,9 @@ import DisableSpamProtection from "./owner/DisableSpamProtection";
 import CommandTicket from "./admin/CommandTicket";
 import TicketForceClose from "./owner/TicketForceClose";
 import CommandFindDuplicates from "./owner/CommandFindDuplicates";
+import CommandReminderDBG from "./owner/CommandReminderDBG";
+import CommandReminderUnlock from "./owner/CommandReminderUnlock";
+import CommandReminderDeleteUser from "./owner/CommandReminderDeleteUser";
 
 export default class CommandManager {
   private REGISTRY: OptionMap<String, BaseCommand>;
@@ -59,6 +62,9 @@ export default class CommandManager {
     this.registerCommand(new DisableSpamProtection())
     this.registerCommand(new TicketForceClose())
     this.registerCommand(new CommandFindDuplicates())
+    this.registerCommand(new CommandReminderDBG())
+    this.registerCommand(new CommandReminderUnlock())
+    this.registerCommand(new CommandReminderDeleteUser())
 
   }
 

@@ -1,10 +1,11 @@
 
 import BaseTask from "@fluffici.ts/components/BaseTask";
-import {fetchDGuild, fetchMember} from "@fluffici.ts/types";
+import {fetchDGuild, fetchMember, fetchSyncMember} from "@fluffici.ts/types";
 import Reminder from "@fluffici.ts/database/Security/Reminder";
 import {GuildMember, MessageButton, TextChannel} from "discord.js";
 import Verification from "@fluffici.ts/database/Guild/Verification";
 import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
+import moment from 'moment/moment'
 
 export default class ReminderVerification extends BaseTask {
   public constructor() {
@@ -20,12 +21,18 @@ export default class ReminderVerification extends BaseTask {
           return;
         }
 
+        const reminder = await Reminder.find()
+
         this.instance.logger.warn("ReminderVerification Running job.")
+        this.instance.logger.warn(`Members: ${role.members.size}`)
+        this.instance.logger.warn(`Reminders: ${reminder.length}`)
 
+        const now = new Date();
         role.members.map(async m => {
+          if (m.user.bot || m.user.system)
+            return;
 
-          const now = new Date();
-          const reminders = await Reminder.find({
+          const reminders = await Reminder.findOne({
             memberId: m.id,
             locked: false,
             notified: false
@@ -35,75 +42,68 @@ export default class ReminderVerification extends BaseTask {
             memberId: m.id
           })
 
-          if (!currentVerification) {
-            for (const reminder of reminders) {
-              // 1 reminder sent @ 24 hour intervals
-              if (reminder.reminders.length < 1) {
-                const lastReminderSent = reminder.reminders[reminder.reminders.length - 1];
-                // 24 hours in milliseconds is 86400000
-                if (!lastReminderSent || now.getTime() - lastReminderSent.getTime() > 86400000) {
-
+          if (reminders) {
+            if (!currentVerification) {
+              let hours = moment().diff(moment(m.joinedTimestamp), 'hours');
+              if (!reminders.locked && hours >= 24) {
+                try {
                   this.instance.logger.warn("First reminder sent to " + m.id)
-
-                  await this.sendFirstReminder(m, now.getTime() - lastReminderSent.getTime());
-
-                  reminder.reminders.push(now);
-                  reminder.locked = true;
-                  await reminder.save();
+                  await this.sendFirstReminder(m);
+                } catch (e) {
+                  this.instance.logger.warn("Cannot send message to " + m.id + " because they disabled their private messages.")
                 }
+                reminders.reminders = now.getTime();
+                reminders.locked = true;
+                await reminders.save();
+              } else {
+                this.instance.logger.warn("Reminder already sent or it's too early " + m.id)
+                this.instance.logger.warn(hours  + " hours " + m.id)
+                this.instance.logger.warn("---")
               }
+            } else {
+              this.instance.logger.warn("Deleting reminder for user because they completed the verification form.")
+              await Reminder.deleteOne({
+                memberId: m.id
+              })
             }
-
-            const remindersLocked = await Reminder.find({
-              memberId: m.id,
-              locked: true,
-              notified: false
-            });
-
-            let memberArray = [];
-
-            for (const reminderLocked of remindersLocked) {
-              const lastReminderSent = reminderLocked.reminders[reminderLocked.reminders.length - 1];
-              // 3 days in milliseconds is 259200000
-              if (!lastReminderSent || now.getTime() - lastReminderSent.getTime() > 259200000) {
-                memberArray.push(reminderLocked.memberId)
-
-                reminderLocked.notified = true;
-                await reminderLocked.save();
-              }
-            }
-
-            if (memberArray.length > 0) {
-              this.instance.logger.warn("Sending kick log.")
-              this.handleRaidLog(memberArray, guild)
-              memberArray.length = 0;
-            }
-
-          } else {
-            this.instance.logger.warn("Deleting reminder for user because they completed the verification form.")
-            // Delete the reminder once the member has completed the verification form.
-            await Reminder.deleteOne({
-              memberId: m.id
-            })
           }
+        })
+
+        this.instance.logger.warn("Checking locked reminder.")
+
+        const remindersLockeds = await Reminder.find({
+          locked: true,
+          notified: false
+        });
+
+        let memberArray = [];
+
+        for (const reminderLocked of remindersLockeds) {
+          let member = fetchSyncMember(guild.guildID, reminderLocked.memberId)
+          let hours = moment().diff(moment(member.joinedTimestamp), 'hours');
+
+          if (hours >= 72) {
+            memberArray.push(`<@${reminderLocked.memberId}>`)
+            this.instance.logger.warn("Pushing locked reminder")
+            reminderLocked.notified = true;
+            await reminderLocked.save();
+          }
+        }
+
+        if (memberArray.length > 0) {
+          this.instance.logger.warn("Sending kick log.")
+          await this.handleRaidLog(memberArray)
+          memberArray.length = 0;
+        } else {
+          this.instance.logger.warn("No locked reminder.")
+        }
       })
-    })
   }
 
-  private async handleRaidLog(memberArray= [], guild: FGuild) {
+  private async handleRaidLog(memberArray= []) {
     const announcementChannel = this.instance.guilds.cache
-      .get(guild.guildID).channels.cache
-      .get(guild.logChannelID) as TextChannel;
-
-
-    const affectedMembers = memberArray.map(async x => {
-      const member = await fetchMember(guild.guildID, x);
-      return member.displayName
-    })
-
-    // Anti spam safety feature.
-    if (affectedMembers.length <= 0)
-      return;
+      .get("606534136806637589").channels.cache
+      .get("803067472621600859") as TextChannel;
 
     let confirmButton = this.instance.buttonManager.getButton("row_confirm_bulk_kick");
     let cancelButton = this.instance.buttonManager.getButton("row_cancel_bulk_remind");
@@ -112,7 +112,7 @@ export default class ReminderVerification extends BaseTask {
       embeds: [
         {
           title: "FurRaidDB - Verification timed-out.",
-          description: `${affectedMembers.join(', ')} has not verified in the time period.`,
+          description: `${memberArray.join(', ')} has not verified in the time period.`,
           timestamp: Date.now()
         }
       ],
@@ -128,7 +128,7 @@ export default class ReminderVerification extends BaseTask {
     });
   }
 
-  async sendFirstReminder(member: GuildMember, remainingTime: number) {
+  async sendFirstReminder(member: GuildMember) {
     await member.send({
       embeds: [
         {
