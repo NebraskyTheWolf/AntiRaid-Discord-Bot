@@ -12,7 +12,7 @@ export default class SyncVerification extends BaseTask {
         verifications.forEach(async verification => {
           const member = await fetchMember(verification.guildId, verification.memberId);
           if (!member) {
-            await forceUpdateVerification(verification.memberId, "The user left before getting verified.");
+            await forceUpdateVerification(verification.memberId, "Uživatel se odpojil");
 
             await Verification.updateOne({ _id: verification._id, status: 'pending'}, {
               $set: {

@@ -39,6 +39,7 @@ export default class ModalVerificationSubmit extends BaseModal {
         .addField(this.getLanguageManager().translate("verification.enforced.username"), `${interaction.user.username}`, true)
         .addField(this.getLanguageManager().translate("verification.enforced.discriminator"), `${interaction.user.discriminator}`, true)
         .addField("ID", `${interaction.user.id}`, true)
+        .addField("Mention", `<@${interaction.user.id}>`, true)
         .addField(this.getLanguageManager().translate('common.joined'), getAmountOfDays(interaction.user.createdAt) + ' ' + this.getLanguageManager().translate('common.days'), true)
         .addField(this.getLanguageManager().translate('common.globally_blacklisted'), `${isNull(blacklisted) ? no : yes}`, false)
         .addField(this.getLanguageManager().translate('common.locally_blacklisted'), `${isNull(localBlacklist) ? no : yes}`, false)
