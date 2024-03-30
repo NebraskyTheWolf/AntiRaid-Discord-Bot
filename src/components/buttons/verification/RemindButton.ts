@@ -8,7 +8,7 @@ import Reminder from "@fluffici.ts/database/Security/Reminder";
 export default class RemindButton extends BaseButton<MessageButton, void> {
 
   public constructor() {
-   super('row_confirm_bulk_kick', 'Kick all')
+   super('row_confirm_bulk_remind', 'Remind all')
   }
 
   async handler(interaction: ButtonInteraction<"cached">): Promise<any> {
@@ -65,7 +65,7 @@ export default class RemindButton extends BaseButton<MessageButton, void> {
     return new MessageButton()
       .setStyle(MessageButtonStyles.SECONDARY)
       .setLabel("Kick all")
-      .setEmoji(this.getEmojisConfig().get('warning'))
+      .setEmoji(this.getEmojisConfig().get('gchecks'))
       .setCustomId(this.customId);
   }
 

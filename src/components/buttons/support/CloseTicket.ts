@@ -41,15 +41,15 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       contentArray.push('---\n')
 
       contentArray.push(`Messages : \n`)
-      messages.forEach(data => {
-        let member = fetchSyncUser(data.userId)
+      messages.forEach(async data => {
+        let user = await fetchUser(data.userId)
         contentArray.push(`Sent at : ${new Date(data.createdAt).toLocaleString()}`);
-        contentArray.push(`Author : ${member.tag}`);
+        contentArray.push(`Author : ${user.tag}`);
         contentArray.push(`Message : ${data.message}\n`);
       })
       contentArray.push('---\n')
 
-      const ticketOwner = fetchSyncMember(interaction.guildId, currentTicket.userId)
+      const ticketOwner = await fetchMember(interaction.guildId, currentTicket.userId)
 
       try {
         if (contentArray.length > 0) {
