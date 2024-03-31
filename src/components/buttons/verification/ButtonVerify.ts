@@ -8,6 +8,7 @@ import ModalHelper from "@fluffici.ts/utils/ModalHelper";
 import {
     TextInputComponent
 } from "discord-modals";
+import Verification from "@fluffici.ts/database/Guild/Verification";
 
 export default class ButtonVerify extends BaseButton<MessageButton, void> {
     public constructor() {
@@ -16,6 +17,20 @@ export default class ButtonVerify extends BaseButton<MessageButton, void> {
 
     public async handler(inter: ButtonInteraction<"cached">): Promise<void> {
       await this.getGuild(inter.guildId)
+
+      const isPending = await Verification.findOne({
+        memberId: inter.member.id,
+        status: 'pending'
+      });
+
+      if (isPending) {
+        return await inter.reply({
+          content: 'You cannot do this, you already sent your request.',
+          ephemeral: true
+        })
+      }
+
+
       await new ModalHelper(
         "row_verification_submit",
         "Ověřte se pro přístup do serveru"

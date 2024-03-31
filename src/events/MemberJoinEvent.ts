@@ -32,9 +32,9 @@ export default class MemberJoin extends BaseEvent {
 
       const guild = await this.getGuild(member.guild.id)
 
-      let reminder = new Reminder({
+      let reminder = await new Reminder({
         memberId: member.id
-      })
+      }).save()
 
       this.instance.logger.info(`Adding ${member.id} to the reminder list (RID: ${reminder._id}`)
 

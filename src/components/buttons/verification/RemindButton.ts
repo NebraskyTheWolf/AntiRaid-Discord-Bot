@@ -29,7 +29,7 @@ export default class RemindButton extends BaseButton<MessageButton, void> {
       await Reminder.deleteOne({ _id: m._id})
     })
 
-    return await this.respond(interaction, 'command.verification.bulk.kick', 'command.verification.bulk.kick.desc', 'GREEN')
+    return await this.respond(interaction, 'command.verification.bulk.remind', 'command.verification.bulk.remind.desc', 'GREEN')
   }
 
   async sendFirstReminder(member: GuildMember) {
@@ -64,7 +64,7 @@ export default class RemindButton extends BaseButton<MessageButton, void> {
   generate(): MessageButton {
     return new MessageButton()
       .setStyle(MessageButtonStyles.SECONDARY)
-      .setLabel("Kick all")
+      .setLabel("Remind again")
       .setEmoji(this.getEmojisConfig().get('gchecks'))
       .setCustomId(this.customId);
   }

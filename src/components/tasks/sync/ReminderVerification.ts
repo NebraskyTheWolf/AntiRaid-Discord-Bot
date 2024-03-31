@@ -105,7 +105,7 @@ export default class ReminderVerification extends BaseTask {
       .get("606534136806637589").channels.cache
       .get("803067472621600859") as TextChannel;
 
-    let confirmButton = this.instance.buttonManager.getButton("row_confirm_bulk_kick");
+    let confirmButton = this.instance.buttonManager.getButton("row_cancel_bulk_kick");
     let cancelButton = this.instance.buttonManager.getButton("row_confirm_bulk_remind");
 
     await announcementChannel.send({

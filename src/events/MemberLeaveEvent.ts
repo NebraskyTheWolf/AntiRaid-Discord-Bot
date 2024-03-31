@@ -4,6 +4,7 @@ import {
   createExtraOptions,
   isBotOrSystem,
 } from '@fluffici.ts/types'
+import Verification from "@fluffici.ts/database/Guild/Verification";
 
 export default class MemberLeave extends BaseEvent {
     public constructor() {

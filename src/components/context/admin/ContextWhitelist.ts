@@ -41,7 +41,7 @@ export default class ContextWhitelist extends BaseContextMenu {
 
   private async handleAddCommand (inter: ContextMenuInteraction<"cached">, member: GuildMember, guildId: string, user: string, whitelisted: any): Promise<any> {
     if (whitelisted) {
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.already_whitelisted.title','info', 'ORANGE', [], 'command.whitelist.already_whitelisted.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.already_whitelisted.title','info', 'ORANGE', [], 'command.whitelist.already_whitelisted.description'))
     }
 
     try {
@@ -53,9 +53,9 @@ export default class ContextWhitelist extends BaseContextMenu {
       }).save()
 
       this.writeAuditLog(guildId, inter.member.id, "whitelist_added", `Whitelisted ${user}`)
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.added_success','success', 'ORANGE', [], 'command.whitelist.added_success.description'))
     } catch {
-      await inter.followUp(this.generateEmbedsResponse(member, 'command.whitelist.added_failed','error', 'RED', [], 'command.whitelist.added_failed.description'))
+      await inter.reply(this.generateEmbedsResponse(member, 'command.whitelist.added_failed','error', 'RED', [], 'command.whitelist.added_failed.description'))
     }
   }
 }
