@@ -231,23 +231,26 @@ export default class CommandTicket extends BaseCommand {
         contentArray.push(`Users in transcript : `)
         members.forEach(members => {
           let i = 0;
-          userInTranscript.push(`${i++} - <@${members.id}> - ${members.tag}`)
-          contentArray.push(`${i++} - <@${members.id}> - ${members.tag}`)
+          userInTranscript.push(`${i} - <@${members.id}> - ${members.tag}`);
+          contentArray.push(`${i} - <@${members.id}> - ${members.tag}`);
+          i++;
         })
         contentArray.push('---\n')
 
-        let message = messages.map(async m => {
-          let user = await fetchUser(m.userId)
+        let messagePromises = messages.map(async m => {
+          let user = await fetchUser(m.userId);
 
-          return`Sent at : ${new Date(m.createdAt).toLocaleString()}\n
-                Author : ${user.tag}\n
-                Message : ${m.message}\n
-                `
-        })
+          return `Sent at : ${new Date(m.createdAt).toLocaleString()}\n
+            Author : ${user.tag}\n
+            Message : ${m.message}\n
+            `;
+        });
 
-        contentArray.push(`Messages : \n\n`)
-        message.forEach(async data => contentArray.push(data));
-        contentArray.push('---\n')
+        contentArray.push(`Messages : \n\n`);
+
+        let messageResults = await Promise.all(messagePromises);
+
+        contentArray = [...contentArray, ...messageResults, '---\n'];
 
         const filePath = path.join(__dirname, '..', '..', '..', '..', 'data', 'transcripts', `transcript-${ticketId}.txt`);
         fs.writeFile(filePath, contentArray.join('\n'), async (err) => {

@@ -40,19 +40,20 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       })
       contentArray.push('---\n')
 
+      let messagePromises = messages.map(async m => {
+        let user = await fetchUser(m.userId);
 
-      let message = messages.map(async m => {
-        let user = await fetchUser(m.userId)
+        return `Sent at : ${new Date(m.createdAt).toLocaleString()}\n
+            Author : ${user.tag}\n
+            Message : ${m.message}\n
+            `;
+      });
 
-        return`Sent at : ${new Date(m.createdAt).toLocaleString()}\n
-                Author : ${user.tag}\n
-                Message : ${m.message}\n
-                `
-      })
+      contentArray.push(`Messages : \n\n`);
 
-      contentArray.push(`Messages : \n\n`)
-      message.forEach(async data => contentArray.push(data));
-      contentArray.push('---\n')
+      let messageResults = await Promise.all(messagePromises);
+
+      contentArray = [...contentArray, ...messageResults, '---\n'];
 
       const ticketOwner = await fetchMember(interaction.guildId, currentTicket.userId)
 
