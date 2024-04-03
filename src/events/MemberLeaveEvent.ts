@@ -5,6 +5,7 @@ import {
   isBotOrSystem,
 } from '@fluffici.ts/types'
 import Verification from "@fluffici.ts/database/Guild/Verification";
+import Reminder from "@fluffici.ts/database/Security/Reminder";
 
 export default class MemberLeave extends BaseEvent {
     public constructor() {
@@ -26,6 +27,9 @@ export default class MemberLeave extends BaseEvent {
               id: member.id
             }), this.getLanguageManager().translate('event.member_removed.description'), 'RED', this.generateLogDetails(member, blacklisted, localBlacklist), extra)
           }
+
+          // Deleting reminders from the existing member.
+          await Reminder.deleteOne({ memberId: member.id })
         });
     }
 }

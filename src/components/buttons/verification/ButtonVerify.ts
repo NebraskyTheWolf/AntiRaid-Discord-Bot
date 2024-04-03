@@ -30,7 +30,6 @@ export default class ButtonVerify extends BaseButton<MessageButton, void> {
         })
       }
 
-
       await new ModalHelper(
         "row_verification_submit",
         "Ověřte se pro přístup do serveru"

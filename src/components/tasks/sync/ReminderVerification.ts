@@ -29,7 +29,7 @@ export default class ReminderVerification extends BaseTask {
 
         const now = new Date();
         role.members.map(async m => {
-          if (m.user.bot || m.user.system)
+          if (!m && m.user.bot || m.user.system)
             return;
 
           const reminders = await Reminder.findOne({
