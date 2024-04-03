@@ -1,11 +1,17 @@
 import BaseCommand from '@fluffici.ts/components/BaseCommand'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
-import {CommandInteraction, Guild, GuildMember, MessageButton} from 'discord.js'
+import {CommandInteraction, Guild, GuildMember, MessageButton, User} from 'discord.js'
 import {
+  SlashCommandStringOption,
   SlashCommandSubcommandBuilder, SlashCommandUserOption,
 } from "@discordjs/builders";
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
+import guild from "@fluffici.ts/database/Guild/Guild";
+import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
+import {fetchUser} from "@fluffici.ts/types";
+import path from "path";
+import fs from "fs";
 
 export default class CommandTicket extends BaseCommand {
 
@@ -20,6 +26,18 @@ export default class CommandTicket extends BaseCommand {
       new SlashCommandSubcommandBuilder()
         .setName("close")
         .setDescription("Closing a ticket")
+    )
+
+    this.addSubCommand(
+      new SlashCommandSubcommandBuilder()
+        .setName("transcripts")
+        .setDescription("Transcript")
+        .addStringOption(
+          new SlashCommandStringOption()
+            .setName("id")
+            .setDescription("Transcript one old support ticket")
+            .setRequired(true)
+        )
     )
 
     this.addSubCommand(
@@ -193,6 +211,64 @@ export default class CommandTicket extends BaseCommand {
       } else {
         await inter.reply({
           content: `This channel is not a support ticket.`,
+          ephemeral: true
+        })
+      }
+    } else if (command == "transcripts") {
+      let ticketId = inter.options.getString("id", true)
+      const messages = await TicketMessage.find({
+        ticketId: ticketId
+      })
+
+      if (messages) {
+        let contentArray = [];
+        let userInTranscript = [];
+
+        let uniqueUserIds = new Set(messages.map(data => data.userId));
+        let memberFetchPromises = Array.from(uniqueUserIds).map(userId => fetchUser(userId));
+        let members = await Promise.all(memberFetchPromises);
+
+        contentArray.push(`Users in transcript : `)
+        members.forEach(members => {
+          let i = 0;
+          userInTranscript.push(`${i++} - <@${members.id}> - ${members.tag}`)
+          contentArray.push(`${i++} - <@${members.id}> - ${members.tag}`)
+        })
+        contentArray.push('---\n')
+
+        let message = messages.map(async m => {
+          let user = await fetchUser(m.userId)
+
+          return`Sent at : ${new Date(m.createdAt).toLocaleString()}\n
+                Author : ${user.tag}\n
+                Message : ${m.message}\n
+                `
+        })
+
+        contentArray.push(`Messages : \n\n`)
+        message.forEach(async data => contentArray.push(data));
+        contentArray.push('---\n')
+
+        const filePath = path.join(__dirname, '..', '..', '..', '..', 'data', 'transcripts', `transcript-${ticketId}.txt`);
+        fs.writeFile(filePath, contentArray.join('\n'), async (err) => {
+          if (err) { console.error(err) }
+
+          await inter.reply({
+            content: `Transcript file has been created.`,
+            components: [
+              {
+                type: 1,
+                components: [
+                  this.instance.buttonManager.createLinkButton(`transcript-${ticketId}.txt`, `https://frdbapi.fluffici.eu/api/transcripts/${ticketId}`)
+                ]
+              }
+            ],
+            ephemeral: true
+          });
+        })
+      } else {
+        await inter.reply({
+          content: `Invalid ticket ID.`,
           ephemeral: true
         })
       }
