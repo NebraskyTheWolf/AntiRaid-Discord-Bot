@@ -19,13 +19,11 @@ export default abstract class RouteBase extends Base {
     protected readonly routerInstance: Router
     protected readonly cacheManager: CacheManager
     protected readonly authentication: Authentication
-    public readonly isRouteProtected: boolean;
-    public readonly routePrefix: string;
 
     public constructor() {
         super("routes", "", "SERVER")
         this.routerInstance = router;
-        this.cacheManager = new CacheManager("api")
+        this.cacheManager = new CacheManager()
         this.authentication = new Authentication()
         this.selfRegister();
     }

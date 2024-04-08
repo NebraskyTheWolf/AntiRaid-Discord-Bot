@@ -51,6 +51,18 @@ export default class CommandTicket extends BaseCommand {
             .setRequired(true)
         )
     )
+
+    this.addSubCommand(
+      new SlashCommandSubcommandBuilder()
+        .setName("add")
+        .setDescription("Add someone to a existing channel.")
+        .addUserOption(
+          new SlashCommandUserOption()
+            .setName("user")
+            .setDescription("Select the user")
+            .setRequired(true)
+        )
+    )
   }
 
   async handler (inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
@@ -272,6 +284,37 @@ export default class CommandTicket extends BaseCommand {
       } else {
         await inter.reply({
           content: `Invalid ticket ID.`,
+          ephemeral: true
+        })
+      }
+    } else if (command == "add") {
+      const currentTicket = await Ticket.findOne({
+        channelId: inter.channelId,
+        isClosed: false
+      })
+
+      if (currentTicket) {
+        let user = inter.options.getUser("user", true)
+        await inter.channel.edit({
+          permissionOverwrites: [
+            {
+              id: user.id,
+              allow: ['SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'VIEW_CHANNEL']
+            }
+          ]
+        })
+
+        await inter.channel.send({
+          content: `<@${user.id}>`
+        })
+
+        await inter.reply({
+          content: `<@${user.id}> has been added to ${inter.channel.name}.`,
+          ephemeral: true
+        })
+      } else {
+        await inter.reply({
+          content: `This channel is not a support ticket.`,
           ephemeral: true
         })
       }

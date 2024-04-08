@@ -11,6 +11,7 @@ import ModalHelper from "@fluffici.ts/utils/ModalHelper";
 import { TextInputComponent } from "discord-modals";
 import Verification from "@fluffici.ts/database/Guild/Verification";
 import AcitivityHelper from "@fluffici.ts/utils/ActivityHelper";
+import Reminder from "@fluffici.ts/database/Security/Reminder";
 
 export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
     public constructor() {
@@ -109,6 +110,8 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
 
           await updateVerification(member, `Žádost schválena od ${interaction.user.displayName}`)
 
+          await Reminder.deleteMany({ memberId: member.id })
+
           await interaction.reply({
             content: `Member ${member.user.username} is now verified.`,
             ephemeral: true
@@ -161,6 +164,8 @@ export default class SelectUpdate extends BaseButton<MessageSelectMenu, void> {
           member.ban({reason: `Uživatel byl zabanován od ${interaction.user.tag}`})
 
           await updateVerification(member, 'Uživatel byl zabanován od ' + interaction.user.tag)
+
+          await Reminder.deleteMany({ memberId: member.id })
 
           await interaction.reply({
             content: `You Banned ${member.user}`,
