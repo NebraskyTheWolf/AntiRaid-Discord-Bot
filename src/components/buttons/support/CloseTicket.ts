@@ -35,21 +35,22 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
       contentArray.push(`Users in transcript : `)
       members.forEach(members => {
         let i = 0;
-        userInTranscript.push(`${i++} - <@${members.id}> - ${members.tag}`)
-        contentArray.push(`${i++} - <@${members.id}> - ${members.tag}`)
+        userInTranscript.push(`${i} - <@${members.id}> - ${members.tag}`)
+        contentArray.push(`${i} - <@${members.id}> - ${members.tag}`)
+        i++
       })
       contentArray.push('---\n')
 
       let messagePromises = messages.map(async m => {
         let user = await fetchUser(m.userId);
 
-        return `Sent at : ${new Date(m.createdAt).toLocaleString()}\n
-            Author : ${user.tag}\n
-            Message : ${m.message}\n
+        return `Sent at : ${new Date(m.createdAt).toLocaleString()}
+            Author : ${user.tag}
+            Message : ${m.message}
             `;
       });
 
-      contentArray.push(`Messages : \n\n`);
+      contentArray.push(`Messages : `);
 
       let messageResults = await Promise.all(messagePromises);
 
@@ -159,7 +160,8 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
             allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 'ATTACH_FILES', 'MANAGE_MESSAGES'],
           }
         ],
-        name: `${interaction.channel.name}-closed`
+        name: `${interaction.channel.name}-closed`,
+        parent: '1231669552249835581'
       })
       await interaction.reply({
         content: 'Ticket closed.',
@@ -171,6 +173,21 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
         ephemeral: true
       })
     }
+
+    const button = interaction.message.components[0].components[0]
+    button.disabled = true
+
+    await interaction.message.edit({
+      embeds: interaction.message.embeds,
+      components: [
+        {
+          type: 1,
+          components: [
+            button
+          ]
+        }
+      ]
+    })
   }
 
   generate(): MessageButton {

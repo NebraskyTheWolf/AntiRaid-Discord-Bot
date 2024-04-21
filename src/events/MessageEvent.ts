@@ -16,6 +16,7 @@ import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
 interface Offence {
   timestamp: number;
   count: number;
+  lastMessageHits: number;
   lastMessage?: string;
   lastMessageTimestamp?: number;
 }
@@ -128,7 +129,7 @@ export default class MessageEvent extends BaseEvent {
     })
 
     if (this.offences.has(message.member.id)) {
-      let offence: Offence = this.offences.get(message.author.id) || { timestamp: currentTime, lastMessage: '', lastMessageTimestamp: currentTime, count: 0 };
+      let offence: Offence = this.offences.get(message.author.id) || { timestamp: currentTime, lastMessage: '', lastMessageTimestamp: currentTime, count: 0, lastMessageHits: 0 };
 
       if (currentTime <= offence.timestamp + this.timePeriod) {
         offence.count++;
@@ -136,10 +137,16 @@ export default class MessageEvent extends BaseEvent {
         offence.count = 1;
       }
 
-      if (message.content === offence.lastMessage && currentTime <= offence.timestamp + this.repeatTimePeriod) {
+      if (message.content === offence.lastMessage && offence.lastMessageHits >= 4 && currentTime <= offence.timestamp + this.repeatTimePeriod) {
         message.reply({ content: `${this.getLanguageManager().translate("common.dont.repeat")}`}).then(m => setTimeout(() => m.delete(), this.repeatTimePeriod))
         message.delete()
         return
+      }
+
+      if (message.content === offence.lastMessage && currentTime <= offence.timestamp + this.repeatTimePeriod) {
+        offence.lastMessageHits++
+      } else {
+        offence.lastMessageHits = 0
       }
 
       // Update the timestamp
@@ -166,7 +173,7 @@ export default class MessageEvent extends BaseEvent {
       // Save the updated offence back to the map
       this.offences.add(message.author.id, offence);
     } else {
-      this.offences.add(message.member.id, { timestamp: Date.now(), lastMessage: message.content, lastMessageTimestamp: currentTime, count: 1});
+      this.offences.add(message.member.id, { timestamp: Date.now(), lastMessage: message.content, lastMessageTimestamp: currentTime, count: 1, lastMessageHits: 0 });
     }
   }
 

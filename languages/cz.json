@@ -83,7 +83,7 @@
   "command.blacklist.bulk.blacklist.cancelled": "Zrušeno",
   "command.blacklist.bulk.blacklist.cancelled.desc": "Časový limit pro všechny členy v seznamu bude zrušen za 60 sekund.",
   "common.dont.spam.everyone": "Prosím nepoužívejte příliš často @ everyone.",
-  "common.dont.repeat": "Prosím nepřehánějte se příliš často.",
+  "common.dont.repeat": "Prosím, vyhni se spamování.",
   "common.dont.spam": "Prosím nezaplněte chat zprávami.",
 
   "event.message.spam.detected.everyone": "Odesláno :messages zmínek @everyone do :ratelimit sekund.",
