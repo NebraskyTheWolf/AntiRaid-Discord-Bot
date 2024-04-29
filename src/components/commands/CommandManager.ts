@@ -24,6 +24,7 @@ import CommandFindDuplicates from "./owner/CommandFindDuplicates";
 import CommandReminderDBG from "./owner/CommandReminderDBG";
 import CommandReminderUnlock from "./owner/CommandReminderUnlock";
 import CommandReminderDeleteUser from "./owner/CommandReminderDeleteUser";
+import CommandVerification from "./admin/CommandVerification";
 
 export default class CommandManager {
   private REGISTRY: OptionMap<String, BaseCommand>;
@@ -49,6 +50,7 @@ export default class CommandManager {
     this.registerCommand(new CommandInvite())
     this.registerCommand(new CommandSupport())
     this.registerCommand(new CommandTicket())
+    this.registerCommand(new CommandVerification())
 
     this.registerCommand(new CommandGlobal())
     this.registerCommand(new CommandLocal())

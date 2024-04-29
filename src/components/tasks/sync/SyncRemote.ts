@@ -15,6 +15,8 @@ export default class SyncRemote extends BaseTask {
 
         const blacklist = await Blacklist.find({ isRemote: true, isAcknowledged: false })
         blacklist.forEach(async item => {
+          // Adding await to avoid data retention.
+          // FIX: F-0002-2024
           await Blacklist.updateOne({
             _id: item._id,
           }, {

@@ -79,10 +79,6 @@ export default class CommandGlobal extends BaseCommand {
           return await this.respond(inter, 'command.blacklist.user_already_blacklisted_title', 'command.blacklist.user_already_blacklisted_description', 'RED', {}, 'warning')
         }
 
-        if (!member) {
-          return await this.respond(inter, 'command.blacklist.user_not_found_title', 'command.blacklist.user_not_found_description', 'RED', {}, 'warning')
-        }
-
         await new Blacklist({
           userID: user,
           reason: reason,
@@ -95,7 +91,11 @@ export default class CommandGlobal extends BaseCommand {
 
         this.writeAuditLog(guild.guildID, inter.member.id, "global_blacklist_added", `Blacklisted ${user} reason ${reason}`)
 
-        await member.ban({ reason: reason })
+        if (member) {
+          // Ban if the user exists, otherwise we skip.
+          // FIX: F-0007-2024
+          await member.ban({ reason: reason })
+        }
 
         return await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN')
       }

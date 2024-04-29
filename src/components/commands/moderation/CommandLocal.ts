@@ -67,10 +67,8 @@ export default class CommandLocal extends BaseCommand {
       case 'add': {
         const reason = inter.options.getString('reason', true)
         const member = await fetchMember(inter.guildId, user.id)
-        if (isBotOrSystem(member)) {
-          return await this.respond(inter, 'command.blacklist.cannot_blacklist_bot_title', 'command.blacklist.cannot_blacklist_bot_description', 'RED')
-        }
         const local = await this.findLocal(user, inter.guildId)
+
         if (local) {
           return await this.respond(inter, 'command.blacklist.user_already_blacklisted_title', 'command.blacklist.user_already_blacklisted_description', 'RED', { user: user.tag }, 'error')
         }
@@ -111,7 +109,11 @@ export default class CommandLocal extends BaseCommand {
     }).save()
 
     await this.respond(inter, 'command.blacklist.user_blacklisted_title', 'command.blacklist.user_blacklisted_description', 'GREEN', { user: user.tag })
-    await member.ban({ reason: reason })
+    if (member) {
+      // Ban if the user exists, otherwise we skip.
+      // FIX: F-0007-2024
+      await member.ban({ reason: reason })
+    }
   }
 
   async removeMemberFromBlacklist (inter: CommandInteraction<'cached'>, user: User) {

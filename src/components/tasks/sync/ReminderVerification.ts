@@ -80,6 +80,12 @@ export default class ReminderVerification extends BaseTask {
 
         for (const reminderLocked of remindersLockeds) {
           let member = fetchSyncMember(guild.guildID, reminderLocked.memberId)
+
+          // Ignoring if the member left the server OR if the member got the verified role.
+          // FIX: F-0001-2024
+          if (!member || member.roles.cache.has("606542137819136020"))
+             continue
+
           let hours = moment().diff(moment(member.joinedTimestamp), 'hours');
 
           if (hours >= 72) {
