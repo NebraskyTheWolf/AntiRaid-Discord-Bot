@@ -40,6 +40,12 @@ export default class CommandVerification extends BaseCommand {
         .setName("purge")
         .setDescription("Purge all unverified members.")
     )
+
+    this.addSubCommand(
+      new SlashCommandSubcommandBuilder()
+        .setName("clear-reminders")
+        .setDescription("Clearing out all the reminders.")
+    )
   }
 
   async handler(inter: CommandInteraction<'cached'>, member: GuildMember, guild: Guild) {
@@ -78,19 +84,38 @@ export default class CommandVerification extends BaseCommand {
       }
       case "unverified": {
         let unverified = [];
+
+        const reminders = await Reminder.find()
         const unverifiedMembers = await Promise.all(unverifiedRole.members.map(async x => {
+          const reminder = await Reminder.findOne({ memberId: x.id });
+
+          if (!reminder)
+            return {
+              user: x,
+              reminder: undefined
+            }
+
           return {
             user: x,
-            reminder: await Reminder.findOne({ memberId: x.id })
+            reminder: reminder
           };
         }));
-
         unverifiedMembers.forEach(x => {
-          unverified.push(`<${x.user.id}> - Is already notified?: ${(x.reminder.notified ? "Yes" : "No")}`)
+          if (x.reminder !== undefined)
+            unverified.push(`<${x.user.id}> - Is already notified?: ${(x.reminder.notified ? "Yes" : "No")}`)
         });
 
+        let content = unverified.join('\n');
+        if (unverified.length <= 0 || reminders.length <= 0)
+          content = this.getLanguageManager().translate("common.no_unverified")
+
         return await inter.reply({
-          content: unverified.join('\n'),
+          embeds: [
+            {
+              title: this.getLanguageManager().translate("common.unverified"),
+              description: content
+            }
+          ],
           ephemeral: true
         })
       }
@@ -101,6 +126,15 @@ export default class CommandVerification extends BaseCommand {
 
         return await inter.reply({
           content: this.getLanguageManager().translate("command.user.purged"),
+          ephemeral: true
+        })
+      }
+      case "clear-reminders": {
+        const reminders = await Reminder.find()
+        reminders.forEach(async x => await Reminder.deleteOne({ _id: x._id }))
+
+        return await inter.reply({
+          content: this.getLanguageManager().translate("command.user.reminder_cleared"),
           ephemeral: true
         })
       }

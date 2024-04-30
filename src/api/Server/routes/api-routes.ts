@@ -35,18 +35,18 @@ export default class ApiRoutes extends AbstractRoutes {
         return res.json({
           status: false,
           error: 'MISSING_ARGUMENTS',
-          message: 'The transcript id is missing.'
+          message: 'The transcript_files id is missing.'
         })
       }
 
-      const filePath = path.join(__dirname, '..', '..', '..', '..', 'data', 'transcripts', `transcript-${req.params.id}.txt`);
+      const filePath = path.join(__dirname, '..', '..', '..', '..', 'data', 'transcripts', `transcript-${req.params.id}.html`);
       if (fs.existsSync(filePath)) {
-        return res.download(filePath)
+        return res.sendFile(filePath)
       } else {
         return res.json({
           status: false,
           error: 'FILE_NOT_FOUND',
-          message: 'The transcript file does not exist.'
+          message: 'The transcript_files file does not exist.'
         });
       }
     }

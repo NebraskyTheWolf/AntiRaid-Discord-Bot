@@ -1,7 +1,7 @@
 import BaseCommand from '@fluffici.ts/components/BaseCommand'
 import OptionMap from '@fluffici.ts/utils/OptionMap'
 
-import {CommandInteraction, Guild, GuildMember, MessageButton, User} from 'discord.js'
+import {CommandInteraction, Guild, GuildMember, MessageButton, TextChannel, User} from 'discord.js'
 import {
   SlashCommandStringOption,
   SlashCommandSubcommandBuilder, SlashCommandUserOption,
@@ -9,7 +9,7 @@ import {
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
 import guild from "@fluffici.ts/database/Guild/Guild";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
-import {fetchUser} from "@fluffici.ts/types";
+import {fetchMember, fetchUser} from "@fluffici.ts/types";
 import path from "path";
 import fs from "fs";
 
@@ -228,58 +228,93 @@ export default class CommandTicket extends BaseCommand {
       }
     } else if (command == "transcripts") {
       let ticketId = inter.options.getString("id", true)
+
+      const currentTicket = await Ticket.findOne({ _id: ticketId })
+
       const messages = await TicketMessage.find({
         ticketId: ticketId
       })
 
       if (messages) {
         let contentArray = [];
-        let userInTranscript = [];
 
         let uniqueUserIds = new Set(messages.map(data => data.userId));
         let memberFetchPromises = Array.from(uniqueUserIds).map(userId => fetchUser(userId));
         let members = await Promise.all(memberFetchPromises);
 
-        contentArray.push(`Users in transcript : `)
         members.forEach(members => {
-          let i = 0;
-          userInTranscript.push(`${i} - <@${members.id}> - ${members.tag}`);
-          contentArray.push(`${i} - <@${members.id}> - ${members.tag}`);
-          i++;
+          contentArray.push(`<p><i class="fas fa-user"></i> ${members.tag}</p>`)
         })
-        contentArray.push('---\n')
 
         let messagePromises = messages.map(async m => {
           let user = await fetchUser(m.userId);
+          const userRegex = /<@(\d{16,19})>/g;
+          m.message = m.message.replace(userRegex, (match, userId) => {
+            const user = this.instance.users.cache.get(userId);
+            return user ? `<strong class='discord-mention'>@${user.tag}</strong>` : match;
+          });
 
-          return `Sent at : ${new Date(m.createdAt).toLocaleString()}\n
-            Author : ${user.tag}\n
-            Message : ${m.message}\n
-            `;
+          const channelRegex = /<#(\d{16,19})>/g;
+          m.message = m.message.replace(channelRegex, (match, channelId) => {
+            const channel = this.instance.channels.cache.get(channelId) as TextChannel;
+            return channel ? `<strong style="color: orange;">#${channel.name}</strong>` : match;
+          });
+
+          const emojiRegex = /<:([a-zA-Z0-9_]+):(\d{16,19})>/g;
+          m.message = m.message.replace(emojiRegex, (match, emojiName, emojiId) => {
+            const emoji = this.instance.emojis.cache.get(emojiId);
+            return emoji ? `<img src="${emoji.url}" class="emoji" alt="${emojiName}" width="64" height="64">` : match;
+          });
+
+          return `<div>
+            <div class="message-header">
+                <img class="avatar" src="${ user.avatarURL({ format: 'png' })}" alt="${user.id}">
+                <div>
+                    <p><i class="fas fa-id-badge"></i> <strong>User ID:</strong> ${user.id}</p>
+                    <p><i class="fas fa-user"></i> <strong>Username:</strong> ${user.tag}</p>
+                    <p><i class="far fa-calendar"></i> <strong>Date:</strong> ${new Date(m.createdAt).toDateString()}</p>
+                </div>
+
+            </div>
+            <div class="message-content">
+                <p>${m.message}</p>
+            </div>
+        </div>
+
+        <hr class="message-separator">`;
         });
 
-        contentArray.push(`Messages : \n\n`);
+        let messageSimplePromises = messages.map(x => {
+          return x.message
+        })
 
         let messageResults = await Promise.all(messagePromises);
+        const ticketOwner = await fetchMember(inter.guildId, currentTicket.userId)
 
-        contentArray = [...contentArray, ...messageResults, '---\n'];
+        const filePath = path.join(__dirname, '..', '..', '..', '..', 'data', 'transcripts', `transcript-${currentTicket._id}.html`);
+        // Write transcription data to a .txt file
 
-        const filePath = path.join(__dirname, '..', '..', '..', '..', 'data', 'transcripts', `transcript-${ticketId}.txt`);
-        fs.writeFile(filePath, contentArray.join('\n'), async (err) => {
-          if (err) { console.error(err) }
+        this.replacePlaceholdersInFile(filePath, {
+          owner: ticketOwner.displayName,
+          ticketid: currentTicket._id,
+          opened: "NYI",
+          closed: new Date().toDateString(),
+          channel: inter.guild.channels.cache.get(currentTicket.channelId).name || "Deleted Channel.",
+          users: contentArray.join("\n"),
+          messages: messageResults.join("\n")
+        }, messageSimplePromises)
 
-          await inter.reply({
-            content: `Transcript file has been created.`,
-            components: [
-              {
-                type: 1,
-                components: [
-                  this.instance.buttonManager.createLinkButton(`transcript-${ticketId}.txt`, `https://frdbapi.fluffici.eu/api/transcripts/${ticketId}`)
-                ]
-              }
-            ],
-            ephemeral: true
-          });
+        await inter.reply({
+          content: `Transcript generated!`,
+          components: [
+            {
+              type: 1,
+              components: [
+                this.instance.buttonManager.createLinkButton(`transcript-${currentTicket._id}.html`, `https://frdbapi.fluffici.eu/api/transcripts/${currentTicket._id}`)
+              ]
+            }
+          ],
+          ephemeral: false
         })
       } else {
         await inter.reply({
@@ -319,5 +354,31 @@ export default class CommandTicket extends BaseCommand {
         })
       }
     }
+  }
+
+  replacePlaceholdersInFile(filePath: string, replacements: Record<string, string>, messages: string[]): void {
+    // Read the file
+    fs.readFile(path.join(__dirname, '..', '..', '..', '..', 'transcript_files', `index.html`), 'utf8', (err, data) => {
+      if (err) {
+        console.error(`Error reading file: ${err}`);
+        return;
+      }
+
+      // Perform replacements
+      let modifiedContent = data;
+      Object.entries(replacements).forEach(([placeholder, value]) => {
+        const regex = new RegExp(`%${placeholder}%`, 'g');
+        modifiedContent = modifiedContent.replace(regex, value);
+      });
+
+      // Write the modified content back to the file
+      fs.writeFile(filePath, modifiedContent, 'utf8', (err) => {
+        if (err) {
+          console.error(`Error writing to file: ${err}`);
+          return;
+        }
+        console.log('Replacements complete.');
+      });
+    });
   }
 }
