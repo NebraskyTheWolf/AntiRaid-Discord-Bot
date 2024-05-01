@@ -102,7 +102,7 @@ export default class CommandVerification extends BaseCommand {
         }));
         unverifiedMembers.forEach(x => {
           if (x.reminder !== undefined)
-            unverified.push(`<${x.user.id}> - Is already notified?: ${(x.reminder.notified ? "Yes" : "No")}`)
+            unverified.push(`<@${x.user.id}> - Is already notified?: ${(x.reminder.notified ? "Yes" : "No")}`)
         });
 
         let content = unverified.join('\n');
