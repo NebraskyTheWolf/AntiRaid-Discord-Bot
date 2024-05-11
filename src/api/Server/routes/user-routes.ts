@@ -1,7 +1,9 @@
 import AbstractRoutes, {ErrorType} from "../../Server/AbstractRoutes";
 import {Request, Response} from "express";
-import {fetchDGuild, fetchUser, getAmountOfDays, isNull} from "@fluffici.ts/types";
+import {fetchDGuild, fetchMember, fetchUser, getAmountOfDays, isNull} from "@fluffici.ts/types";
 import {Snowflake} from "discord.js";
+import verification from "@fluffici.ts/database/Guild/Verification";
+import Verification from "@fluffici.ts/database/Guild/Verification";
 
 interface CachedMember {
   id: Snowflake,
@@ -23,6 +25,7 @@ interface Data {
 export default class UserRoutes extends AbstractRoutes {
   public selfRegister() {
     this.getRouter().get('/users/:id', this.getMemberInformation.bind(this))
+    this.getRouter().get('/users/:id/is-verified', this.getMemberVerification.bind(this))
     this.getRouter().get('/servers/:id', this.getServerInformation.bind(this))
   }
 
@@ -51,6 +54,33 @@ export default class UserRoutes extends AbstractRoutes {
      })
    }
   }
+
+  private async getMemberVerification(req: Request, res: Response) {
+    if (isNull(req.params.id)) {
+      return this.sendSuccessResponse(res, {
+        verified: false
+      });
+    }
+
+    const member = await fetchMember('606534136806637589', req.params.id);
+    if (!member) {
+      return this.sendSuccessResponse(res, {
+        verified: false
+      });
+    }
+
+    const verification = await Verification.findOne({ memberId: req.params.id, status: 'verified' });
+    if (verification || member.roles.cache.has("606542137819136020") && !member.roles.cache.has("606542004708573219")) {
+      return this.sendSuccessResponse(res, {
+        verified: true
+      });
+    }
+
+    return this.sendSuccessResponse(res, {
+      verified: false
+    });
+  }
+
 
   private async getMemberInformation(req: Request, res: Response) {
     if (isNull(req.params.id)) {
