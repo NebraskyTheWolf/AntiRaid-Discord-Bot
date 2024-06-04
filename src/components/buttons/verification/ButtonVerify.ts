@@ -76,27 +76,26 @@ export default class ButtonVerify extends BaseButton<MessageButton, void> {
         return new MessageButton()
             .setCustomId(this.customId)
             .setLabel(this.description)
-            .setStyle("SECONDARY")
-            .setEmoji(this.getEmojisConfig().get("gchecks"));
+            .setStyle("PRIMARY")
+            .setEmoji(this.getEmojisConfig().get("verify"));
     }
 
     public message(): MessageEmbed {
         return new MessageEmbed()
-            .setTitle("Základní informace")
             .setColor("GREEN")
-            .setDescription("**Vítej na našem serveru! Pro přístup se nejprve musíš ověřit.**\n Ač se jedná o furry server, pro přístup není pravidlem být furrík.\n" +
-              "\n" +
-              "**Základní informace o serveru:**\n" +
-              " \u2022 Jsi na Discordovém serveru komunity Fluffíci. Naším cílem je poskytnout prostory pro socializaci a možnost poznat nové lidi v rámci českého a slovenského furry fandomu. Pořádáme akce pro Fluffíci, z.s., organizujeme eventy na serveru (například filmové večery, hraní her, kreslení atd.) a také je zde prostor pro obyčejný pokec.\n\n" +
-              " \u2022 Server je kompletně SFW. Cokoliv, co do této kategorie nespadá, zde není tolerováno.\n\n" +
-              " \u2022 Minimální věk dle pravidel platformy Discord je 15 let v ČR a 16 let v SR\n\n" +
-              " \u2022 Trollové, raideři a jiné osoby s obdobnými záměry nejsou vítáni.\n\n" +
-              "**Jak se ověřit?**\n" +
-              " \u2022 Kliknutím na tlačítko 'Ověření' pod tímto oknem zahájíš verifikaci\n\n" +
-              " \u2022 Během verifikace budeš odkázán/a na pravidla serveru, které je třeba si projít a odsouhlasit\n\n" +
-              " \u2022 Abychom se přesvědčili, že nemáš nekalé úmysly, je potřeba alespoň stručně odpovědět na několik otázek. Snaž se odepisovat konkrétně a stručně.\n\n" +
-              " \u2022 Po odeslání žádosti o ověření vyčkej, než moderátorský tým zkontroluje tvojí žádost. Doba čekání je obvykle do hodiny, max během několika hodin v závislosti na čase odeslání žádosti.\n\n" +
-              " \u2022 Nebude-li tvoje žádost dostatečně adekvátní či až příliš stručná, bude zamítnuta. V případě zamítnutí máš možnost odeslat novou žádost.\n\n" +
-              " \u2022 Kdyby cokoliv nebylo jasné, využij možnost ticketu.")
+            .setDescription("## Základní informace\n" +
+              "**Vítej na našem serveru! Pro přístup se nejprve musíš ověřit.**\n" +
+              "* Jsi na Discordovém serveru komunity Fluffíci. Naším cílem je poskytnout prostory pro socializaci a možnost poznat nové lidi v rámci českého a slovenského furry fandomu. Pořádáme akce pro Fluffíci, z.s., organizujeme eventy na serveru (například filmové večery, hraní her, kreslení atd.) a také je zde prostor pro obyčejný pokec.\n" +
+              "* Server je kompletně SFW. Cokoliv, co do této kategorie nespadá, zde není tolerováno.\n" +
+              "* Minimální věk dle pravidel platformy Discord je 15 let v ČR a 16 let v SR.\n" +
+              "* Trollové, raideři a jiné osoby s obdobnými záměry nejsou vítáni.\n" +
+              "## Jak se ověřit?\n" +
+              "** Kliknutím na tlačítko 'Ověření' pod tímto oknem zahájíš verifikaci.**\n" +
+              "* Během verifikace budeš odkázán/a na pravidla serveru, které je třeba si projít a odsouhlasit.\n" +
+              "* Abychom se přesvědčili, že nemáš nekalé úmysly, je potřeba alespoň stručně odpovědět na několik otázek. Snaž se odepisovat konkrétně a stručně.\n" +
+              "* Po odeslání žádosti o ověření vyčkej, než moderátorský tým zkontroluje tvoji žádost. Doba čekání je obvykle do hodiny, max během několika hodin v závislosti na čase odeslání žádosti.\n" +
+              "* Nebude-li tvoje žádost dostatečně adekvátní či až příliš stručná, bude zamítnuta. V případě zamítnutí máš možnost odeslat novou žádost.\n" +
+              "* Kdyby cokoliv nebylo jasné, využij možnost ticketu."
+            )
     }
 }

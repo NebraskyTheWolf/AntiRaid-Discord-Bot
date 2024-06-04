@@ -7,7 +7,7 @@ import PreventTicket from "@fluffici.ts/database/Security/PreventTicket";
 export default class SupportTicket extends BaseButton<MessageButton, void> {
 
   public constructor() {
-   super('row_support_ticket', 'Ticket')
+   super('row_support_ticket', 'Potřebuji pomoc!')
   }
 
   async handler(interaction: ButtonInteraction<"cached">): Promise<any> {
@@ -131,7 +131,7 @@ export default class SupportTicket extends BaseButton<MessageButton, void> {
 
   generate(): MessageButton {
     return new MessageButton()
-      .setStyle(MessageButtonStyles.PRIMARY)
+      .setStyle(MessageButtonStyles.SECONDARY)
       .setLabel(this.description)
       .setEmoji(this.getEmojisConfig().get('ticket'))
       .setCustomId(this.customId);
