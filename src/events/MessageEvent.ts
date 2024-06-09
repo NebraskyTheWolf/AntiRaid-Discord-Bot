@@ -1,17 +1,14 @@
 import BaseEvent from "@fluffici.ts/components/BaseEvent";
-import {Guild as FGuild} from "@fluffici.ts/database/Guild/Guild";
-
-import fetch from "node-fetch"
-
-import {Message, Snowflake, TextChannel} from "discord.js";
-import {registerCommands} from "@fluffici.ts/utils/registerCommand";
-import Migrated, {IMigrated} from "@fluffici.ts/database/Security/Migrated";
+import { Guild as FGuild } from "@fluffici.ts/database/Guild/Guild";
+import fetch from "node-fetch";
+import { Message, Snowflake, TextChannel } from "discord.js";
+import { registerCommands } from "@fluffici.ts/utils/registerCommand";
+import Migrated, { IMigrated } from "@fluffici.ts/database/Security/Migrated";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
-import {fetchDGuild, isBotOrSystem, isNull} from "@fluffici.ts/types";
+import { fetchDGuild, isBotOrSystem } from "@fluffici.ts/types";
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
 import PreventTicket from "@fluffici.ts/database/Security/PreventTicket";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
-
 
 interface Offence {
   timestamp: number;
@@ -19,17 +16,18 @@ interface Offence {
   lastMessageHits: number;
   lastMessage?: string;
   lastMessageTimestamp?: number;
+  repeatedMessages: Set<string>;
 }
 
 export default class MessageEvent extends BaseEvent {
 
-  private readonly offences: OptionMap<Snowflake, Offence> = new OptionMap<Snowflake, Offence>()
-  private messageThreshold: number = 25;
-  private timePeriod: number = 10000;
-  private repeatTimePeriod: number = 10000;
+  private readonly offences: OptionMap<Snowflake, Offence> = new OptionMap<Snowflake, Offence>();
+  private messageThreshold: number = 15;
+  private timePeriod: number = 5000;
+  private repeatTimePeriod: number = 8000;
   private messageTimePeriod: number = 10000;
 
-  public constructor () {
+  public constructor() {
     super('messageCreate', async (message: Message) => {
       if (isBotOrSystem(message.member)) return;
 
@@ -40,9 +38,9 @@ export default class MessageEvent extends BaseEvent {
       }
 
       try {
-        this.handleTicketMessage(message)
+        this.handleTicketMessage(message);
       } catch (e) {
-        this.instance.logger.error(e)
+        this.instance.logger.error(e);
       }
 
       try {
@@ -50,7 +48,7 @@ export default class MessageEvent extends BaseEvent {
           await this.handleOffence(message, guild);
         }
       } catch (e) {
-        this.instance.logger.error(e)
+        this.instance.logger.error(e);
       }
 
       try {
@@ -58,12 +56,12 @@ export default class MessageEvent extends BaseEvent {
           await this.handleScamLinks(message, guild);
         }
       } catch (e) {
-        this.instance.logger.error(e)
+        this.instance.logger.error(e);
       }
-    })
+    });
   }
 
-  async handleTicketMessage(message: Message) {
+  private async handleTicketMessage(message: Message) {
     if (message.channel.type === 'GUILD_TEXT') {
       const channel = message.channel as TextChannel;
       const guild = channel.guild;
@@ -78,15 +76,15 @@ export default class MessageEvent extends BaseEvent {
             ticketId: isTicket._id,
             userId: member.id,
             message: message.content
-          }).save()
+          }).save();
         }
       }
     }
   }
 
-  async handleMigrationCommand(message: Message): Promise<void> {
+  private async handleMigrationCommand(message: Message): Promise<void> {
     if (message.member.permissions.has('ADMINISTRATOR')) {
-      const migrate: IMigrated = await Migrated.findOne({guildId: message.guildId});
+      const migrate: IMigrated = await Migrated.findOne({ guildId: message.guildId });
       if (migrate) {
         await message.reply({
           content: this.getLanguageManager().translate('event.already_migrated')
@@ -108,28 +106,28 @@ export default class MessageEvent extends BaseEvent {
     }
   }
 
-  async handleScamLinks(message: Message, guild: FGuild): Promise<void> {
+  private async handleScamLinks(message: Message, guild: FGuild): Promise<void> {
     if (message.content.indexOf('https://') !== -1 || message.content.indexOf('http://') !== -1) {
       const urls = this.extractUrls(message.content);
-      const scamUrl = await this.findScamUrl(urls);
-
-      if (scamUrl) {
-        await this.handleScam(guild, message, scamUrl);
+      for (const url of urls) {
+        const scamUrl = await this.findScamUrl(url);
+        if (scamUrl) {
+          await this.handleScam(guild, message, scamUrl);
+        }
       }
     }
   }
 
-  async handleOffence(message: Message, guild: FGuild): Promise<void> {
+  private async handleOffence(message: Message, guild: FGuild): Promise<void> {
     const currentTime = Date.now();
-
     const isTicket = await Ticket.findOne({
       channelId: message.channelId,
       userId: message.author.id,
       isClosed: false
-    })
+    });
 
     if (this.offences.has(message.member.id)) {
-      let offence: Offence = this.offences.get(message.author.id) || { timestamp: currentTime, lastMessage: '', lastMessageTimestamp: currentTime, count: 0, lastMessageHits: 0 };
+      let offence = this.offences.get(message.author.id) as Offence;
 
       if (currentTime <= offence.timestamp + this.timePeriod) {
         offence.count++;
@@ -137,68 +135,64 @@ export default class MessageEvent extends BaseEvent {
         offence.count = 1;
       }
 
-      if (message.content === offence.lastMessage && offence.lastMessageHits >= 4 && currentTime <= offence.timestamp + this.repeatTimePeriod) {
-        message.reply({ content: `${this.getLanguageManager().translate("common.dont.repeat")}`}).then(m => setTimeout(() => m.delete(), this.repeatTimePeriod))
-        message.delete()
-        return
-      }
-
-      if (message.content === offence.lastMessage && currentTime <= offence.timestamp + this.repeatTimePeriod) {
-        offence.lastMessageHits++
+      if (offence.repeatedMessages.has(message.content) && currentTime <= offence.lastMessageTimestamp + this.repeatTimePeriod) {
+        offence.lastMessageHits++;
+        if (offence.lastMessageHits >= 4) {
+          await this.takeAction(message, guild, offence, "repeating messages");
+          return;
+        }
       } else {
-        offence.lastMessageHits = 0
+        offence.lastMessageHits = 1;
       }
 
-      // Update the timestamp
+      offence.repeatedMessages.add(message.content);
       offence.timestamp = currentTime;
       offence.lastMessage = message.content;
       offence.lastMessageTimestamp = currentTime;
 
-      // If the count exceeds the threshold, take action
       if (offence.count > this.messageThreshold) {
-        message.reply({ content: `${this.getLanguageManager().translate("common.dont.spam")}`})
-        message.member.timeout(600 * 1000, "Spam")
-
+        await this.takeAction(message, guild, offence, "spamming");
         if (isTicket) {
-          const guild = await fetchDGuild(message.guildId)
-          guild.channels.cache.get(isTicket.channelId).delete("Spamming in a support ticket.")
+          const dGuild = await fetchDGuild(message.guildId);
+          dGuild.channels.cache.get(isTicket.channelId)?.delete("Spamming in a support ticket.");
           new PreventTicket({
             userId: message.author.id
-          }).save()
+          }).save();
         }
-
-        await this.handleSpamLog(guild, message, offence, false)
       }
 
-      // Save the updated offence back to the map
       this.offences.add(message.author.id, offence);
     } else {
-      this.offences.add(message.member.id, { timestamp: Date.now(), lastMessage: message.content, lastMessageTimestamp: currentTime, count: 1, lastMessageHits: 0 });
+      this.offences.add(message.member.id, {
+        timestamp: currentTime,
+        count: 1,
+        lastMessageHits: 0,
+        lastMessage: message.content,
+        lastMessageTimestamp: currentTime,
+        repeatedMessages: new Set<string>([message.content])
+      });
     }
   }
 
-  private async findScamUrl (url: string): Promise<string | null> {
-    const res = await this.callScamDetection(url)
-    if (res.scam) {
-      return url
-    }
-    return null;
+  private async findScamUrl(url: string): Promise<string | null> {
+    const res = await this.callScamDetection(url);
+    return res.scam ? url : null;
   }
 
-  private async callScamDetection (url: string): Promise<any> {
-    const apiUrl = this.getDefaultConfig().get('fluffici-api') + '/api/moderation/scam-detection/link?link=' + url
+  private async callScamDetection(url: string): Promise<any> {
+    const apiUrl = `${this.getDefaultConfig().get('fluffici-api')}/api/moderation/scam-detection/link?link=${url}`;
     const response = await fetch(apiUrl, {
       method: 'GET'
-    })
-    if (!response.ok) throw new Error('Failed to fetch data')
-    return response.json()
+    });
+    if (!response.ok) throw new Error('Failed to fetch data');
+    return response.json();
   }
 
-  private async handleScam (guild: FGuild, message: Message, scamUrl: string, muted: boolean = false, offence: Offence = null): Promise<void> {
+  private async handleScam(guild: FGuild, message: Message, scamUrl: string, muted: boolean = false, offence: Offence = null): Promise<void> {
     await message.reply({
-      content: this.getLanguageManager().translate('event.message.scam_detected'),
-    }).then(m => setTimeout(() => m.delete(), 10 * 1000))
-    await message.delete()
+      content: this.getLanguageManager().translate('event.message.scam_detected')
+    }).then(m => setTimeout(() => m.delete(), 10 * 1000));
+    await message.delete();
 
     const logDetails = [
       {
@@ -216,7 +210,7 @@ export default class MessageEvent extends BaseEvent {
         value: `${message.author.displayName}`,
         inline: false
       }
-    ]
+    ];
 
     if (muted) {
       logDetails.push(
@@ -225,22 +219,29 @@ export default class MessageEvent extends BaseEvent {
           value: `Spamming of scam-links Strikes (${offence.count})/5`,
           inline: false
         }
-      )
+      );
     }
 
-    const title = muted ? this.getLanguageManager().translate('event.message.log.title.muted') : this.getLanguageManager().translate('event.message.log.title')
-    const desc = this.getLanguageManager().translate('event.message.log.description')
+    const title = muted ? this.getLanguageManager().translate('event.message.log.title.muted') : this.getLanguageManager().translate('event.message.log.title');
+    const desc = this.getLanguageManager().translate('event.message.log.description');
 
-    await this.sendScamLog(guild, message, title, desc, logDetails)
+    await this.sendScamLog(guild, message, title, desc, logDetails);
+  }
+
+  private async takeAction(message: Message, guild: FGuild, offence: Offence, reason: string) {
+    await message.reply({ content: `${this.getLanguageManager().translate("common.dont.spam")}` });
+    await message.member.timeout(600 * 1000, reason);
+
+    await this.handleSpamLog(guild, message, offence, reason === "spamming");
   }
 
   private async handleSpamLog(guild: FGuild, message: Message, offence: Offence, isEveryone: boolean = false) {
     const logDetails = [
       {
-        name: `${isEveryone ? '[Spam of @ everyone]' : '[Message spamming]' }`,
+        name: `${isEveryone ? '[Spam of @ everyone]' : '[Message spamming]'}`,
         value: this.getLanguageManager().translate(isEveryone ? "event.message.spam.detected.everyone" : "event.message.spam.detected", {
           messages: `${offence.count}`,
-          ratelimit: `${this.messageTimePeriod/1000}`
+          ratelimit: `${this.messageTimePeriod / 1000}`
         }),
         inline: false
       },
@@ -254,25 +255,21 @@ export default class MessageEvent extends BaseEvent {
         value: `${message.author.displayName}`,
         inline: false
       }
-    ]
+    ];
 
     const title = this.getLanguageManager().translate('event.message.log.title.spam', {
       id: message.author.id
-    })
-    await this.sendScamLog(guild, message, title, 'blep', logDetails)
+    });
+    await this.sendScamLog(guild, message, title, 'blep', logDetails);
   }
 
-  private extractUrls (text: string): string {
-    let cleanedText = text;
-    let markdownLinkPattern = '[(.*?)\]\((.*?))';
-
-    if (text.match(markdownLinkPattern)) {
-      cleanedText = text.replace(markdownLinkPattern, "");
+  private extractUrls(text: string): string[] {
+    let urls: string[] = [];
+    const urlPattern = /((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/g;
+    let match: string[];
+    while ((match = urlPattern.exec(text)) !== null) {
+      urls.push(match[0].replace(/https?:\/\//, '').replace('/', '').replace(')', ''));
     }
-
-    let urlMatch = cleanedText.match("((https?://)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(/\\S*)?)");
-    return urlMatch[0].replace(/https?:\/\//, '')
-      .replace('/', '')
-      .replace(')', '');
+    return urls;
   }
 }

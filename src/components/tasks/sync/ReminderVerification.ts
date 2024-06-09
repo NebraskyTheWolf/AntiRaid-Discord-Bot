@@ -11,115 +11,125 @@ export default class ReminderVerification extends BaseTask {
   public constructor() {
     super("ReminderVerification", "Syncing all new entries from the dashboard", 160,
       async () => {
-        const guild = await this.getGuild(this.getDefaultConfig().get('main-guild'))
-        const discordGuild = await fetchDGuild(guild.guildID)
+        const guildConfig = this.getDefaultConfig().get('main-guild');
+        const guild = await this.getGuild(guildConfig);
+        const discordGuild = await fetchDGuild(guild.guildID);
 
         const role = discordGuild.roles.cache.find(role => role.id === "606542004708573219");
 
         if (!this.instance.spamProtectionEnabled) {
-          this.instance.logger.warn("ReminderVerification disabled by developer.")
+          this.instance.logger.warn("ReminderVerification disabled by developer.");
           return;
         }
 
-        const reminder = await Reminder.find()
+        const reminders = await Reminder.find();
 
-        this.instance.logger.warn("ReminderVerification Running job.")
-        this.instance.logger.warn(`Members: ${role.members.size}`)
-        this.instance.logger.warn(`Reminders: ${reminder.length}`)
+        this.instance.logger.warn("ReminderVerification Running job.");
+        this.instance.logger.warn(`Members: ${role.members.size}`);
+        this.instance.logger.warn(`Reminders: ${reminders.length}`);
 
         const now = new Date();
-        role.members.map(async m => {
-          if (!m && m.user.bot || m.user.system)
-            return;
 
-          const reminders = await Reminder.findOne({
-            memberId: m.id,
+        await Promise.all(role.members.map(async (member) => {
+          if (!member || member.user.bot || member.user.system) {
+            return;
+          }
+
+          const reminder = await Reminder.findOne({
+            memberId: member.id,
             locked: false,
             notified: false
           });
 
-          let currentVerification = await Verification.findOne({
-            memberId: m.id
-          })
+          const currentVerification = await Verification.findOne({
+            memberId: member.id
+          });
 
-          if (reminders) {
+          if (reminder) {
             if (!currentVerification) {
-              let hours = moment().diff(moment(m.joinedTimestamp), 'hours');
-              if (!reminders.locked && hours >= 24) {
+              const hours = moment().diff(moment(member.joinedTimestamp), 'hours');
+              if (!reminder.locked && hours >= 24) {
                 try {
-                  this.instance.logger.warn("First reminder sent to " + m.id)
-                  await this.sendFirstReminder(m);
+                  this.instance.logger.warn("First reminder sent to " + member.id);
+                  await this.sendFirstReminder(member);
                 } catch (e) {
-                  this.instance.logger.warn("Cannot send message to " + m.id + " because they disabled their private messages.")
+                  this.instance.logger.warn("Cannot send message to " + member.id + " because they disabled their private messages.");
                 }
-                reminders.reminders = now.getTime();
-                reminders.locked = true;
-                await reminders.save();
+                reminder.reminders = now.getTime();
+                reminder.locked = true;
+                await reminder.save();
               } else {
-                this.instance.logger.warn("Reminder already sent or it's too early " + m.id)
-                this.instance.logger.warn(hours  + " hours " + m.id)
-                this.instance.logger.warn("---")
+                this.instance.logger.warn("Reminder already sent or it's too early " + member.id);
+                this.instance.logger.warn(hours + " hours " + member.id);
+                this.instance.logger.warn("---");
               }
             } else {
-              this.instance.logger.warn("Deleting reminder for user because they completed the verification form.")
+              this.instance.logger.warn("Deleting reminder for user because they completed the verification form.");
               await Reminder.deleteOne({
-                memberId: m.id
-              })
+                memberId: member.id
+              });
             }
           }
-        })
+        }));
 
-        this.instance.logger.warn("Checking locked reminder.")
+        this.instance.logger.warn("Checking locked reminders.");
 
-        const remindersLockeds = await Reminder.find({
+        const lockedReminders = await Reminder.find({
           locked: true,
           notified: false
         });
 
-        let memberArray = [];
+        const memberArray = [];
 
-        for (const reminderLocked of remindersLockeds) {
-          let member = fetchSyncMember(guild.guildID, reminderLocked.memberId)
+        for (const lockedReminder of lockedReminders) {
+          let member;
+          try {
+            member = fetchSyncMember(guild.guildID, lockedReminder.memberId);
+          } catch (e) {
+            this.instance.logger.warn(`Member ${lockedReminder.memberId} left the server.`);
+            continue;
+          }
 
           // Ignoring if the member left the server OR if the member got the verified role.
-          // FIX: F-0001-2024
-          if (!member || member.roles.cache.has("606542137819136020"))
-             continue
+          if (!member || member.roles.cache.has("606542137819136020")) {
+            continue;
+          }
 
-          let hours = moment().diff(moment(member.joinedTimestamp), 'hours');
+          const hours = moment().diff(moment(member.joinedTimestamp), 'hours');
 
           if (hours >= 72) {
-            memberArray.push(`<@${reminderLocked.memberId}>`)
-            this.instance.logger.warn("Pushing locked reminder")
-            reminderLocked.notified = true;
-            await reminderLocked.save();
+            memberArray.push(`<@${lockedReminder.memberId}>`);
+            this.instance.logger.warn("Pushing locked reminder");
+            lockedReminder.notified = true;
+            await lockedReminder.save();
           }
         }
 
         if (memberArray.length > 0) {
-          this.instance.logger.warn("Sending kick log.")
-          await this.handleRaidLog(memberArray)
+          this.instance.logger.warn("Sending kick log.");
+          await this.handleRaidLog(memberArray);
           memberArray.length = 0;
         } else {
-          this.instance.logger.warn("No locked reminder.")
+          this.instance.logger.warn("No locked reminders.");
         }
-      })
+      }
+    );
   }
 
-  private async handleRaidLog(memberArray= []) {
+  private async handleRaidLog(memberArray: string[]) {
     const announcementChannel = this.instance.guilds.cache
-      .get("606534136806637589").channels.cache
+      .get("606534136806637589")?.channels.cache
       .get("803067472621600859") as TextChannel;
 
-    let confirmButton = this.instance.buttonManager.getButton("row_cancel_bulk_kick");
-    let cancelButton = this.instance.buttonManager.getButton("row_confirm_bulk_remind");
+    const confirmButton = this.instance.buttonManager.getButton("row_cancel_bulk_kick");
+    const cancelButton = this.instance.buttonManager.getButton("row_confirm_bulk_remind");
 
     await announcementChannel.send({
       embeds: [
         {
           title: "FurRaidDB - Verification timed-out.",
           description: `${memberArray.join(', ')} has not verified in the time period.`,
-          timestamp: Date.now()
+          timestamp: new Date()
         }
       ],
       components: [
