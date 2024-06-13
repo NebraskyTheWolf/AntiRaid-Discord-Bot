@@ -1,7 +1,7 @@
 import BaseEvent from "@fluffici.ts/components/BaseEvent";
 import { Guild as FGuild } from "@fluffici.ts/database/Guild/Guild";
 import fetch from "node-fetch";
-import { Message, Snowflake, TextChannel } from "discord.js";
+import {Collection, Message, Snowflake, TextChannel, User} from "discord.js";
 import { registerCommands } from "@fluffici.ts/utils/registerCommand";
 import Migrated, { IMigrated } from "@fluffici.ts/database/Security/Migrated";
 import OptionMap from "@fluffici.ts/utils/OptionMap";
@@ -37,8 +37,13 @@ export default class MessageEvent extends BaseEvent {
         await this.handleMigrationCommand(message);
       }
 
+      // Enforcement in English chat.
+      if (message.channelId == "1226963314433851563") {
+          this.messageThreshold = 5
+      }
+
       try {
-        this.handleTicketMessage(message);
+        await this.handleTicketMessage(message);
       } catch (e) {
         this.instance.logger.error(e);
       }
@@ -72,7 +77,7 @@ export default class MessageEvent extends BaseEvent {
           isClosed: false
         });
         if (isTicket) {
-          new TicketMessage({
+          await new TicketMessage({
             ticketId: isTicket._id,
             userId: member.id,
             message: message.content
@@ -154,8 +159,8 @@ export default class MessageEvent extends BaseEvent {
         await this.takeAction(message, guild, offence, "spamming");
         if (isTicket) {
           const dGuild = await fetchDGuild(message.guildId);
-          dGuild.channels.cache.get(isTicket.channelId)?.delete("Spamming in a support ticket.");
-          new PreventTicket({
+          await dGuild.channels.cache.get(isTicket.channelId)?.delete("Spamming in a support ticket.");
+          await new PreventTicket({
             userId: message.author.id
           }).save();
         }
@@ -230,7 +235,7 @@ export default class MessageEvent extends BaseEvent {
 
   private async takeAction(message: Message, guild: FGuild, offence: Offence, reason: string) {
     await message.reply({ content: `${this.getLanguageManager().translate("common.dont.spam")}` });
-    await message.member.timeout(600 * 1000, reason);
+    await message.member.timeout(60 * 1000, reason);
 
     await this.handleSpamLog(guild, message, offence, reason === "spamming");
   }
