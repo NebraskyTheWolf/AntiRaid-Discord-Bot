@@ -16,6 +16,7 @@ export default class ApiRoutes extends AbstractRoutes {
         this.getRouter().get('/invite', this.getInviteHandler.bind(this))
         this.getRouter().get('/stats', this.getStatsHandler.bind(this))
         this.getRouter().get('/transcripts/:id', this.getTranscriptHandler.bind(this))
+        this.getRouter().get('/intercept/:channelId/:messageId', this.interceptMessage.bind(this))
     }
 
     private async getCmdHandler(req: Request, res: Response) {
@@ -29,6 +30,44 @@ export default class ApiRoutes extends AbstractRoutes {
         };
         this.sendSuccessResponse(res, data);
     }
+
+  /**
+   * Intercepts a message from a specified channel.
+   *
+   * @param {Request} req - The request object.
+   * @param {Response} res - The response object.
+   * @return {Promise<void>} - A promise that resolves when the interception is completed.
+   */
+  private async interceptMessage(req: Request, res: Response): Promise<void> {
+      const channelId = req.params.channelId;
+      const messageId = req.params.messageId;
+
+      const channel = await Fluffici.instance.channels.fetch(channelId);
+      if (channel?.isText()) {
+          const message = await channel.messages.fetch(messageId);
+          if (message) {
+            res.status(200).json({
+              status: true,
+              data: {
+                giftsCodes: message.giftsCodes ?? [],
+                message: message
+              }
+            }).end()
+          } else {
+              res.status(404).json({
+                  status: false,
+                  error: 'MESSAGE_NOT_FOUND',
+                  message: 'The message does not exist in the specified channel.',
+              });
+          }
+      } else {
+          res.status(400).json({
+              status: false,
+              error: 'INVALID_CHANNEL',
+              message: 'The specified channel is not a text channel.',
+          });
+      }
+  }
 
     private async getTranscriptHandler(req: Request, res: Response) {
       if (!req.params.id) {

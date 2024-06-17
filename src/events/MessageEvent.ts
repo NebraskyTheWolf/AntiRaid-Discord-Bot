@@ -1,13 +1,11 @@
 import BaseEvent from "@fluffici.ts/components/BaseEvent";
 import { Guild as FGuild } from "@fluffici.ts/database/Guild/Guild";
 import fetch from "node-fetch";
-import {Collection, Message, Snowflake, TextChannel, User} from "discord.js";
+import {Message, TextChannel} from "discord.js";
 import { registerCommands } from "@fluffici.ts/utils/registerCommand";
 import Migrated, { IMigrated } from "@fluffici.ts/database/Security/Migrated";
-import OptionMap from "@fluffici.ts/utils/OptionMap";
-import { fetchDGuild, isBotOrSystem } from "@fluffici.ts/types";
+import { isBotOrSystem } from "@fluffici.ts/types";
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
-import PreventTicket from "@fluffici.ts/database/Security/PreventTicket";
 import TicketMessage from "@fluffici.ts/database/Guild/TicketMessage";
 
 interface Offence {
@@ -20,11 +18,6 @@ interface Offence {
 }
 
 export default class MessageEvent extends BaseEvent {
-
-  private readonly offences: OptionMap<Snowflake, Offence> = new OptionMap<Snowflake, Offence>();
-  private messageThreshold: number = 15;
-  private timePeriod: number = 5000;
-  private repeatTimePeriod: number = 8000;
   private messageTimePeriod: number = 10000;
 
   public constructor() {
@@ -37,21 +30,8 @@ export default class MessageEvent extends BaseEvent {
         await this.handleMigrationCommand(message);
       }
 
-      // Enforcement in English chat.
-      if (message.channelId == "1226963314433851563") {
-          this.messageThreshold = 5
-      }
-
       try {
         await this.handleTicketMessage(message);
-      } catch (e) {
-        this.instance.logger.error(e);
-      }
-
-      try {
-        if (this.instance.spamProtectionEnabled) {
-          await this.handleOffence(message, guild);
-        }
       } catch (e) {
         this.instance.logger.error(e);
       }
@@ -120,62 +100,6 @@ export default class MessageEvent extends BaseEvent {
           await this.handleScam(guild, message, scamUrl);
         }
       }
-    }
-  }
-
-  private async handleOffence(message: Message, guild: FGuild): Promise<void> {
-    const currentTime = Date.now();
-    const isTicket = await Ticket.findOne({
-      channelId: message.channelId,
-      userId: message.author.id,
-      isClosed: false
-    });
-
-    if (this.offences.has(message.member.id)) {
-      let offence = this.offences.get(message.author.id) as Offence;
-
-      if (currentTime <= offence.timestamp + this.timePeriod) {
-        offence.count++;
-      } else {
-        offence.count = 1;
-      }
-
-      if (offence.repeatedMessages.has(message.content) && currentTime <= offence.lastMessageTimestamp + this.repeatTimePeriod) {
-        offence.lastMessageHits++;
-        if (offence.lastMessageHits >= 4) {
-          await this.takeAction(message, guild, offence, "repeating messages");
-          return;
-        }
-      } else {
-        offence.lastMessageHits = 1;
-      }
-
-      offence.repeatedMessages.add(message.content);
-      offence.timestamp = currentTime;
-      offence.lastMessage = message.content;
-      offence.lastMessageTimestamp = currentTime;
-
-      if (offence.count > this.messageThreshold) {
-        await this.takeAction(message, guild, offence, "spamming");
-        if (isTicket) {
-          const dGuild = await fetchDGuild(message.guildId);
-          await dGuild.channels.cache.get(isTicket.channelId)?.delete("Spamming in a support ticket.");
-          await new PreventTicket({
-            userId: message.author.id
-          }).save();
-        }
-      }
-
-      this.offences.add(message.author.id, offence);
-    } else {
-      this.offences.add(message.member.id, {
-        timestamp: currentTime,
-        count: 1,
-        lastMessageHits: 0,
-        lastMessage: message.content,
-        lastMessageTimestamp: currentTime,
-        repeatedMessages: new Set<string>([message.content])
-      });
     }
   }
 

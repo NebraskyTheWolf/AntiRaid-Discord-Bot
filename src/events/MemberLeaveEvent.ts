@@ -4,7 +4,6 @@ import {
   createExtraOptions,
   isBotOrSystem,
 } from '@fluffici.ts/types'
-import Verification from "@fluffici.ts/database/Guild/Verification";
 import Reminder from "@fluffici.ts/database/Security/Reminder";
 import Ticket from "@fluffici.ts/database/Guild/Ticket";
 

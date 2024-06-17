@@ -54,7 +54,7 @@ export default class CommandTicket extends BaseCommand {
 
     this.addSubCommand(
       new SlashCommandSubcommandBuilder()
-        .setName("add")
+        .setName("addadd")
         .setDescription("Add someone to a existing channel.")
         .addUserOption(
           new SlashCommandUserOption()

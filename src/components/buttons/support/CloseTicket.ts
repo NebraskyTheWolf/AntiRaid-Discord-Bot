@@ -136,7 +136,8 @@ export default class CloseTicket extends BaseButton<MessageButton, void> {
                   }
                 ],
                 footer: {
-                  text: `Ticket ${currentTicket._id}`,
+                  text: `
+                   ${currentTicket._id}`,
                   iconURL: this.instance.user.avatarURL({ format: 'png' })
                 },
                 timestamp: Date.now()
