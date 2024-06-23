@@ -26,8 +26,26 @@ export default class ApiRoutes extends AbstractRoutes {
     }
 
   private async getAllServers(req: Request, res: Response) {
-    const data = Fluffici.instance.guilds.cache.values();
-    this.sendSuccessResponse(res, data);
+    const guilds = Array.from(Fluffici.instance.guilds.cache.values());
+
+    // Serialize the guild data
+    const serializedGuilds = guilds.map(guild => ({
+      id: guild.id,
+      name: guild.name,
+      icon: guild.iconURL({ format:  'png' }),
+      ownerId: guild.ownerId,
+      memberCount: guild.memberCount,
+      afkChannelId: guild.afkChannelId,
+      afkTimeout: guild.afkTimeout,
+      joinedAt: guild.joinedAt,
+      large: guild.large,
+      maximumMembers: guild.maximumMembers,
+      maximumPresences: guild.maximumPresences,
+      premiumTier: guild.premiumTier,
+      verificationLevel: guild.verificationLevel,
+    }));
+
+    this.sendSuccessResponse(res, serializedGuilds);
   }
 
     private async getInviteHandler(req: Request, res: Response) {
