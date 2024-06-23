@@ -17,12 +17,18 @@ export default class ApiRoutes extends AbstractRoutes {
         this.getRouter().get('/stats', this.getStatsHandler.bind(this))
         this.getRouter().get('/transcripts/:id', this.getTranscriptHandler.bind(this))
         this.getRouter().get('/intercept/:channelId/:messageId', this.interceptMessage.bind(this))
+        this.getRouter().get('/get-servers', this.getAllServers.bind(this))
     }
 
     private async getCmdHandler(req: Request, res: Response) {
         const data = Fluffici.instance.manager.toList();
         this.sendSuccessResponse(res, data);
     }
+
+  private async getAllServers(req: Request, res: Response) {
+    const data = Fluffici.instance.guilds.cache.values();
+    this.sendSuccessResponse(res, data);
+  }
 
     private async getInviteHandler(req: Request, res: Response) {
         const data = {
@@ -49,7 +55,7 @@ export default class ApiRoutes extends AbstractRoutes {
             res.status(200).json({
               status: true,
               data: {
-                giftsCodes: message.giftsCodes ?? [],
+                giftsCodes: message.giftCodes ?? [],
                 message: message
               }
             }).end()
