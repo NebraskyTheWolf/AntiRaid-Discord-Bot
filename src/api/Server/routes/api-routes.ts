@@ -3,6 +3,7 @@ import AbstractRoutes from "../../Server/AbstractRoutes";
 import {Request, Response} from "express";
 import path from "path";
 import fs from "node:fs";
+import guild from "@fluffici.ts/database/Guild/Guild";
 
 export interface Statistics {
     guilds: number;
@@ -18,6 +19,7 @@ export default class ApiRoutes extends AbstractRoutes {
         this.getRouter().get('/transcripts/:id', this.getTranscriptHandler.bind(this))
         this.getRouter().get('/intercept/:channelId/:messageId', this.interceptMessage.bind(this))
         this.getRouter().get('/get-servers', this.getAllServers.bind(this))
+        this.getRouter().get('/servers/:id/members', this.getAllMembers.bind(this))
     }
 
     private async getCmdHandler(req: Request, res: Response) {
@@ -46,6 +48,35 @@ export default class ApiRoutes extends AbstractRoutes {
     }));
 
     this.sendSuccessResponse(res, serializedGuilds);
+  }
+
+  private async getAllMembers(req: Request, res: Response) {
+      const guildId = req.params.id;
+      const guild = Fluffici.instance.guilds.cache.get(guildId);
+
+      if (guild) {
+          const members = Array.from(guild.members.cache.values());
+
+          // Serialize the member data
+          const serializedMembers = members.map(member => ({
+              id: member.id,
+              username: member.user.username,
+              discriminator: member.user.discriminator,
+              avatar: member.user.avatarURL({ format: 'png' }),
+              joinedAt: member.joinedAt,
+              roles: Array.from(member.roles.cache.values()).map(role => ({
+                  id: role.id,
+                  name: role.name,
+                  color: role.color,
+                  position: role.position,
+              })),
+              isSpam: (member.flags.bitfield & (1 << 20)) !== 0
+          }));
+
+          this.sendSuccessResponse(res, serializedMembers);
+      } else {
+        this.sendSuccessResponse(res, []);
+      }
   }
 
     private async getInviteHandler(req: Request, res: Response) {
